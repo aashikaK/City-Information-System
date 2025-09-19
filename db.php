@@ -1,0 +1,10 @@
+<?php
+$host="localhost";
+$db="cis";
+try{
+    $pdo= new PDO("mysql:host=$host;dbname=$db","root","");
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+}
+catch(PDOException $e){
+echo"Error-> ".$e->getMessage();
+}

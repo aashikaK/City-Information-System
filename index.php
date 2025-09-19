@@ -1,3 +1,7 @@
+<?php
+require "db.php";
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -94,24 +98,33 @@ body { background:#f4f7fb; }
 .info-table tr:nth-child(even){background:#f9f9f9;}
 .info-table tr:hover{background:#e0f0ff;}
 
-/* Optional Events Section */
+/* Events Section */
 .events {
     width:90%;
     margin:30px auto;
 }
-.events h2 { text-align:center; margin-bottom:20px; }
+.events h2 { 
+    text-align:center; 
+    margin-bottom:20px; 
+    font-size: 1.8rem; 
+    color:#333; 
+}
 .event-card {
-    background:white;
+    background:rgba(200, 218, 233, 1);
     padding:15px;
     margin-bottom:15px;
     border-radius:10px;
-    box-shadow:0 4px 8px rgba(0,0,0,0.1);
+    box-shadow:0 4px 8px rgba(0, 0, 0, 0.42);
     transition:0.3s;
 }
 .event-card:hover {
     transform: translateY(-5px);
     box-shadow:0 6px 12px rgba(0,0,0,0.2);
 }
+.event-card strong { font-size:1.2rem; color:#222; }
+.event-date { color:#555; font-size:0.95rem; }
+.event-location { font-style:italic; color:#777; font-size:0.9rem; }
+
 
 /* Footer */
 .footer {
@@ -238,18 +251,36 @@ body { background:#f4f7fb; }
     </tbody>
 </table>
 
-<!-- Optional Events Section -->
+<!-- Upcoming Events Section -->
 <div class="events">
-    <h2>Upcoming City Events</h2>
-    <div class="event-card">
-        <strong>Kathmandu Street Festival</strong> - 12th Oct 2025
-    </div>
-    <div class="event-card">
-        <strong>Pokhara Adventure Marathon</strong> - 25th Oct 2025
-    </div>
-    <div class="event-card">
-        <strong>Lumbini Meditation Camp</strong> - 5th Nov 2025
-    </div>
+    <h2>Upcoming Popular Events</h2>
+    <?php
+    try {
+        // fetch events where event_date >= today AND is_popular=1
+        $stmt = $pdo->prepare("SELECT event_name, city, description, event_date, location 
+                               FROM events 
+                               WHERE event_date >= CURDATE() AND is_popular=1
+                               ORDER BY event_date ASC 
+                               LIMIT 5");
+        $stmt->execute();
+        $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        if ($events) {
+            foreach ($events as $event) {
+                echo "<div class='event-card'>";
+                echo "<strong>" . htmlspecialchars($event['event_name']) . "</strong>";
+                echo " <span class='event-date'>(" . date("d M Y", strtotime($event['event_date'])) . ")</span>";
+                echo "<div class='event-location'>📍 " . htmlspecialchars($event['city']) . " - " . htmlspecialchars($event['location']) . "</div>";
+                echo "<p>" . htmlspecialchars($event['description']) . "</p>";
+                echo "</div>";
+            }
+        } else {
+            echo "<p style='text-align:center; color:#777;'>No upcoming popular events found.</p>";
+        }
+    } catch (PDOException $e) {
+        echo "<p style='color:red; text-align:center;'>Error fetching events: " . $e->getMessage() . "</p>";
+    }
+    ?>
 </div>
 
 <div class="footer">
