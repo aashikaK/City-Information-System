@@ -9,7 +9,12 @@ require "db.php";
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>City Information System</title>
 
+
+<!-- Font Awesome -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css"/>
+  
+<!-- AOS Library CSS -->
+<link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
 
 <style>
 * { margin:0; padding:0; box-sizing:border-box; font-family:"Segoe UI", Arial, sans-serif; }
@@ -150,53 +155,56 @@ body { background:#f4f7fb; }
 <?php include('navbar.php'); ?> <!-- Reuse navbar -->
 
 <!-- Hero Section -->
-<div class="hero">
+<div class="hero" data-aos="fade-down">
     <h1>Welcome to the City Information System</h1>
     <p>Complete information about cities, facilities, events, and tourism</p>
 </div>
 
 <!-- Featured Cities -->
 <div class="cities">
-    <div class="city-card" onclick="location.href='ktm.php'">
+    <div class="city-card" data-aos="zoom-in" data-aos-delay="0" onclick="location.href='ktm.php'">
         <img src="images/ktm.jpg" alt="Kathmandu">
         <h3>Kathmandu Valley</h3>
         <p>Population: 1.5M | Area: 50 km²</p>
     </div>
-    <div class="city-card" onclick="location.href='lalitpur.php'">
+    <div class="city-card" data-aos="zoom-in" data-aos-delay="100" onclick="location.href='lalitpur.php'">
         <img src="images/lalitpur.jpg" alt="Lalitpur">
         <h3>Lalitpur</h3>
         <p>Population: 0.3M | Area: 36 km²</p>
     </div>
-    <div class="city-card" onclick="location.href='bhaktapur.php'">
+    <div class="city-card" data-aos="zoom-in" data-aos-delay="200" onclick="location.href='bhaktapur.php'">
         <img src="images/bkt.jpg" alt="Bhaktapur">
         <h3>Bhaktapur</h3>
         <p>Population: 0.25M | Area: 15 km²</p>
     </div>
-    <div class="city-card" onclick="location.href='pokhara.php'">
+    <div class="city-card" data-aos="zoom-in" data-aos-delay="300" onclick="location.href='pokhara.php'">
         <img src="images/pokhara.jpg" alt="Pokhara">
         <h3>Pokhara</h3>
         <p>Population: 0.42M | Area: 55 km²</p>
     </div>
-    <div class="city-card" onclick="location.href='lumbini.php'">
+    <div class="city-card" data-aos="zoom-in" data-aos-delay="400" onclick="location.href='lumbini.php'">
         <img src="images/lumbini.jpg" alt="Lumbini">
         <h3>Lumbini</h3>
         <p>Birthplace of Lord Buddha</p>
+        <p>Population: 5.12M | Area: 19,707 km²</p> 
     </div>
-    <div class="city-card" onclick="location.href='chitwan.php'">
+    <div class="city-card" data-aos="zoom-in" data-aos-delay="500" onclick="location.href='chitwan.php'">
         <img src="images/chitwan.jpg" alt="Chitwan">
         <h3>Chitwan</h3>
         <p>Famous for National Park & Safari</p>
+        <p>Population: 719.9K | Area: 2,238.39 km²</p>
     </div>
-    <div class="city-card" onclick="location.href='mustang.php'">
+    <div class="city-card" data-aos="zoom-in" data-aos-delay="600" onclick="location.href='mustang.php'">
         <img src="images/mustang.jpg" alt="Mustang">
         <h3>Mustang</h3>
         <p>Historical Lo Manthang City</p>
+        <p>Population: 14.5K | Area: 3,573 km²</p>
     </div>
 </div>
 
 <!-- City Info Table -->
-<h2 style="text-align:center; margin-top:30px;">City Highlights</h2>
-<table class="info-table">
+<h2 style="text-align:center; margin-top:30px;" data-aos="fade-up">City Highlights</h2>
+<table class="info-table" data-aos="fade-up" data-aos-delay="100">
     <thead>
         <tr>
             <th>City</th>
@@ -252,7 +260,7 @@ body { background:#f4f7fb; }
 </table>
 
 <!-- Upcoming Events Section -->
-<div class="events">
+<div class="events" data-aos="fade-up" data-aos-delay="200">
     <h2>Upcoming Popular Events</h2>
     <?php
     try {
@@ -283,9 +291,16 @@ body { background:#f4f7fb; }
     ?>
 </div>
 
-<div class="footer">
+<div class="footer" data-aos="fade-up" data-aos-delay="300">
     &copy; 2025 City Information System. All rights reserved.
 </div>
+
+
+<!-- AOS JS -->
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+<script>
+  AOS.init({ duration:1000, once:true });
+</script>
 
 </body>
 </html>
