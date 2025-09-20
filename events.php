@@ -34,6 +34,8 @@ try {
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Events - City Information System</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css"/>
+<!-- AOS Library -->
+<link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
 
 <style>
 * { margin:0; padding:0; box-sizing:border-box; font-family:"Segoe UI", Arial, sans-serif; }
@@ -117,7 +119,7 @@ body { background:#f4f7fb; }
 
 <?php include('navbar.php'); ?>
 
-<div class="page-header">
+<div class="page-header" data-aos="fade-down">
     <h1>All Upcoming Events</h1>
 </div>
 
@@ -144,8 +146,9 @@ body { background:#f4f7fb; }
 <div class="events-container">
 <?php
 if ($events) {
+    $delay = 0;
     foreach ($events as $event) {
-        echo "<div class='event-card'>";
+       echo "<div class='event-card' data-aos='fade-up' data-aos-delay='{$delay}'>";
         echo "<strong>" . htmlspecialchars($event['event_name']) . "</strong>";
         if ($event['is_popular']) {
             echo "<span class='popular-badge'>Popular</span>";
@@ -154,6 +157,7 @@ if ($events) {
         echo "<div class='event-location'>📍 " . htmlspecialchars($event['city']) . " - " . htmlspecialchars($event['location']) . "</div>";
         echo "<p>" . htmlspecialchars($event['description']) . "</p>";
         echo "</div>";
+        $delay += 100;
     }
 } else {
     echo "<p style='text-align:center; color:#777;'>No upcoming events found.</p>";
@@ -165,5 +169,13 @@ if ($events) {
     &copy; 2025 City Information System. All rights reserved.
 </div>
 
+<!-- AOS JS -->
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+<script>
+  AOS.init({ duration:800, once:true });
+</script>
+
+</body>
+</html>
 </body>
 </html>
