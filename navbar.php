@@ -123,7 +123,7 @@ body { background:#f4f7fb; }
         <li><a href="/CIS/index.php">Home</a></li>
         <li><a href="/CIS/about.php">About Us</a></li>
         <li><a href="/CIS/services.php">Services</a></li>
-        <li><a href="/CIS/places.php">Tourism</a></li>
+        <li><a href="/CIS/tourism.php">Tourism</a></li>
         <li><a href="/CIS/events.php">Events</a></li>
         <li><a href="/CIS/map.php">Map</a></li>
         <?php if(isset($_SESSION['login']) && $_SESSION['login'] != '') { ?>
