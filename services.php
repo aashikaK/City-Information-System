@@ -181,7 +181,7 @@ body { background:#f4f7fb; }
 </div>
 
 <h2 style="text-align:center; margin-bottom:20px;" data-aos="fade-up">
-    <?php echo $categories[$selected_category] . ' ' . htmlspecialchars($selected_category); ?>
+    <?php echo $categories[$selected_category]['icon'] . ' ' . htmlspecialchars($selected_category); ?>
 </h2>
 
 <div class="services-container">
