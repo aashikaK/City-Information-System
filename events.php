@@ -108,6 +108,12 @@ body { background:#f4f7fb; }
     padding:15px 20px;
     margin-top:30px;
 }
+/* if aos doesnot work properly */
+[data-aos] {
+  opacity: 1 !important;
+  transform: none !important;
+}
+
 
 /* Responsive */
 @media(max-width:768px){
@@ -173,6 +179,8 @@ if ($events) {
 <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
 <script>
   AOS.init({ duration:800, once:true });
+  window.addEventListener('load', AOS.refresh);
+
 </script>
 
 </body>

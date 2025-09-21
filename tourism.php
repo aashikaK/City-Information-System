@@ -101,7 +101,9 @@ if ($places) {
 <div class="footer">&copy; 2025 City Information System. All rights reserved.</div>
 
 <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
-<script>AOS.init({duration:800,once:true});</script>
+<script>AOS.init({duration:800,once:true});
+    window.addEventListener('load', AOS.refresh);
+</script>
 
 </body>
 </html>
