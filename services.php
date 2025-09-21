@@ -128,7 +128,7 @@ body { background:#f4f7fb; }
     transform:translateY(-5px);
     box-shadow:0 6px 12px rgba(0,0,0,0.25);
 }
-.service-card img { width:100%; height:200px; object-fit:cover; }
+.service-card img { width:100%; height:250px; object-fit:cover; }
 .service-card .content { padding:15px; }
 .service-card h3 { margin-bottom:8px; color:#222; }
 .service-card p { font-size:0.95rem; color:#555; margin-bottom:5px; }
