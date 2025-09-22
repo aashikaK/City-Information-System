@@ -3,7 +3,7 @@ require "db.php";
 
 $sql = "SELECT * FROM tourism WHERE city=? ORDER BY city ASC";
 $stmt = $pdo->prepare($sql);
-$stmt->execute(["Kathmandu"]);
+$stmt->execute(["Mustang"]);
 $places = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 ?>
