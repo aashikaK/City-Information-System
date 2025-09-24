@@ -15,7 +15,8 @@ $categories = [
     'Government' => ['icon' => '🏢', 'image' => 'images/categories/government.jpg'],
     'Bank' => ['icon' => '💰', 'image' => 'images/categories/bank.jpg'],
     'Fire Station' => ['icon' => '🔥', 'image' => 'images/categories/firestation.jpg'],
-    'Tourism' => ['icon' => 'ℹ️', 'image' => 'images/categories/tourism.jpg']
+    'Tourism' => ['icon' => 'ℹ️', 'image' => 'images/categories/tourism.jpg'],
+    'Temple' =>['icon'=>'🏛️', 'image'=>'images/categories/temple.jpg']
 ];
 
 
