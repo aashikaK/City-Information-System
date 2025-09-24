@@ -42,9 +42,33 @@ require "db.php";
 $places=[];
 $sql_tourism="SELECT place_name AS name, category, city, description, image 
                 FROM tourism";
-$stmt=$pdo->execute();
+$stmt=$pdo->prepare($sql_tourism);
+$stmt->execute();
 $result1=$stmt->fetchAll(PDO::FETCH_ASSOC);
-
+foreach($result1 as $r1 ){
+  $places[]=[
+    "name"=>$r1['name'],
+    "category"=>$r1['category'],
+    "city"=>$r1['city'],
+    "description"=>$r1['description'],
+    "image"=>$r1['image']
+  ];
+}
+$sql_services = "SELECT name, category, city, description, image, icon 
+                 FROM city_services ";
+$stmt=$pdo->prepare($sql_services);
+$stmt->execute();
+$result2=$stmt->fetchAll(PDO::FETCH_ASSOC);
+foreach($result2 as $r2){
+  $places[]=[
+    "name"=>$r2['name'],
+    "category"=>$r2['category'],
+    "city"=>$r2['city'],
+    "description"=>$r2['description'],
+    "image"=>$r2['image'],
+    "icon"=>$r2['icon']
+  ];
+}
 ?>
 
 <!--Leaflet JS-->
