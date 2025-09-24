@@ -76,6 +76,8 @@ foreach($result2 as $r2){
 
 <script>
 // Initialize map centered on Nepal
+
+var dbPlaces = <?php echo json_encode($places); ?>;
 var map = L.map('map').setView([28.3949, 84.1240], 7);
 
 // Load tiles from OpenStreetMap
@@ -99,6 +101,30 @@ cities.forEach(city => {
   L.marker([city.lat, city.lon]).addTo(map)
     .bindPopup("<b>" + city.name + "</b><br>" + city.info);
 });
+
+// Icons for categories (you need to create these icons in an 'icons/' folder)
+var icons = {
+    "Hospital": L.icon({ iconUrl: "icons/hospital.png", iconSize: [30, 30] }),
+    "School": L.icon({ iconUrl: "icons/school.png", iconSize: [30, 30] }),
+    "Temple": L.icon({ iconUrl: "icons/temple.png", iconSize: [30, 30] }),
+    "Attraction": L.icon({ iconUrl: "icons/attraction.png", iconSize: [30, 30] }),
+    "default": L.icon({ iconUrl: "icons/default.png", iconSize: [30, 30] })
+};
+
+// Add markers for DB places
+dbPlaces.forEach(place => {
+    var icon = icons[place.category] || icons["default"];
+    var popupContent = `
+        <b>${place.name}</b><br>
+        Category: ${place.category}<br>
+        ${place.description ? place.description + "<br>" : ""}
+        ${place.image ? "<img src='" + place.image + "' width='120px'><br>" : ""}
+    `;
+    L.marker([place.lat || 0, place.lon || 0], { icon: icon })
+        .addTo(map)
+        .bindPopup(popupContent);
+});
+
 </script>
 
 </body>
