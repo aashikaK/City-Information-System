@@ -37,6 +37,16 @@ h2 {
 
 <div id="map"></div>
 
+<?php
+require "db.php";
+$places=[];
+$sql_tourism="SELECT place_name AS name, category, city, description, image 
+                FROM tourism";
+$stmt=$pdo->execute();
+$result1=$stmt->fetchAll(PDO::FETCH_ASSOC);
+
+?>
+
 <!--Leaflet JS-->
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
