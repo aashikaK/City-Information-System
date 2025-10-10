@@ -47,8 +47,15 @@ select { padding:6px 10px; border-radius:5px; margin:0 5px; }
       <option value="">All Categories</option>
       <option value="Hospital">Hospital</option>
       <option value="School">School</option>
+      <option value="University">University</option>
+      <option value="College">College</option>
+      <option value="Transport">Transport</option>
+      <option value="Hotel">Hotel</option>
+      <option value="Government">Government</option>
+      <option value="Bank">Bank</option>
+      <option value="Firestation">Firestation</option>
       <option value="Temple">Temple</option>
-      <option value="Attraction">Attraction</option>
+      <option value="Tourism">Tourism</option>
     </select>
 
     <button type="submit">Filter</button>
@@ -138,9 +145,12 @@ var icons = {
   "University": L.icon({ iconUrl: "images/icons/university.png", iconSize: [30, 30] }),
   "College": L.icon({ iconUrl: "images/icons/college.png", iconSize: [30, 30] }),
   "Transport": L.icon({ iconUrl: "images/icons/transport.png", iconSize: [30, 30] }),
-  "College": L.icon({ iconUrl: "images/icons/college.png", iconSize: [30, 30] }),
+  "Hotel": L.icon({ iconUrl: "images/icons/hotel.png", iconSize: [30, 30] }),
+  "Government": L.icon({ iconUrl: "images/icons/government.png", iconSize: [30, 30] }),
+  "Bank": L.icon({ iconUrl: "images/icons/bank.png", iconSize: [30, 30] }),
+  "Firestation": L.icon({ iconUrl: "images/icons/firestation.png", iconSize: [30, 30] }),
   "Temple": L.icon({ iconUrl: "images/icons/temple.png", iconSize: [30, 30] }),
-  "Attraction": L.icon({ iconUrl: "images/icons/attraction.png", iconSize: [30, 30] }),
+  "Tourism": L.icon({ iconUrl: "images/icons/tourism.png", iconSize: [30, 30] }),
   "default": L.icon({ iconUrl: "images/icons/default.png", iconSize: [30, 30] })
 };
 
