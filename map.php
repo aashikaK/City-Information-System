@@ -11,15 +11,9 @@
 <style>
 * { margin:0; padding:0; box-sizing:border-box; font-family:"Segoe UI", Arial, sans-serif; }
 body { background:#f4f7fb; }
-
-/* Page title */
-h2 {
-  text-align:center;
-  margin:20px;
-  color:#333;
-}
-
-/* Map */
+h2 { text-align:center; margin:20px; color:#333; }
+#filter-box { text-align:center; margin-bottom:15px; }
+select { padding:6px 10px; border-radius:5px; margin:0 5px; }
 #map {
   height: 90vh;
   width: 90%;
@@ -35,57 +29,92 @@ h2 {
 
 <h2>Explore Nepal on Map</h2>
 
+<!-- Filter section -->
+<div id="filter-box">
+  <form method="GET">
+    <select name="city">
+      <option value="">All Cities</option>
+      <option value="Kathmandu">Kathmandu</option>
+      <option value="Lalitpur">Lalitpur</option>
+      <option value="Bhaktapur">Bhaktapur</option>
+      <option value="Pokhara">Pokhara</option>
+      <option value="Lumbini">Lumbini</option>
+      <option value="Chitwan">Chitwan</option>
+      <option value="Mustang">Mustang</option>
+    </select>
+
+    <select name="category">
+      <option value="">All Categories</option>
+      <option value="Hospital">Hospital</option>
+      <option value="School">School</option>
+      <option value="Temple">Temple</option>
+      <option value="Attraction">Attraction</option>
+    </select>
+
+    <button type="submit">Filter</button>
+  </form>
+</div>
+
 <div id="map"></div>
 
 <?php
 require "db.php";
-$places=[];
-$sql_tourism="SELECT place_name AS name, category, city, description, image 
-                FROM tourism";
-$stmt=$pdo->prepare($sql_tourism);
-$stmt->execute();
-$result1=$stmt->fetchAll(PDO::FETCH_ASSOC);
-foreach($result1 as $r1 ){
-  $places[]=[
-    "name"=>$r1['name'],
-    "category"=>$r1['category'],
-    "city"=>$r1['city'],
-    "description"=>$r1['description'],
-    "image"=>$r1['image']
-  ];
+
+$filter_city = isset($_GET['city']) ? $_GET['city'] : '';
+$filter_category = isset($_GET['category']) ? $_GET['category'] : '';
+
+$places = [];
+
+// TOURISM
+$sql_tourism = "SELECT place_name AS name, category, city, description, image, contact_info 
+                FROM tourism WHERE status = 1";
+$params = [];
+if ($filter_city != '') {
+    $sql_tourism .= " AND city = ?";
+    $params[] = $filter_city;
 }
-$sql_services = "SELECT name, category, city, description, image, icon 
-                 FROM city_services ";
-$stmt=$pdo->prepare($sql_services);
-$stmt->execute();
-$result2=$stmt->fetchAll(PDO::FETCH_ASSOC);
-foreach($result2 as $r2){
-  $places[]=[
-    "name"=>$r2['name'],
-    "category"=>$r2['category'],
-    "city"=>$r2['city'],
-    "description"=>$r2['description'],
-    "image"=>$r2['image'],
-    "icon"=>$r2['icon']
-  ];
+if ($filter_category != '') {
+    $sql_tourism .= " AND category = ?";
+    $params[] = $filter_category;
 }
+$stmt = $pdo->prepare($sql_tourism);
+$stmt->execute($params);
+$tourism = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// CITY SERVICES
+$sql_services = "SELECT name, category, city, description, image, icon, contact_info 
+                 FROM city_services WHERE status = 1";
+$params = [];
+if ($filter_city != '') {
+    $sql_services .= " AND city = ?";
+    $params[] = $filter_city;
+}
+if ($filter_category != '') {
+    $sql_services .= " AND category = ?";
+    $params[] = $filter_category;
+}
+$stmt = $pdo->prepare($sql_services);
+$stmt->execute($params);
+$services = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+$places = array_merge($tourism, $services);
 ?>
 
 <!--Leaflet JS-->
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
 <script>
-// Initialize map centered on Nepal
-
 var dbPlaces = <?php echo json_encode($places); ?>;
+
+// Initialize map centered on Nepal
 var map = L.map('map').setView([28.3949, 84.1240], 7);
 
-// Load tiles from OpenStreetMap
+// Load map tiles
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; OpenStreetMap contributors'
+  attribution: '&copy; OpenStreetMap contributors'
 }).addTo(map);
 
-// Cities array
+// Major cities
 var cities = [
   { name: "Kathmandu", lat: 27.7172, lon: 85.3240, info: "Capital of Nepal" },
   { name: "Lalitpur", lat: 27.6644, lon: 85.3188, info: "Famous for Patan Durbar Square" },
@@ -96,36 +125,45 @@ var cities = [
   { name: "Mustang", lat: 29.1833, lon: 83.8333, info: "Lo Manthang - Walled City" }
 ];
 
-//Add markers for cities
+// Add city markers
 cities.forEach(city => {
   L.marker([city.lat, city.lon]).addTo(map)
     .bindPopup("<b>" + city.name + "</b><br>" + city.info);
 });
 
-// Icons for categories (you need to create these icons in an 'icons/' folder)
+
 var icons = {
-    "Hospital": L.icon({ iconUrl: "icons/hospital.png", iconSize: [30, 30] }),
-    "School": L.icon({ iconUrl: "icons/school.png", iconSize: [30, 30] }),
-    "Temple": L.icon({ iconUrl: "icons/temple.png", iconSize: [30, 30] }),
-    "Attraction": L.icon({ iconUrl: "icons/attraction.png", iconSize: [30, 30] }),
-    "default": L.icon({ iconUrl: "icons/default.png", iconSize: [30, 30] })
+  "Hospital": L.icon({ iconUrl: "images/icons/hospital.png", iconSize: [30, 30] }),
+  "School": L.icon({ iconUrl: "images/icons/school.png", iconSize: [30, 30] }),
+  "University": L.icon({ iconUrl: "images/icons/university.png", iconSize: [30, 30] }),
+  "College": L.icon({ iconUrl: "images/icons/college.png", iconSize: [30, 30] }),
+  "Transport": L.icon({ iconUrl: "images/icons/transport.png", iconSize: [30, 30] }),
+  "College": L.icon({ iconUrl: "images/icons/college.png", iconSize: [30, 30] }),
+  "Temple": L.icon({ iconUrl: "images/icons/temple.png", iconSize: [30, 30] }),
+  "Attraction": L.icon({ iconUrl: "images/icons/attraction.png", iconSize: [30, 30] }),
+  "default": L.icon({ iconUrl: "images/icons/default.png", iconSize: [30, 30] })
 };
 
-// Add markers for DB places
+// Add database places
 dbPlaces.forEach(place => {
-    var icon = icons[place.category] || icons["default"];
-    var popupContent = `
-        <b>${place.name}</b><br>
-        Category: ${place.category}<br>
-        ${place.description ? place.description + "<br>" : ""}
-        ${place.image ? "<img src='" + place.image + "' width='120px'><br>" : ""}
-    `;
-    L.marker([place.lat || 0, place.lon || 0], { icon: icon })
-        .addTo(map)
-        .bindPopup(popupContent);
+  var icon = icons[place.category] || icons["default"];
+  var popup = `
+    <b>${place.name}</b><br>
+    Category: ${place.category}<br>
+    City: ${place.city}<br>
+    ${place.description ? place.description + "<br>" : ""}
+    ${place.contact_info ? "📞 " + place.contact_info + "<br>" : ""}
+    ${place.image ? "<img src='" + place.image + "' width='120px'><br>" : ""}
+  `;
+
+  // Default coordinates based on city
+  var coords = cities.find(c => c.name.toLowerCase() === place.city.toLowerCase());
+  if (coords) {
+    L.marker([coords.lat, coords.lon], { icon: icon })
+      .addTo(map)
+      .bindPopup(popup);
+  }
 });
-
 </script>
-
 </body>
 </html>
