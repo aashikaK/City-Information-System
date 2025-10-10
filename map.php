@@ -140,18 +140,18 @@ cities.forEach(city => {
 
 
 var icons = {
-  "Hospital": L.icon({ iconUrl: "images/icons/hospital.png", iconSize: [30, 30] }),
-  "School": L.icon({ iconUrl: "images/icons/school.png", iconSize: [30, 30] }),
-  "University": L.icon({ iconUrl: "images/icons/university.png", iconSize: [30, 30] }),
-  "College": L.icon({ iconUrl: "images/icons/college.png", iconSize: [30, 30] }),
-  "Transport": L.icon({ iconUrl: "images/icons/transport.png", iconSize: [30, 30] }),
-  "Hotel": L.icon({ iconUrl: "images/icons/hotel.png", iconSize: [30, 30] }),
-  "Government": L.icon({ iconUrl: "images/icons/government.png", iconSize: [30, 30] }),
-  "Bank": L.icon({ iconUrl: "images/icons/bank.png", iconSize: [30, 30] }),
-  "Firestation": L.icon({ iconUrl: "images/icons/firestation.png", iconSize: [30, 30] }),
-  "Temple": L.icon({ iconUrl: "images/icons/temple.png", iconSize: [30, 30] }),
-  "Tourism": L.icon({ iconUrl: "images/icons/tourism.png", iconSize: [30, 30] }),
-  "default": L.icon({ iconUrl: "images/icons/default.png", iconSize: [30, 30] })
+  "Hospital": L.icon({ iconUrl: "images/icons/hospital.png", iconSize: [20, 20] }),
+  "School": L.icon({ iconUrl: "images/icons/school.png", iconSize: [20, 20] }),
+  "University": L.icon({ iconUrl: "images/icons/university.png", iconSize: [20, 20] }),
+  "College": L.icon({ iconUrl: "images/icons/college.png", iconSize: [20, 20] }),
+  "Transport": L.icon({ iconUrl: "images/icons/transport.png", iconSize: [20, 20] }),
+  "Hotel": L.icon({ iconUrl: "images/icons/hotel.png", iconSize: [20, 20] }),
+  "Government": L.icon({ iconUrl: "images/icons/government.png", iconSize: [20, 20] }),
+  "Bank": L.icon({ iconUrl: "images/icons/bank.png", iconSize: [20, 20] }),
+  "Firestation": L.icon({ iconUrl: "images/icons/firestation.png", iconSize: [20, 20] }),
+  "Temple": L.icon({ iconUrl: "images/icons/temple.png", iconSize: [20, 20] }),
+  "Tourism": L.icon({ iconUrl: "images/icons/tourism.png", iconSize: [20, 20] }),
+  "default": L.icon({ iconUrl: "images/icons/default.png", iconSize: [20, 20] })
 };
 
 // Add database places
@@ -168,11 +168,18 @@ dbPlaces.forEach(place => {
 
   // Default coordinates based on city
   var coords = cities.find(c => c.name.toLowerCase() === place.city.toLowerCase());
-  if (coords) {
-    L.marker([coords.lat, coords.lon], { icon: icon })
-      .addTo(map)
-      .bindPopup(popup);
-  }
+ if (coords) {
+  // Add a small random offset so markers don't overlap
+  var offsetLat = (Math.random() - 0.5) * 0.04; 
+  var offsetLon = (Math.random() - 0.5) * 0.04; 
+  var lat = coords.lat + offsetLat;
+  var lon = coords.lon + offsetLon;
+
+  L.marker([lat, lon], { icon: icon })
+    .addTo(map)
+    .bindPopup(popup);
+}
+
 });
 </script>
 </body>
