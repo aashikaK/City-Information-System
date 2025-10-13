@@ -71,6 +71,12 @@ select { padding:6px 10px; border-radius:5px; margin:0 5px; }
   </button>
 </div>
 
+<div id="nearest-places" style="text-align:center; margin-bottom:15px; font-weight:bold; color:#333;">
+  <!-- Nearest matching places will appear here -->
+</div>
+
+
+
 <div id="map"></div>
 
 <?php
@@ -145,7 +151,6 @@ cities.forEach(city => {
     .bindPopup("<b>" + city.name + "</b><br>" + city.info);
 });
 
-
 var icons = {
   "Hospital": L.icon({ iconUrl: "images/icons/hospital.png", iconSize: [20, 20] }),
   "School": L.icon({ iconUrl: "images/icons/school.png", iconSize: [20, 20] }),
@@ -160,8 +165,7 @@ var icons = {
   "Tourism": L.icon({ iconUrl: "images/icons/tourism.png", iconSize: [20, 20] }),
   "default": L.icon({ iconUrl: "images/icons/default.png", iconSize: [20, 20] })
 };
-
-// Add places from database 
+//dbplaces
 dbPlaces.forEach(place => {
   var icon = icons[place.category] || icons["default"];
   var popup = `
@@ -172,79 +176,91 @@ dbPlaces.forEach(place => {
     ${place.contact_info ? "📞 " + place.contact_info + "<br>" : ""}
     ${place.image ? "<img src='" + place.image + "' width='120px'><br>" : ""}
   `;
-
-  // Default cordinates based on city
   var coords = cities.find(c => c.name.toLowerCase() === place.city.toLowerCase());
- if (coords) {
-  // Add a small random offset so markers don't overlap
-  var offsetLat = (Math.random() - 0.5) * 0.04; 
-  var offsetLon = (Math.random() - 0.5) * 0.04; 
-  var lat = coords.lat + offsetLat;
-  var lon = coords.lon + offsetLon;
-
-  L.marker([lat, lon], { icon: icon })
-    .addTo(map)
-    .bindPopup(popup);
-}
-
+  if (coords) {
+    var offsetLat = (Math.random() - 0.5) * 0.04; 
+    var offsetLon = (Math.random() - 0.5) * 0.04; 
+    var lat = coords.lat + offsetLat;
+    var lon = coords.lon + offsetLon;
+    L.marker([lat, lon], { icon: icon }).addTo(map).bindPopup(popup);
+  }
 });
 
-// Function to calculate distance between two points (Haversine formula)
+// Haversine distance function
 function getDistance(lat1, lon1, lat2, lon2) {
-    const R = 6371; // Earth radius in km
+    const R = 6371;
     const dLat = (lat2 - lat1) * Math.PI / 180;
     const dLon = (lon2 - lon1) * Math.PI / 180;
-    const a = 
-        Math.sin(dLat/2) * Math.sin(dLat/2) +
-        Math.cos(lat1 * Math.PI/180) * Math.cos(lat2 * Math.PI/180) *
-        Math.sin(dLon/2) * Math.sin(dLon/2);
+    const a = Math.sin(dLat/2)**2 + Math.cos(lat1 * Math.PI/180) * Math.cos(lat2 * Math.PI/180) * Math.sin(dLon/2)**2;
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
     return R * c;
 }
 
-// Example places not in DB (you can expand or use an API)
-var externalPlaces = [
-    { name: "Popular Hospital 1", category: "Hospital", lat: 27.7100, lon: 85.3200 },
-    { name: "Popular Hospital 2", category: "Hospital", lat: 27.7200, lon: 85.3300 },
-    { name: "Popular Hospital 3", category: "Hospital", lat: 28.2100, lon: 83.9800 }
-];
-
-// Search button click
+// =======================
+// SEARCH WITH OSM + ALGORITHM
+// =======================
 document.getElementById("search-btn").addEventListener("click", function() {
     var query = document.getElementById("search-input").value.toLowerCase();
     if (!query) return alert("Please enter a search term");
 
-    // Ask for user location
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(function(position) {
-            var userLat = position.coords.latitude;
-            var userLon = position.coords.longitude;
+    if (!navigator.geolocation) return alert("Geolocation not supported");
 
-            // Filter places matching query (from externalPlaces)
-            var matches = externalPlaces.filter(p => p.name.toLowerCase().includes(query) || p.category.toLowerCase().includes(query));
+    navigator.geolocation.getCurrentPosition(async function(position) {
+        var userLat = position.coords.latitude;
+        var userLon = position.coords.longitude;
 
-            // Sort by distance
-            matches.sort((a,b) => getDistance(userLat,userLon,a.lat,a.lon) - getDistance(userLat,userLon,b.lat,b.lon));
+        // Overpass API query for real OSM data
+        var overpassQuery = `
+            [out:json];
+            (
+              node["amenity"="${query}"](around:5000,${userLat},${userLon});
+              way["amenity"="${query}"](around:5000,${userLat},${userLon});
+              relation["amenity"="${query}"](around:5000,${userLat},${userLon});
+            );
+            out center;
+        `;
+        var url = "https://overpass-api.de/api/interpreter?data=" + encodeURIComponent(overpassQuery);
 
-            // Take first 2 nearest
-            matches.slice(0,2).forEach(place => {
-                var icon = icons[place.category] || icons["default"];
+        try {
+            let response = await fetch(url);
+            let data = await response.json();
+
+            if (!data.elements.length) return alert("No nearby places found");
+
+            // Calculate distance and sort
+            data.elements.forEach(el => {
+                if (!el.lat && el.center) el.lat = el.center.lat;
+                if (!el.lon && el.center) el.lon = el.center.lon;
+                el.distance = getDistance(userLat, userLon, el.lat, el.lon);
+            });
+            data.elements.sort((a, b) => a.distance - b.distance);
+
+            // Clear previous nearest places text
+            document.getElementById("nearest-places").innerHTML = "";
+
+            // Show nearest 2 places
+            data.elements.slice(0,2).forEach(place => {
+                var name = place.tags.name || query;
+                var category = place.tags.amenity || query;
+                var icon = icons[category] || icons["default"];
                 L.marker([place.lat, place.lon], { icon: icon })
                  .addTo(map)
-                 .bindPopup(`<b>${place.name}</b><br>Category: ${place.category}`);
+                 .bindPopup(`<b>${name}</b><br>Category: ${category}`);
+                
+                document.getElementById("nearest-places").innerHTML += name + "<br>";
             });
 
-            // Optional: move map to user location
             map.setView([userLat, userLon], 13);
 
-        }, function() {
-            alert("Geolocation is required to find nearest places");
-        });
-    } else {
-        alert("Geolocation not supported by your browser");
-    }
+        } catch(err) {
+            console.error(err);
+            alert("Error fetching data from OpenStreetMap");
+        }
+    }, function() {
+        alert("Geolocation is required to find nearest places");
+    });
 });
-
 </script>
+
 </body>
 </html>
