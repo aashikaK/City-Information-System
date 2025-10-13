@@ -130,6 +130,7 @@ var dbPlaces = <?php echo json_encode($places); ?>;
 
 var map = L.map('map').setView([28.3949, 84.1240], 7);
 
+
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   attribution: '&copy; OpenStreetMap contributors'
 }).addTo(map);
@@ -243,7 +244,12 @@ document.getElementById("search-btn").addEventListener("click", function() {
             data.elements.sort((a, b) => a.distance - b.distance);
 
             // Clear previous nearest places text
-            document.getElementById("nearest-places").innerHTML = "";
+           document.getElementById("nearest-places").innerHTML += `
+  <img src="https://cdn-icons-png.flaticon.com/512/684/684908.png" 
+       width="16" height="16" style="vertical-align:middle; margin-right:5px;">
+  ${name}<br>
+`;
+
 
             // Show nearest 2 places
             data.elements.slice(0,2).forEach(place => {
