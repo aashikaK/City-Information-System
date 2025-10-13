@@ -62,6 +62,15 @@ select { padding:6px 10px; border-radius:5px; margin:0 5px; }
   </form>
 </div>
 
+<!-- Search section -->
+<div id="search-box" style="text-align:center; margin-bottom:15px;">
+  <input type="text" id="search-input" placeholder="Search places like 'hospital'..." 
+         style="padding:6px 10px; border-radius:5px; width:200px; margin-right:5px; border:1px solid #ccc;">
+  <button id="search-btn" style="padding:6px 10px; border-radius:5px; background:#4a90e2; color:white; border:none; cursor:pointer;">
+    Search
+  </button>
+</div>
+
 <div id="map"></div>
 
 <?php
@@ -113,10 +122,8 @@ $places = array_merge($tourism, $services);
 <script>
 var dbPlaces = <?php echo json_encode($places); ?>;
 
-// Initialize map centered on Nepal
 var map = L.map('map').setView([28.3949, 84.1240], 7);
 
-// Load map tiles
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   attribution: '&copy; OpenStreetMap contributors'
 }).addTo(map);
@@ -154,7 +161,7 @@ var icons = {
   "default": L.icon({ iconUrl: "images/icons/default.png", iconSize: [20, 20] })
 };
 
-// Add database places
+// Add places from database 
 dbPlaces.forEach(place => {
   var icon = icons[place.category] || icons["default"];
   var popup = `
@@ -166,7 +173,7 @@ dbPlaces.forEach(place => {
     ${place.image ? "<img src='" + place.image + "' width='120px'><br>" : ""}
   `;
 
-  // Default coordinates based on city
+  // Default cordinates based on city
   var coords = cities.find(c => c.name.toLowerCase() === place.city.toLowerCase());
  if (coords) {
   // Add a small random offset so markers don't overlap
@@ -181,6 +188,63 @@ dbPlaces.forEach(place => {
 }
 
 });
+
+// Function to calculate distance between two points (Haversine formula)
+function getDistance(lat1, lon1, lat2, lon2) {
+    const R = 6371; // Earth radius in km
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a = 
+        Math.sin(dLat/2) * Math.sin(dLat/2) +
+        Math.cos(lat1 * Math.PI/180) * Math.cos(lat2 * Math.PI/180) *
+        Math.sin(dLon/2) * Math.sin(dLon/2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    return R * c;
+}
+
+// Example places not in DB (you can expand or use an API)
+var externalPlaces = [
+    { name: "Popular Hospital 1", category: "Hospital", lat: 27.7100, lon: 85.3200 },
+    { name: "Popular Hospital 2", category: "Hospital", lat: 27.7200, lon: 85.3300 },
+    { name: "Popular Hospital 3", category: "Hospital", lat: 28.2100, lon: 83.9800 }
+];
+
+// Search button click
+document.getElementById("search-btn").addEventListener("click", function() {
+    var query = document.getElementById("search-input").value.toLowerCase();
+    if (!query) return alert("Please enter a search term");
+
+    // Ask for user location
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+            var userLat = position.coords.latitude;
+            var userLon = position.coords.longitude;
+
+            // Filter places matching query (from externalPlaces)
+            var matches = externalPlaces.filter(p => p.name.toLowerCase().includes(query) || p.category.toLowerCase().includes(query));
+
+            // Sort by distance
+            matches.sort((a,b) => getDistance(userLat,userLon,a.lat,a.lon) - getDistance(userLat,userLon,b.lat,b.lon));
+
+            // Take first 2 nearest
+            matches.slice(0,2).forEach(place => {
+                var icon = icons[place.category] || icons["default"];
+                L.marker([place.lat, place.lon], { icon: icon })
+                 .addTo(map)
+                 .bindPopup(`<b>${place.name}</b><br>Category: ${place.category}`);
+            });
+
+            // Optional: move map to user location
+            map.setView([userLat, userLon], 13);
+
+        }, function() {
+            alert("Geolocation is required to find nearest places");
+        });
+    } else {
+        alert("Geolocation not supported by your browser");
+    }
+});
+
 </script>
 </body>
 </html>
