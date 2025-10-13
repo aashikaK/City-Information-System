@@ -196,6 +196,13 @@ function getDistance(lat1, lon1, lat2, lon2) {
     return R * c;
 }
 
+var highlightIcon = L.icon({
+  iconUrl: "https://cdn-icons-png.flaticon.com/512/684/684908.png", // bright red pin
+  iconSize: [40, 40], // bigger than normal
+  iconAnchor: [20, 40],
+  popupAnchor: [0, -35]
+});
+
 // =======================
 // SEARCH WITH OSM + ALGORITHM
 // =======================
@@ -243,7 +250,8 @@ document.getElementById("search-btn").addEventListener("click", function() {
                 var name = place.tags.name || query;
                 var category = place.tags.amenity || query;
                 var icon = icons[category] || icons["default"];
-                L.marker([place.lat, place.lon], { icon: icon })
+                L.marker([place.lat, place.lon], { icon: highlightIcon, riseOnHover: true })
+
                  .addTo(map)
                  .bindPopup(`<b>${name}</b><br>Category: ${category}`);
                 
