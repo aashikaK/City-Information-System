@@ -141,22 +141,28 @@ if(isset($_POST['create'])){
     $password=md5($_POST['password']);
     $confirm_pw=md5($_POST['confirm_password']);
 
+    // check if un exists
     $sqlun="select username from users where username=?";
     $stmt=$pdo->prepare($sqlun);
     $stmt->execute([$username]);
     $result_uncheck=$stmt->fetchAll(PDO::FETCH_ASSOC);
-    if($result_uncheck){
-        $error_message= "This username is already in use.Try another";
-    }
+
+    // check if email exists
     $sqlemail="select email from users where email=?";
     $stmt=$pdo->prepare($sqlemail);
     $stmt->execute([$email]);
     $result_emailcheck=$stmt->fetchAll(PDO::FETCH_ASSOC);
-    if($result_emailcheck){
+
+    // errormessage or registration
+    if($result_uncheck){
         $error_message= "This username is already in use.Try another";
     }
-        $insertsql="INSERT INTO users(username,email,password,created_at) VALUES(?,?,?,NOW())";
+    else if($result_emailcheck){
+        $error_message= "This email is already in use.Try another";
+    }
+       else{
+         $insertsql="INSERT INTO users(username,email,password,created_at) VALUES(?,?,?,NOW())";
         $stmt=$pdo->prepare($insertsql);
         $stmt->execute([$username,$email,$password]);
         $success_message="Signup Successful";
-    }
+    } }
