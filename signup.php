@@ -102,6 +102,15 @@ body {
 
 <div class="form-container">
   <h2><i class="fas fa-user-plus"></i> Sign Up</h2>
+<!-- to display error or succes message -->
+  <?php if($error_message != "") { ?>
+   <div style="color: #ff6b6b; margin-bottom: 10px;"><?php echo $error_message; ?></div>
+<?php } ?>
+
+<?php if($success_message != "") { ?>
+   <div style="color: #00ff99; margin-bottom: 10px;"><?php echo $success_message; ?></div>
+<?php } ?>
+
   <form method="POST">
     <div class="input-group">
       <label for="username">Username</label>
