@@ -141,6 +141,12 @@ if(isset($_POST['create'])){
     $password=md5($_POST['password']);
     $confirm_pw=md5($_POST['confirm_password']);
 
+    // pw and confirm pw check
+    if ($password !== $confirm_pw) {
+    $error_message = "Passwords do not match!";
+}
+
+else{
     // check if un exists
     $sqlun="select username from users where username=?";
     $stmt=$pdo->prepare($sqlun);
@@ -166,3 +172,4 @@ if(isset($_POST['create'])){
         $stmt->execute([$username,$email,$password]);
         $success_message="Signup Successful";
     } }
+}
