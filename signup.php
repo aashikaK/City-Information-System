@@ -151,13 +151,13 @@ else{
     $sqlun="select username from users where username=?";
     $stmt=$pdo->prepare($sqlun);
     $stmt->execute([$username]);
-    $result_uncheck=$stmt->fetchAll(PDO::FETCH_ASSOC);
+    // $result_uncheck=$stmt->fetch(PDO::FETCH_ASSOC);  fetch only for one row fetching
 
     // check if email exists
     $sqlemail="select email from users where email=?";
     $stmt=$pdo->prepare($sqlemail);
     $stmt->execute([$email]);
-    $result_emailcheck=$stmt->fetchAll(PDO::FETCH_ASSOC);
+    $result_emailcheck=$stmt->fetchA(PDO::FETCH_ASSOC);
 
     // errormessage or registration
     if($result_uncheck){
