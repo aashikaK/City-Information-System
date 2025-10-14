@@ -1,4 +1,7 @@
 <?php
+$error_message="";
+$success_message="";
+require "db.php";
 session_start();
 ?>
 
@@ -99,7 +102,7 @@ body {
 
 <div class="form-container">
   <h2><i class="fas fa-user-plus"></i> Sign Up</h2>
-  <form action="signup_action.php" method="POST">
+  <form method="POST">
     <div class="input-group">
       <label for="username">Username</label>
       <input type="text" name="username" id="username" placeholder="Enter your username" required>
@@ -120,7 +123,7 @@ body {
       <input type="password" name="confirm_password" id="confirm_password" placeholder="Re-enter your password" required>
     </div>
 
-    <button type="submit" class="btn">Create Account</button>
+    <button type="submit" name="create" class="btn">Create Account</button>
   </form>
 
   <div class="bottom-text">
@@ -130,3 +133,30 @@ body {
 
 </body>
 </html>
+
+<?php
+if(isset($_POST['create'])){
+     $username = trim($_POST['username']);
+    $email = trim($_POST['email']);
+    $password=md5($_POST['password']);
+    $confirm_pw=md5($_POST['confirm_password']);
+
+    $sqlun="select username from users where username=?";
+    $stmt=$pdo->prepare($sqlun);
+    $stmt->execute([$username]);
+    $result_uncheck=$stmt->fetchAll(PDO::FETCH_ASSOC);
+    if($result_uncheck){
+        $error_message= "This username is already in use.Try another";
+    }
+    $sqlemail="select email from users where email=?";
+    $stmt=$pdo->prepare($sqlemail);
+    $stmt->execute([$email]);
+    $result_emailcheck=$stmt->fetchAll(PDO::FETCH_ASSOC);
+    if($result_emailcheck){
+        $error_message= "This username is already in use.Try another";
+    }
+        $insertsql="INSERT INTO users(username,email,password,created_at) VALUES(?,?,?,NOW())";
+        $stmt=$pdo->prepare($insertsql);
+        $stmt->execute([$username,$email,$password]);
+        $success_message="Signup Successful";
+    }
