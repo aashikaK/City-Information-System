@@ -3,6 +3,45 @@ $error_message="";
 $success_message="";
 require "db.php";
 session_start();
+
+if(isset($_POST['create'])){
+     $username = trim($_POST['username']);
+    $email = trim($_POST['email']);
+    $password=md5($_POST['password']);
+    $confirm_pw=md5($_POST['confirm_password']);
+
+    // pw and confirm pw check
+    if ($password !== $confirm_pw) {
+    $error_message = "Passwords do not match!";
+}
+
+else{
+    // check if un exists
+    $sqlun="select username from users where username=?";
+    $stmt=$pdo->prepare($sqlun);
+    $stmt->execute([$username]);
+    // $result_uncheck=$stmt->fetch(PDO::FETCH_ASSOC);  fetch only for one row fetching
+
+    // check if email exists
+    $sqlemail="select email from users where email=?";
+    $stmt=$pdo->prepare($sqlemail);
+    $stmt->execute([$email]);
+    $result_emailcheck=$stmt->fetchA(PDO::FETCH_ASSOC);
+
+    // errormessage or registration
+    if($result_uncheck){
+        $error_message= "This username is already in use.Try another";
+    }
+    else if($result_emailcheck){
+        $error_message= "This email is already in use.Try another";
+    }
+       else{
+         $insertsql="INSERT INTO users(username,email,password,created_at) VALUES(?,?,?,NOW())";
+        $stmt=$pdo->prepare($insertsql);
+        $stmt->execute([$username,$email,$password]);
+        $success_message="Signup Successful";
+    } }
+}
 ?>
 
 <!DOCTYPE html>
@@ -104,32 +143,36 @@ body {
   <h2><i class="fas fa-user-plus"></i> Sign Up</h2>
 <!-- to display error or succes message -->
   <?php if($error_message != "") { ?>
-   <div style="color: #ff6b6b; margin-bottom: 10px;"><?php echo $error_message; ?></div>
+   <div style="color: #ff6b6b; margin-bottom: 10px; font-weight:bold;"><?php echo $error_message; ?></div>
 <?php } ?>
 
 <?php if($success_message != "") { ?>
-   <div style="color: #00ff99; margin-bottom: 10px;"><?php echo $success_message; ?></div>
+   <div style="color: #00ff99; margin-bottom: 10px;font-weight:bold;"><?php echo $success_message; ?></div>
 <?php } ?>
 
-  <form method="POST">
+  <form method="POST" onSubmit="return validateForm()" novalidate>
     <div class="input-group">
       <label for="username">Username</label>
       <input type="text" name="username" id="username" placeholder="Enter your username" required>
+        <p id="un-err-msg" style="color:#FFD700;"></p>
     </div>
 
     <div class="input-group">
       <label for="email">Email</label>
       <input type="email" name="email" id="email" placeholder="Enter your email" required>
+        <p id="email-err-msg" style="color:#FFD700;"></p>
     </div>
 
     <div class="input-group">
       <label for="password">Password</label>
       <input type="password" name="password" id="password" placeholder="Create a password" required>
+        <p id="pw-err-msg" style="color:#FFD700;"></p>
     </div>
 
     <div class="input-group">
       <label for="confirm_password">Confirm Password</label>
       <input type="password" name="confirm_password" id="confirm_password" placeholder="Re-enter your password" required>
+        <p id="c_pw-err-msg" style="color:#FFD700;"></p>
     </div>
 
     <button type="submit" name="create" class="btn">Create Account</button>
@@ -140,45 +183,35 @@ body {
   </div>
 </div>
 
+<script>
+  function validateForm(){
+  var un= document.getElementById("username").value.trim;
+  var pw= document.getElementById("password").value.trim;
+  var email= document.getElementById("email").value.trim;
+  var c_pw= document.getElementById("confirm_password").value.trim;
+
+  document.getElementById("un-err-msg").innerHTML = "";
+  document.getElementById("email-err-msg").innerHTML = "";
+  document.getElementById("pw-err-msg").innerHTML = "";
+  document.getElementById("c_pw-err-msg").innerHTML = "";
+
+  let valid=true;
+  // checking for empty fields
+
+  if(un===""){
+    document.getElementById("un-err-msg").innerHTML="Please enter username";
+    valid=false;
+  }
+   if(pw===""){
+    document.getElementById("pw-err-msg").innerHTML="Please enter password";
+  }
+   if(email===""){
+    document.getElementById("email-err-msg").innerHTML="Please enter email";
+  }
+  if(c_pw===""){
+    document.getElementById("c_pw-err-msg").innerHTML="Please enter this field for password confirmation";
+  }
+  </script>
 </body>
 </html>
 
-<?php
-if(isset($_POST['create'])){
-     $username = trim($_POST['username']);
-    $email = trim($_POST['email']);
-    $password=md5($_POST['password']);
-    $confirm_pw=md5($_POST['confirm_password']);
-
-    // pw and confirm pw check
-    if ($password !== $confirm_pw) {
-    $error_message = "Passwords do not match!";
-}
-
-else{
-    // check if un exists
-    $sqlun="select username from users where username=?";
-    $stmt=$pdo->prepare($sqlun);
-    $stmt->execute([$username]);
-    // $result_uncheck=$stmt->fetch(PDO::FETCH_ASSOC);  fetch only for one row fetching
-
-    // check if email exists
-    $sqlemail="select email from users where email=?";
-    $stmt=$pdo->prepare($sqlemail);
-    $stmt->execute([$email]);
-    $result_emailcheck=$stmt->fetchA(PDO::FETCH_ASSOC);
-
-    // errormessage or registration
-    if($result_uncheck){
-        $error_message= "This username is already in use.Try another";
-    }
-    else if($result_emailcheck){
-        $error_message= "This email is already in use.Try another";
-    }
-       else{
-         $insertsql="INSERT INTO users(username,email,password,created_at) VALUES(?,?,?,NOW())";
-        $stmt=$pdo->prepare($insertsql);
-        $stmt->execute([$username,$email,$password]);
-        $success_message="Signup Successful";
-    } }
-}
