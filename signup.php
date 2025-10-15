@@ -5,7 +5,7 @@ require "db.php";
 session_start();
 
 if(isset($_POST['create'])){
-     $username = trim($_POST['username']);
+    $username = trim($_POST['username']);
     $email = trim($_POST['email']);
     $password=md5($_POST['password']);
     $confirm_pw=md5($_POST['confirm_password']);
@@ -60,7 +60,7 @@ else{
   font-family: "Segoe UI", Arial, sans-serif;
 }
 body {
-  background: linear-gradient(135deg, #6bb9f0, #4a90e2);
+  background: linear-gradient(135deg, #0766a9ff, #032c5cff);
   height: 100vh;
   display: flex;
   justify-content: center;
@@ -127,7 +127,7 @@ body {
 }
 
 .bottom-text a {
-  color: #000000ff;
+  color: #ffe082;
   text-decoration: none;
   font-weight: 600;
 }
