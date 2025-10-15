@@ -26,7 +26,7 @@ else{
     $sqlemail="select email from users where email=?";
     $stmt=$pdo->prepare($sqlemail);
     $stmt->execute([$email]);
-    $result_emailcheck=$stmt->fetchA(PDO::FETCH_ASSOC);
+    $result_emailcheck=$stmt->fetch(PDO::FETCH_ASSOC);
 
     // errormessage or registration
     if($result_uncheck){
