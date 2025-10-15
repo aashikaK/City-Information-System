@@ -165,7 +165,9 @@ body {
 
     <div class="input-group">
       <label for="password">Password</label>
-      <input type="password" name="password" id="password" placeholder="Create a password" required>
+      <input type="password" name="password" id="password" placeholder="Create a password" 
+      title="Must contain at least 1 number,an uppercase and a lowercase letter, and at least 6 or more characters"
+      required>
         <p id="pw-err-msg" style="color:#FFD700;"></p>
     </div>
 
@@ -185,10 +187,10 @@ body {
 
 <script>
   function validateForm(){
-  var un= document.getElementById("username").value.trim;
-  var pw= document.getElementById("password").value.trim;
-  var email= document.getElementById("email").value.trim;
-  var c_pw= document.getElementById("confirm_password").value.trim;
+  var un= document.getElementById("username").value.trim();
+  var pw= document.getElementById("password").value.trim();
+  var email= document.getElementById("email").value.trim();
+  var c_pw= document.getElementById("confirm_password").value.trim();
 
   document.getElementById("un-err-msg").innerHTML = "";
   document.getElementById("email-err-msg").innerHTML = "";
@@ -204,12 +206,15 @@ body {
   }
    if(pw===""){
     document.getElementById("pw-err-msg").innerHTML="Please enter password";
+    valid=false;
   }
    if(email===""){
     document.getElementById("email-err-msg").innerHTML="Please enter email";
+    valid=false;
   }
   if(c_pw===""){
     document.getElementById("c_pw-err-msg").innerHTML="Please enter this field for password confirmation";
+    valid=false;
   }
   </script>
 </body>
