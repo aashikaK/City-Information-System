@@ -153,13 +153,13 @@ body {
   <form method="POST" onSubmit="return validateForm()" novalidate>
     <div class="input-group">
       <label for="username">Username</label>
-      <input type="text" name="username" id="username" placeholder="Enter your username" required>
+      <input type="text" name="username" id="username" placeholder="eg: david72" required>
         <p id="un-err-msg" style="color: #ff6b6b;"></p>
     </div>
 
     <div class="input-group">
       <label for="email">Email</label>
-      <input type="email" name="email" id="email" placeholder="Enter your email" required>
+      <input type="email" name="email" id="email" placeholder="eg: david@gmail.com" required>
         <p id="email-err-msg" style="color: #ff6b6b;"></p>
     </div>
 
