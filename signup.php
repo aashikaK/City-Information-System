@@ -154,13 +154,13 @@ body {
     <div class="input-group">
       <label for="username">Username</label>
       <input type="text" name="username" id="username" placeholder="Enter your username" required>
-        <p id="un-err-msg" style="color:#FFD700;"></p>
+        <p id="un-err-msg" style="color: #ff6b6b;"></p>
     </div>
 
     <div class="input-group">
       <label for="email">Email</label>
       <input type="email" name="email" id="email" placeholder="Enter your email" required>
-        <p id="email-err-msg" style="color:#FFD700;"></p>
+        <p id="email-err-msg" style="color: #ff6b6b;"></p>
     </div>
 
     <div class="input-group">
@@ -168,13 +168,13 @@ body {
       <input type="password" name="password" id="password" placeholder="Create a password" 
       title="Must contain at least 1 number,an uppercase and a lowercase letter, and at least 6 or more characters"
       required>
-        <p id="pw-err-msg" style="color:#FFD700;"></p>
+        <p id="pw-err-msg" style="color: #ff6b6b;;"></p>
     </div>
 
     <div class="input-group">
       <label for="confirm_password">Confirm Password</label>
       <input type="password" name="confirm_password" id="confirm_password" placeholder="Re-enter your password" required>
-        <p id="c_pw-err-msg" style="color:#FFD700;"></p>
+        <p id="c_pw-err-msg" style="color: #ff6b6b;"></p>
     </div>
 
     <button type="submit" name="create" class="btn">Create Account</button>
@@ -198,41 +198,41 @@ body {
   document.getElementById("c_pw-err-msg").innerHTML = "";
 
   let valid=true;
-  // checking for empty fields
+  // checking for empty un field
 
   if(un===""){
     document.getElementById("un-err-msg").innerHTML="Please enter username";
-    valid=false;
-  }
-   if(pw===""){
-    document.getElementById("pw-err-msg").innerHTML="Please enter password";
-    valid=false;
-  }
-   if(email===""){
-    document.getElementById("email-err-msg").innerHTML="Please enter email";
-    valid=false;
-  }
-  if(c_pw===""){
-    document.getElementById("c_pw-err-msg").innerHTML="Please enter this field for password confirmation";
     valid=false;
   }
 
   // password validation
   const pwPattern = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}$/;
 
-  if (!pwPattern.test(pw)) {
+  if(pw===""){
+    document.getElementById("pw-err-msg").innerHTML="Please enter password";
+    valid=false;
+  }
+  else if (!pwPattern.test(pw)) {
     document.getElementById("pw-err-msg").innerHTML="Password must contain at least one number, one uppercase, one lowercase letter, and be 6 or more characters long.";
     valid=false;
   }
-
-  if (pw !== c_pw) {
+// for pw confirmation
+ if(c_pw===""){
+    document.getElementById("c_pw-err-msg").innerHTML="Please enter this field for password confirmation";
+    valid=false;
+  }
+  else if (pw !== c_pw) {
    document.getElementById("c_pw-err-msg").innerHTML="Passwords do not match!";
     valid= false;
   }
 
   // email validation
 
-  if (email.startsWith("@")) {
+   if(email===""){
+    document.getElementById("email-err-msg").innerHTML="Please enter email";
+    valid=false;
+  }
+  else if (email.startsWith("@")) {
         document.getElementById("email-err-msg").innerHTML= "Email cannot start with '@'.";
         valid = false;
        }
