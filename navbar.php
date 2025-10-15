@@ -94,7 +94,7 @@ body { background:#f4f7fb; }
                 </button>
             </li>
         <?php } else { ?>
-            <li><a href="/CIS/admin/index.php"><i class="fas fa-user-shield"></i> Admin Login</a></li>
+            <li><a href="/CIS/admin_login.php"><i class="fas fa-user-shield"></i> Admin Login</a></li>
         <?php } ?>
     </ul>
 
