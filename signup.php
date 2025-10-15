@@ -230,7 +230,32 @@ body {
     valid= false;
   }
 
+  // email validation
+ if(email===""){
+            document.getElementById("email-err-msg").innerHTML= "Please enter your email.";
+           valid=false; 
+          }
+         else if (email.startsWith("@")) {
+        document.getElementById("email-err-msg").innerHTML= "Email cannot start with '@'.";
+        valid = false;
+       }
 
+        else {
+    
+           // regex pattern explanation:
+          // ^[^\s@]+  → string must start with one or more characters that are NOT space or @
+          // @         → then must have exactly one '@'
+          // [^\s@]+   → then one or more characters (not space or @) for the domain
+          // \.        → must have a dot
+          // [^\s@]+$  → then one or more characters (not space or @) until the end (like .com, .org, etc.)
+          
+          let emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          if(!emailPattern.test(email)) {
+          document.getElementById("email-err-msg").innerHTML= "Enter a valid email address.";
+          valid = false;
+      } }
+      return valid;
+    }
   </script>
 </body>
 </html>
