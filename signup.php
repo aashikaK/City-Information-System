@@ -216,6 +216,21 @@ body {
     document.getElementById("c_pw-err-msg").innerHTML="Please enter this field for password confirmation";
     valid=false;
   }
+
+  // password validation
+  const pwPattern = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}$/;
+
+  if (!pwPattern.test(pw)) {
+    document.getElementById("pw-err-msg").innerHTML="Password must contain at least one number, one uppercase, one lowercase letter, and be 6 or more characters long.";
+    valid=false;
+  }
+
+  if (pw !== c_pw) {
+   document.getElementById("pw-err-msg").innerHTML="Passwords do not match!";
+    valid= false;
+  }
+
+
   </script>
 </body>
 </html>
