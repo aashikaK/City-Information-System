@@ -127,7 +127,7 @@ body {
 }
 
 .bottom-text a {
-  color: #ffe082;
+  color: #000000ff;
   text-decoration: none;
   font-weight: 600;
 }
