@@ -20,7 +20,7 @@ else{
     $sqlun="select username from users where username=?";
     $stmt=$pdo->prepare($sqlun);
     $stmt->execute([$username]);
-    // $result_uncheck=$stmt->fetch(PDO::FETCH_ASSOC);  fetch only for one row fetching
+    $result_uncheck=$stmt->fetch(PDO::FETCH_ASSOC);  //fetch only for one row fetching
 
     // check if email exists
     $sqlemail="select email from users where email=?";
@@ -226,16 +226,13 @@ body {
   }
 
   if (pw !== c_pw) {
-   document.getElementById("pw-err-msg").innerHTML="Passwords do not match!";
+   document.getElementById("c_pw-err-msg").innerHTML="Passwords do not match!";
     valid= false;
   }
 
   // email validation
- if(email===""){
-            document.getElementById("email-err-msg").innerHTML= "Please enter your email.";
-           valid=false; 
-          }
-         else if (email.startsWith("@")) {
+
+  if (email.startsWith("@")) {
         document.getElementById("email-err-msg").innerHTML= "Email cannot start with '@'.";
         valid = false;
        }
