@@ -22,7 +22,7 @@ if(isset($_POST['sign_in'])){
     }
        else{
         $_SESSION['login']=$username;
-       header("Location:index.php");
+       header("Location:dashboard.php");
     } 
 }
 ?>
