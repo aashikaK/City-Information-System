@@ -114,7 +114,7 @@ body { background:#f4f7fb; }
         <?php } else { ?>
             <li>Toll Number: 123-4568790</li>
             <li><a href="/CIS/signup.php" target="_blank"><i class="fas fa-user-plus"></i> Sign Up</a></li>
-            <li><a href="/CIS/signin.php" target="_blank"><i class="fas fa-sign-in-alt"></i> Sign In</a></li>
+            <li><a href="/CIS/signin.php"><i class="fas fa-sign-in-alt"></i> Sign In</a></li>
         <?php } ?>
     </ul>
 </div>
@@ -142,7 +142,7 @@ body { background:#f4f7fb; }
             <li><a href="/CIS/write-us.php">Write Us</a></li>
             <li><a href="/CIS/logout.php">Logout</a></li>
         <?php } else { ?>
-            <li><a href="/CIS/signin.php" target="_blank">Sign In</a></li>
+            <li><a href="/CIS/signin.php">Sign In</a></li>
             <li><a href="/CIS/signup.php" target="_blank">Sign Up</a></li>
         <?php } ?>
     </ul>
