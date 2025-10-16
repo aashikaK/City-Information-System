@@ -3,7 +3,7 @@ $error_message="";
 require "db.php";
 session_start();
 
-if(isset($_POST['login'])){
+if(isset($_POST['sign_in'])){
     $username = trim($_POST['username']);
     $password=md5($_POST['password']);
 
@@ -15,7 +15,7 @@ if(isset($_POST['login'])){
 
     if(!$result){
         $error_message= "Either username or password do not match. Please Enter correct username and password";
-        header("Location:signup.php");
+        
     }
        else{
         $_SESSION['login']=$username;
@@ -29,7 +29,7 @@ if(isset($_POST['login'])){
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sign Up - City Information System</title>
+<title>Sign In - City Information System</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
 
 <style>
@@ -126,7 +126,7 @@ body {
         <p id="pw-err-msg" style="color: #ff6b6b;;"></p>
     </div>
 
-    <button type="submit" name="create" class="btn">Sign In</button>
+    <button type="submit" name="sign_in" class="btn">Sign In</button>
   </form>
 </div>
 
