@@ -27,7 +27,7 @@ body { background:#f4f7fb; }
 .greeting { font-size:1.5rem; margin-bottom:20px; }
 
 /* Cards */
-.cards { display:grid; grid-template-columns: repeat(auto-fit,minmax(200px,1fr)); gap:20px; }
+.cards { display:grid; grid-template-columns: repeat(auto-fit,minmax(250px,1fr)); gap:70px; }
 .card {
     background:white; 
     border-radius:12px; 
