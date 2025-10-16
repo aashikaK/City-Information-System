@@ -15,7 +15,7 @@ if(isset($_POST['login'])){
 
     if(!$result){
         $error_message= "Either username or password do not match. Please Enter correct username and password";
-        header("Location:admin_login.php");
+        
     }
        else{
         $_SESSION['admin']=$username;
@@ -23,7 +23,6 @@ if(isset($_POST['login'])){
     } 
 }
 
-?>
 
 <!DOCTYPE html>
 <html lang="en">

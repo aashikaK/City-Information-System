@@ -1,12 +1,11 @@
 <?php
 $error_message="";
-$success_message="";
 require "db.php";
 session_start();
 
 if(isset($_POST['login'])){
     $username = trim($_POST['username']);
-    $password=$_POST['password'];
+    $password=md5($_POST['password']);
 
     // check if un exists
     $sql="select username,password from users where username=? AND password=?";
