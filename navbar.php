@@ -75,12 +75,16 @@ body { background:#f4f7fb; }
 </head>
 <body>
 
-
 <!-- Top Header -->
 <div class="top-header">
     <ul>
         <li><a href="/CIS/index.php"><i class="fas fa-home"></i> Home</a></li>
-        <?php if(isset($_SESSION['login']) && $_SESSION['login'] != '') { ?>
+
+        <?php 
+        if(isset($_SESSION['admin'])) { ?>
+       <li><a href="/CIS/adminpanel.php"><i class="fas fa-user-shield"></i> Admin Panel</a></li>
+        <?php } 
+        elseif(isset($_SESSION['login']) && $_SESSION['login'] != '') { ?>
             <li><a href="/CIS/profile.php"><i class="fas fa-user"></i> My Profile</a></li>
             <li><a href="/CIS/change-password.php"><i class="fas fa-key"></i> Change Password</a></li>
             <li><a href="/CIS/eventhistory.php"><i class="fas fa-calendar-alt"></i> Event History</a></li>
@@ -99,7 +103,11 @@ body { background:#f4f7fb; }
     </ul>
 
     <ul>
-        <?php if(isset($_SESSION['login']) && $_SESSION['login'] != '') { ?>
+        <?php if(isset($_SESSION['admin'])) { ?>
+            <li>Welcome Admin :</li>
+            <li><?php echo htmlentities($_SESSION['admin']); ?></li>
+            <li><a href="/CIS/logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+        <?php } elseif(isset($_SESSION['login']) && $_SESSION['login'] != '') { ?>
             <li>Welcome :</li>
             <li><?php echo htmlentities($_SESSION['login']); ?></li>
             <li><a href="/CIS/logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
@@ -126,7 +134,11 @@ body { background:#f4f7fb; }
         <li><a href="/CIS/tourism.php">Tourism</a></li>
         <li><a href="/CIS/events.php">Events</a></li>
         <li><a href="/CIS/map.php">Map</a></li>
-        <?php if(isset($_SESSION['login']) && $_SESSION['login'] != '') { ?>
+
+        <?php if(isset($_SESSION['admin'])) { ?>
+            <li><a href="/CIS/adminpanel.php">Admin Panel</a></li>
+            <li><a href="/CIS/logout.php">Logout</a></li>
+        <?php } elseif(isset($_SESSION['login']) && $_SESSION['login'] != '') { ?>
             <li><a href="/CIS/write-us.php">Write Us</a></li>
             <li><a href="/CIS/logout.php">Logout</a></li>
         <?php } else { ?>

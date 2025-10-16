@@ -1,5 +1,6 @@
 <?php
 $error_message="";
+$success_message="";
 require "db.php";
 session_start();
 
@@ -15,14 +16,13 @@ if(isset($_POST['login'])){
 
     if(!$result){
         $error_message= "Either username or password do not match. Please Enter correct username and password";
-        header("Location:admin_login.php");
+        header("Location:signup.php");
     }
        else{
-        $_SESSION['admin']=$username;
-       header("Location:adminpanel.php");
+        $_SESSION['login']=$username;
+       header("Location:dashboard.php");
     } 
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -101,36 +101,34 @@ body {
 .btn:hover {
   background: #ffd54f;
 }
-
 </style>
 </head>
 <body>
 
 <div class="form-container">
-  <h2><i class="fas fa-user"></i>Admin Login</h2>
-<!-- to display error message -->
+  <h2><i class="fas fa-user"></i> Sign In</h2>
+<!-- to display error or succes message -->
   <?php if($error_message != "") { ?>
-   <div style="color: #ff6b6b; margin-bottom: 10px; font-weight:bold;"><?php echo $error_message; ?></div>
+   <div style="color: #f90000ff; margin-bottom: 10px; font-weight:bold;"><?php echo $error_message; ?></div>
 <?php } ?>
 
   <form method="POST" onSubmit="return validateForm()" novalidate>
-    <div class="input-group">
+  
+  <div class="input-group">
       <label for="username">Username</label>
       <input type="text" name="username" id="username" placeholder="Enter your username" required>
-        <p id="un-err-msg" style="color: #ff6b6b;"></p>
+      <p id="un-err-msg" style="color: #ff6b6b;"></p>
     </div>
 
     <div class="input-group">
       <label for="password">Password</label>
       <input type="password" name="password" id="password" placeholder="Enter your password" 
-      title="Must contain at least 1 number,an uppercase and a lowercase letter, and at least 6 or more characters"
-      required>
+    required>
         <p id="pw-err-msg" style="color: #ff6b6b;;"></p>
     </div>
 
-    <button type="submit" name="login" class="btn">Login</button>
+    <button type="submit" name="create" class="btn">Sign In</button>
   </form>
-
 </div>
 
 <script>
@@ -139,10 +137,9 @@ body {
   var pw= document.getElementById("password").value.trim();
 
   document.getElementById("un-err-msg").innerHTML = "";
-  document.getElementById("pw-err-msg").innerHTML = "";
+  document.getElementById("email-err-msg").innerHTML = "";
 
   let valid=true;
-
   // checking for empty un field
 
   if(un===""){
@@ -156,6 +153,7 @@ body {
     document.getElementById("pw-err-msg").innerHTML="Please enter password";
     valid=false;
   }
+ 
       return valid;
     }
   </script>
