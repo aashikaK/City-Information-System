@@ -140,6 +140,7 @@ body { background:#f4f7fb; }
             <li><a href="/CIS/logout.php">Logout</a></li>
         <?php } elseif(isset($_SESSION['login']) && $_SESSION['login'] != '') { ?>
             <li><a href="/CIS/write-us.php">Write Us</a></li>
+            <li><a href="/CIS/dashboard.php">Dashboard</a></li>
             <li><a href="/CIS/logout.php">Logout</a></li>
         <?php } else { ?>
             <li><a href="/CIS/signin.php">Sign In</a></li>
