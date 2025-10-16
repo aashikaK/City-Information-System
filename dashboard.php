@@ -1,5 +1,5 @@
 <?php
-session_start();
+include "navbar.php";
 
 // Redirect if not logged in
 if(!isset($_SESSION['login']) || $_SESSION['login'] == ''){
@@ -43,7 +43,7 @@ body { background:#f4f7fb; }
 </head>
 <body>
 
-<?php include "navbar.php"; // include your existing navbar ?>
+
 
 <div class="dashboard-container">
     <div class="greeting">
