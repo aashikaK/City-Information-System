@@ -69,6 +69,13 @@ body { background:#f4f7fb; }
             <a href="tour-history.php">View Bookings</a>
         </div>
 
+        
+        <div class="card">
+    <i class="fas fa-users"></i>
+    User Details
+    <a href="customereventhistory.php">View Details</a>
+</div>
+
         <div class="card">
             <i class="fas fa-envelope-open-text"></i>
             Issue Tickets
