@@ -13,6 +13,8 @@ if(isset($_POST['sign_in'])){
     $stmt=$pdo->prepare($sql);
     $stmt->execute([$username,$password]);
     $result=$stmt->fetchAll(PDO::FETCH_ASSOC);  //fetch only for one row fetching
+    
+
 
     if(!$result){
         $error_message= "Either username or password do not match. Please Enter correct username and password";
