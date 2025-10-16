@@ -143,7 +143,7 @@ body {
   <h2><i class="fas fa-user-plus"></i> Sign Up</h2>
 <!-- to display error or succes message -->
   <?php if($error_message != "") { ?>
-   <div style="color: #f90000ff; margin-bottom: 10px; font-weight:bold;"><?php echo $error_message; ?></div>
+   <div style="color: #ffd54f; margin-bottom: 10px; font-weight:bold;"><?php echo $error_message; ?></div>
 <?php } ?>
 
 <?php if($success_message != "") { ?>
@@ -154,13 +154,13 @@ body {
     <div class="input-group">
       <label for="username">Username</label>
       <input type="text" name="username" id="username" placeholder="eg: david72" required>
-        <p id="un-err-msg" style="color: #ff6b6b;"></p>
+        <p id="un-err-msg" style="color: #ffd54f;"></p>
     </div>
 
     <div class="input-group">
       <label for="email">Email</label>
       <input type="email" name="email" id="email" placeholder="eg: david@gmail.com" required>
-        <p id="email-err-msg" style="color: #ff6b6b;"></p>
+        <p id="email-err-msg" style="color: #ffd54f;"></p>
     </div>
 
     <div class="input-group">
@@ -168,13 +168,13 @@ body {
       <input type="password" name="password" id="password" placeholder="Create a password" 
       title="Must contain at least 1 number,an uppercase and a lowercase letter, and at least 6 or more characters"
       required>
-        <p id="pw-err-msg" style="color: #ff6b6b;;"></p>
+        <p id="pw-err-msg" style="color: #ffd54f;"></p>
     </div>
 
     <div class="input-group">
       <label for="confirm_password">Confirm Password</label>
       <input type="password" name="confirm_password" id="confirm_password" placeholder="Re-enter your password" required>
-        <p id="c_pw-err-msg" style="color: #ff6b6b;"></p>
+        <p id="c_pw-err-msg" style="color: #ffd54f;"></p>
     </div>
 
     <button type="submit" name="create" class="btn">Create Account</button>

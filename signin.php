@@ -7,6 +7,7 @@ if(isset($_POST['sign_in'])){
     $username = trim($_POST['username']);
     $password=md5($_POST['password']);
 
+
     // check if un exists
     $sql="select username,password from users where username=? AND password=?";
     $stmt=$pdo->prepare($sql);
@@ -108,7 +109,7 @@ body {
   <h2><i class="fas fa-user"></i> Sign In</h2>
 <!-- to display error or succes message -->
   <?php if($error_message != "") { ?>
-   <div style="color: #f90000ff; margin-bottom: 10px; font-weight:bold;"><?php echo $error_message; ?></div>
+   <div style="color: #ffd54f; margin-bottom: 10px; font-weight:bold;"><?php echo $error_message; ?></div>
 <?php } ?>
 
   <form method="POST" onSubmit="return validateForm()" novalidate>
@@ -116,14 +117,14 @@ body {
   <div class="input-group">
       <label for="username">Username</label>
       <input type="text" name="username" id="username" placeholder="Enter your username" required>
-      <p id="un-err-msg" style="color: #ff6b6b;"></p>
+      <p id="un-err-msg" style="color: #ffd54f;"></p>
     </div>
 
     <div class="input-group">
       <label for="password">Password</label>
       <input type="password" name="password" id="password" placeholder="Enter your password" 
     required>
-        <p id="pw-err-msg" style="color: #ff6b6b;;"></p>
+        <p id="pw-err-msg" style="color: #ffd54f;"></p>
     </div>
 
     <button type="submit" name="sign_in" class="btn">Sign In</button>
@@ -136,7 +137,7 @@ body {
   var pw= document.getElementById("password").value.trim();
 
   document.getElementById("un-err-msg").innerHTML = "";
-  document.getElementById("email-err-msg").innerHTML = "";
+  document.getElementById("pw-err-msg").innerHTML = "";
 
   let valid=true;
   // checking for empty un field
