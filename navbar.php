@@ -128,25 +128,29 @@ body { background:#f4f7fb; }
     <span class="menu-toggle" onclick="toggleMenu()">☰</span>
 
     <ul id="menu">
-        <li><a href="/CIS/index.php">Home</a></li>
-        <li><a href="/CIS/about.php">About Us</a></li>
-        <li><a href="/CIS/services.php">Services</a></li>
-        <li><a href="/CIS/tourism.php">Tourism</a></li>
-        <li><a href="/CIS/events.php">Events</a></li>
-        <li><a href="/CIS/map.php">Map</a></li>
+    <?php if(isset($_SESSION['login']) && $_SESSION['login'] != '') { ?>
+        <li><a href="/CIS/dashboard.php">Dashboard</a></li>
+    <?php } ?>
 
-        <?php if(isset($_SESSION['admin'])) { ?>
-            <li><a href="/CIS/adminpanel.php">Admin Panel</a></li>
-            <li><a href="/CIS/logout.php">Logout</a></li>
-        <?php } elseif(isset($_SESSION['login']) && $_SESSION['login'] != '') { ?>
-            <li><a href="/CIS/write-us.php">Write Us</a></li>
-            <li><a href="/CIS/dashboard.php">Dashboard</a></li>
-            <li><a href="/CIS/logout.php">Logout</a></li>
-        <?php } else { ?>
-            <li><a href="/CIS/signin.php">Sign In</a></li>
-            <li><a href="/CIS/signup.php" target="_blank">Sign Up</a></li>
-        <?php } ?>
-    </ul>
+    <li><a href="/CIS/index.php">Home</a></li>
+    <li><a href="/CIS/about.php">About Us</a></li>
+    <li><a href="/CIS/services.php">Services</a></li>
+    <li><a href="/CIS/tourism.php">Tourism</a></li>
+    <li><a href="/CIS/events.php">Events</a></li>
+    <li><a href="/CIS/map.php">Map</a></li>
+
+    <?php if(isset($_SESSION['admin'])) { ?>
+        <li><a href="/CIS/adminpanel.php">Admin Panel</a></li>
+        <li><a href="/CIS/logout.php">Logout</a></li>
+    <?php } elseif(isset($_SESSION['login']) && $_SESSION['login'] != '') { ?>
+        <li><a href="/CIS/write-us.php">Write Us</a></li>
+        <li><a href="/CIS/logout.php">Logout</a></li>
+    <?php } else { ?>
+        <li><a href="/CIS/signin.php">Sign In</a></li>
+        <li><a href="/CIS/signup.php" target="_blank">Sign Up</a></li>
+    <?php } ?>
+</ul>
+
 </nav>
 
 <script>
