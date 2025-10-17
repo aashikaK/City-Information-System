@@ -109,7 +109,7 @@ if ($events) {
             $note = htmlspecialchars($event['personal_note'] ?? '');
             echo "<textarea name='personal_note'>{$note}</textarea>";
             echo "<input type='hidden' name='event_id' value='{$event['event_id']}'>";
-            echo "<button type='submit' class='save-btn'>Save</button>";
+            echo "<button type='submit' name='save_btn' class='save-btn'>Save</button>";
             echo "</form>";
         } elseif ($event['status'] == 'cancelled') {
             echo "<div class='cancelled'>Cancelled</div>";
