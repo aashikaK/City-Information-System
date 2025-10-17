@@ -88,7 +88,7 @@ button { padding:10px; border:none; border-radius:8px; background:#4a90e2; color
 button:hover { background:#357ABD; }
 .success { color:green; font-weight:bold; }
 .error { color:red; font-weight:bold; }
-.profile-pic { width:120px; height:120px; object-fit:cover; border-radius:50%; margin-bottom:10px; }
+.profile-pic { width:220px; height:220px; object-fit:cover; border-radius:50%; margin-bottom:10px; }
 </style>
 </head>
 <body>
