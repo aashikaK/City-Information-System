@@ -104,9 +104,11 @@ button:hover { background:#357ABD; }
         <div style="text-align:center;">
             <?php if($profile && $profile['profile_pic']) { ?>
                 <img src="<?php echo $profile['profile_pic']; ?>" alt="Profile Picture" class="profile-pic">
-            <?php } else { ?>
-                <img src="images/user_profiles/default.png" alt="Profile Picture" class="profile-pic">
-            <?php } ?>
+            <?php } else { 
+                if($profile['gender']=="Male"||$profile['gender']=="Other"){?>
+                <img src="images/user_profiles/male.jpg" alt="Profile Picture" class="profile-pic">
+            <?php } else{ ?> <img src="images/user_profiles/female.jpg" alt="Profile Picture" class="profile-pic">
+            <?php}} ?>
         </div>
 
         <label>Full Name</label>
