@@ -1,6 +1,7 @@
 <?php
 require "db.php";
 include "navbar.php";
+session_start();
 
 // Make sure user is logged in
 if (!isset($_SESSION['login'])) {
@@ -14,8 +15,17 @@ $user_stmt = $pdo->prepare("SELECT id FROM users WHERE username = :username");
 $user_stmt->execute([':username'=>$username]);
 $user_id = $user_stmt->fetchColumn();
 
+// --- Update past registered events to attended ---
+$update_stmt = $pdo->prepare("
+    UPDATE user_events ue
+    JOIN events e ON ue.event_id = e.event_id
+    SET ue.status = 'attended'
+    WHERE ue.status = 'registered' AND e.event_date < NOW() AND ue.user_id = :uid
+");
+$update_stmt->execute([':uid' => $user_id]);
+
 // Fetch all user_events joined with events
-$sql = "SELECT ue.*, e.event_name, e.city, e.location, e.event_date, e.description,e.is_popular, e.image_path
+$sql = "SELECT ue.*, e.event_name, e.city, e.location, e.event_date, e.description, e.is_popular, e.image_path
         FROM user_events ue
         JOIN events e ON ue.event_id = e.event_id
         WHERE ue.user_id = :uid
@@ -80,7 +90,7 @@ if ($events) {
 
         // Name & popular badge
         echo "<strong>" . htmlspecialchars($event['event_name']) . "</strong>";
-        if ($event['is_popular']) echo "<span class='popular-badge'>Popular</span>";
+        if (!empty($event['is_popular'])) echo "<span class='popular-badge'>Popular</span>";
 
         // Date & location
         echo "<div class='event-date'>" . date("d M Y", strtotime($event['event_date'])) . "</div>";
