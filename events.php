@@ -2,7 +2,6 @@
 require "db.php";
 include "navbar.php";
 
-session_start(); // ensure session is started
 
 $username = isset($_SESSION['login']) ? $_SESSION['login'] : '';
 $user_id = null;
