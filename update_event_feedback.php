@@ -21,15 +21,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $note = $_POST['personal_note'] ?: null;
 
     $update = $pdo->prepare("UPDATE user_events 
-                             SET rating = :rating, review = :review, personal_note = :note
-                             WHERE user_id = :uid AND event_id = :eid");
-    $update->execute([
-        ':rating' => $rating,
-        ':review' => $review,
-        ':note'   => $note,
-        ':uid'    => $user_id,
-        ':eid'    => $event_id
-    ]);
+                             SET rating = ?, review = ?, personal_note = ?
+                             WHERE user_id = ? AND event_id = ?");
+    $update->execute([ $rating, $review, $note,$user_id,$event_id]);
 
     // redirect back to event history
     header("Location: eventhistory.php");
