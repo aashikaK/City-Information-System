@@ -1,7 +1,7 @@
 <?php
 require "db.php";
 include "navbar.php";
-session_start();
+
 
 // Make sure user is logged in
 if (!isset($_SESSION['login'])) {
