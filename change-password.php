@@ -13,7 +13,7 @@ if(isset($_POST['changeBtn'])){
 
     $sql="Select password from users where password=? AND username=?";
     $stmt=$pdo->prepare($sql);
-    $stmt->execute[$oldPw,$username];
+    $stmt->execute([$oldPw,$username]);
     $result=$stmt->fetchAll(PDO::FETCH_ASSOC);
 
     if($result && ($newPw== confirmPw)){
@@ -23,6 +23,9 @@ if(isset($_POST['changeBtn'])){
 
         if($updatepw){
             echo "Password changed successfully.";
+        }
+        else{
+            echo "New passwords do not match with confirmation password.";
         }
     }
     
