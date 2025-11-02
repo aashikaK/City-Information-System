@@ -18,6 +18,16 @@ if(isset($_POST['changeBtn'])){
 
     if($result && ($newPw== confirmPw)){
         $sql="UPDATE users SET password=$newPw where username=?";
+        $stmt=$pdo->prepare($sql);
+        $updatepw=$stmt->execute();
+
+        if($updatepw){
+            echo "Password changed successfully.";
+        }
+    }
+    
+ else{
+        echo "Old password do not match.";
     }
 }
 ?>
