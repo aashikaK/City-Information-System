@@ -27,7 +27,7 @@ h2 { text-align:center; color:#2A5D91; margin-bottom:20px; }
 <body>
 
 <div class="container">
-    <h2> <?php echo $_SESSION['username']; ?> </h2>
+    <h2> <?php echo $_SESSION['login']; ?> </h2>
    
     <div class="change-pw">
         <div class="label" name="oldPw">Enter old password</div> 
