@@ -35,13 +35,13 @@ function showValue($val){
 <style>
 body { font-family:"Segoe UI", sans-serif; background:#f4f7fb; }
 .container { max-width:800px; margin:30px auto; padding:20px; background:rgba(200, 218, 233, 1); border-radius:12px; box-shadow:0 10px 15px rgba(0,0,0,0.1); }
-h2 { text-align:center; color:black; margin-bottom:20px; }
+h2 { text-align:center; color:#2A5D91; margin-bottom:20px; }
 .profile-pic { width:150px; height:150px; border-radius:50%; object-fit:cover; margin-bottom:15px; display:block; margin-left:auto; margin-right:auto; }
 .details { display:grid; grid-template-columns:1fr 2fr; gap:10px; margin-top:20px; }
 .details div { padding:5px 0; }
 .label { font-weight:bold; color:black; }
-.update-btn { display:block; margin:20px auto; padding:10px 20px; background:#4a90e2; color:white; border:none; border-radius:8px; cursor:pointer; text-decoration:none; text-align:center; width:200px; }
-.update-btn:hover { background:#357ABD; }
+.update-btn { display:block; margin:20px auto; padding:10px 20px; background:#2A5D91; color:white; border:none; border-radius:8px; cursor:pointer; text-decoration:none; text-align:center; width:200px; }
+.update-btn:hover { background:#1F456F; }
 </style>
 </head>
 <body>
