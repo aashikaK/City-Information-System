@@ -89,7 +89,7 @@ body { background:#f4f7fb; }
             <li><a href="/CIS/change-password.php"><i class="fas fa-key"></i> Change Password</a></li>
             <li><a href="/CIS/eventhistory.php"><i class="fas fa-calendar-alt"></i> Event History</a></li>
             <li><a href="/CIS/tour-history.php"><i class="fas fa-ticket-alt"></i> Booking History</a></li>
-            <li><a href="/CIS/customereventhistory.php"><i class="fas fa-users"></i> User Details</a></li>
+            <li><a href="/CIS/userdetails.php"><i class="fas fa-users"></i> User Details</a></li>
             <li><a href="/CIS/issuetickets.php"><i class="fas fa-envelope-open-text"></i> Issue Tickets</a></li>
             <li><a href="/CIS/chatgroup_history.php"><i class="fas fa-comments"></i> Chat Group</a></li>
             <li>
