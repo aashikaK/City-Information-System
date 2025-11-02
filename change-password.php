@@ -5,6 +5,21 @@ if(!isset($_SESSION['login']) || $_SESSION['login'] == ''){
     header("Location: signin.php");
     exit;
 }
+if(isset($_POST['changeBtn'])){
+    $oldPw= md5($_POST['oldPw']);
+    $newPw=md5($_POST['newPw']);
+    $confirmPw=$md5(_POST['confirmPw']);
+    $username=$_SESSION['login'];
+
+    $sql="Select password from users where password=? AND username=?";
+    $stmt=$pdo->prepare($sql);
+    $stmt->execute[$oldPw,$username];
+    $result=$stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    if($result && ($newPw== confirmPw)){
+        $sql="UPDATE users SET password=$newPw where username=?";
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
