@@ -73,7 +73,7 @@ body { background:#f4f7fb; }
         <div class="card">
     <i class="fas fa-users"></i>
     User Details
-    <a href="customereventhistory.php">View Details</a>
+    <a href="userdetails.php">View Details</a>
 </div>
 
         <div class="card">
