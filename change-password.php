@@ -28,10 +28,10 @@ if(isset($_POST['changeBtn'])){
         $updatepw=$stmt->execute();
 
         if($updatepw){
-            $message = ." Password changed successfully.";
+            $message .= " Password changed successfully.";
         }
         else{
-            $message= ." New passwords do not match with confirmation password.";
+            $message .= " New passwords do not match with confirmation password.";
         }
     }
  else{
