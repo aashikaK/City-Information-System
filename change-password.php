@@ -58,7 +58,7 @@ h2 { text-align:center; color:#2A5D91; margin-bottom:20px; }
 </style>
 </head>
 <body>
-
+<p style="text-align:center; color:red;"><?php $message ?></p>
 <div class="container">
     <h2> <?php echo $_SESSION['login']; ?> </h2>
    <form method="post">
