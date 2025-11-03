@@ -22,7 +22,7 @@ if(isset($_POST['changeBtn'])){
     $stmt->execute([$oldPw,$username]);
     $result=$stmt->fetchAll(PDO::FETCH_ASSOC);
    
-    if($result && ($newPw== confirmPw)){
+    if($result && ($newPw== $confirmPw)){
         $sql="UPDATE users SET password=? where username=?";
         $stmt=$pdo->prepare($sql);
         $updatepw=$stmt->execute([$newPw,$username]);
