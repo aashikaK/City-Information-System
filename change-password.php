@@ -13,10 +13,9 @@ if(isset($_POST['changeBtn'])){
     $username=$_SESSION['login'];
 
      if($oldPw==="" || $newPw==="" || $confirmPw===""){
-        $message="Please fill all the fields.";
-        exit;
+        $message .="Please fill all the fields.";
      }
-
+else{
     $sql="Select password from users where password=? AND username=?";
     $stmt=$pdo->prepare($sql);
     $stmt->execute([$oldPw,$username]);
@@ -37,7 +36,7 @@ if(isset($_POST['changeBtn'])){
  else{
         $message .= " Old password do not match.";
     }
-}
+}}
 ?>
 <!DOCTYPE html>
 <html lang="en">
