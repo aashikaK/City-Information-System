@@ -12,7 +12,7 @@ if(isset($_POST['changeBtn'])){
     $confirmPw=md5($_POST['confirmPw']);
     $username=$_SESSION['login'];
 
-     if($oldPw==="" && $newPw==="" && $confirmPw===""){
+     if($oldPw==="" || $newPw==="" || $confirmPw===""){
         $message="Please fill all the fields.";
         exit;
      }
