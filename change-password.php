@@ -69,9 +69,9 @@ h2 { text-align:center; color:#2A5D91; margin-bottom:20px; }
         <input type="password" name="newPw" >
         <div class="label" >Confirm new password:</div>
         <input type="password" name="confirmPw"> 
-        <button class="changeBtn" type="submit">Change Password</button>
+        <button class="changeBtn" name="changeBtn" type="submit">Change Password</button>
          </div>
-<form>
+</form>
 </div>
 
 </body>
