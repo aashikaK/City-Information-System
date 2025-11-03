@@ -9,7 +9,7 @@ $message="";
 if(isset($_POST['changeBtn'])){
     $oldPw= md5($_POST['oldPw']);
     $newPw=md5($_POST['newPw']);
-    $confirmPw=$md5(_POST['confirmPw']);
+    $confirmPw=md5($_POST['confirmPw']);
     $username=$_SESSION['login'];
 
      if($oldPw==="" && $newPw==="" && $confirmPw===""){
