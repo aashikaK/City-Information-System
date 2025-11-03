@@ -5,32 +5,37 @@ if(!isset($_SESSION['login']) || $_SESSION['login'] == ''){
     header("Location: signin.php");
     exit;
 }
+$message="";
 if(isset($_POST['changeBtn'])){
     $oldPw= md5($_POST['oldPw']);
     $newPw=md5($_POST['newPw']);
     $confirmPw=$md5(_POST['confirmPw']);
     $username=$_SESSION['login'];
 
+     if($oldPw==="" && $newPw==="" && $confirmPw!===""){
+        $message="Please fill all the fields.";
+        exit;
+     }
+
     $sql="Select password from users where password=? AND username=?";
     $stmt=$pdo->prepare($sql);
     $stmt->execute([$oldPw,$username]);
     $result=$stmt->fetchAll(PDO::FETCH_ASSOC);
-
+   
     if($result && ($newPw== confirmPw)){
         $sql="UPDATE users SET password=$newPw where username=?";
         $stmt=$pdo->prepare($sql);
         $updatepw=$stmt->execute();
 
         if($updatepw){
-            echo "Password changed successfully.";
+            $message = ." Password changed successfully.";
         }
         else{
-            echo "New passwords do not match with confirmation password.";
+            $message= ." New passwords do not match with confirmation password.";
         }
     }
-    
  else{
-        echo "Old password do not match.";
+        $message= ." Old password do not match.";
     }
 }
 ?>
