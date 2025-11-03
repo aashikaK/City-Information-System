@@ -58,8 +58,9 @@ h2 { text-align:center; color:#2A5D91; margin-bottom:20px; }
 </style>
 </head>
 <body>
-<p style="text-align:center; color:red;"><?php echo $message; ?></p>
 <div class="container">
+    
+<p style="text-align:center; color:red; margin:10px;"><?php echo $message; ?></p>
     <h2> <?php echo $_SESSION['login']; ?> </h2>
    <form method="post">
     <div class="change-pw">
