@@ -108,12 +108,13 @@ h2 { text-align:center; color:#2A5D91; margin-bottom:20px; }
     document.getElementById("newPw-err").innerHTML="Please enter new password";
     valid=false;
   }
-  else if (!pwPattern.test(newPw)) {
-    document.getElementById("newPw-err").innerHTML="Password must contain at least one number, one uppercase, one lowercase letter, and be 6 or more characters long.";
-    valid=false;
-  }
+  
   else if(newPw===oldPw){
     document.getElementById("newPw-err").innerHTML="Your new password cannot be old password.";
+    valid=false;
+  }
+  else if (!pwPattern.test(newPw)) {
+    document.getElementById("newPw-err").innerHTML="Password must contain at least one number, one uppercase, one lowercase letter, and be 6 or more characters long.";
     valid=false;
   }
 // for pw confirmation
