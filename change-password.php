@@ -45,6 +45,11 @@ body { font-family:"Segoe UI", sans-serif; background:#f4f7fb; }
 h2 { text-align:center; color:#2A5D91; margin-bottom:20px; }
 .change-pw { display:grid; grid-template-columns:1fr 2fr; gap:10px; margin-top:20px; }
 .change-pw div{ padding:5px 0; }
+.change-pw p {
+  grid-column: 2; /* force error message to stay under input */
+  margin: 2px 0 10px;
+}
+
 .label { font-weight:bold; color:black; font-size:17px; }
 .changeBtn { display:block; margin:20px auto; padding:10px 20px; background:#2A5D91; color:white; border:none; border-radius:8px; cursor:pointer; text-decoration:none; text-align:center; width:200px; }
 .changeBtn:hover { background:#1F456F; }
