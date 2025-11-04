@@ -30,7 +30,7 @@ if(isset($_POST['changeBtn'])){
         }}
  else{
         $message .= "Old password does not match.";
-   } }
+   } } }
 ?>
 <!DOCTYPE html>
 <html lang="en">
