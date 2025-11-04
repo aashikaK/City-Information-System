@@ -55,7 +55,7 @@ h2 { text-align:center; color:#2A5D91; margin-bottom:20px; }
     
 <p style="text-align:center; color:red; margin:10px;"><?php echo $message; ?></p>
 
-<h2 style="text-align:center; color:green; margin:10px;"><?php echo $updateMessage; ?></p>
+<h2 style="text-align:center; color:green; margin:10px;"><?php echo $updateMessage; ?></h2>
     <h2> <?php echo $_SESSION['login']; ?> </h2>
 
    <form method="post" onSubmit="return validateForm()">

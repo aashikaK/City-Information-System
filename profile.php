@@ -31,7 +31,7 @@ if(isset($_POST['update_profile'])){
     // Handle profile picture upload
     $profile_pic_path = $profile['profile_pic']; // keep old if not changed
     if(isset($_FILES['profile_pic']) && $_FILES['profile_pic']['name'] != ''){
-        $target_dir = "images/user_profiles/";
+        $target_dir = "images/user_profile/";
         $filename = time() . "_" . basename($_FILES['profile_pic']['name']);
         $target_file = $target_dir . $filename;
 
@@ -106,9 +106,9 @@ button:hover { background:#357ABD; }
     <img src="<?php echo $profile['profile_pic']; ?>" alt="Profile Picture" class="profile-pic">
 <?php } else { ?>
     <?php if($profile && ($profile['gender'] == "Male" || $profile['gender'] == "Other")) { ?>
-        <img src="images/user_profiles/male.jpg" alt="Profile Picture" class="profile-pic">
+        <img src="images/user_profile/male.jpg" alt="Profile Picture" class="profile-pic">
     <?php } else { ?>
-        <img src="images/user_profiles/female.jpg" alt="Profile Picture" class="profile-pic">
+        <img src="images/user_profile/female.jpg" alt="Profile Picture" class="profile-pic">
     <?php } ?>
 <?php } ?>
 
