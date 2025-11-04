@@ -13,6 +13,11 @@ $stmt = $pdo->prepare("SELECT * FROM users WHERE username=?");
 $stmt->execute([$_SESSION['login']]);
 $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
+if(!$user){
+    echo "<p style='color:red; text-align:center;'>User not found in database.</p>";
+    exit;
+}
+
 // Get user profile info
 $stmt2 = $pdo->prepare("SELECT * FROM user_profiles WHERE user_id=?");
 $stmt2->execute([$user['id']]);
