@@ -58,9 +58,9 @@ h2 { text-align:center; color:#2A5D91; margin-bottom:20px; }
 <body>
 <div class="container">
     
-<p style="text-align:center; color:red; margin:10px;"><?php echo $message; ?></p>
+<?php if(!empty($message)) echo "<p style='color:red;text-align:center;'>$message</p>"; ?>
+<?php if(!empty($updatemessage)) echo "<h3 style='color:green;text-align:center;'>$updatemessage</h3>"; ?>
 
-<h2 style="text-align:center; color:green; margin:10px;"><?php echo $updateMessage; ?></h2>
     <h2> <?php echo $_SESSION['login']; ?> </h2>
 
    <form method="post" onSubmit="return validateForm()">
@@ -110,6 +110,10 @@ h2 { text-align:center; color:#2A5D91; margin-bottom:20px; }
   }
   else if (!pwPattern.test(newPw)) {
     document.getElementById("newPw-err").innerHTML="Password must contain at least one number, one uppercase, one lowercase letter, and be 6 or more characters long.";
+    valid=false;
+  }
+  else if(newPw===oldPw){
+    document.getElementById("newPw-err").innerHTML="Your new password cannot be old password.";
     valid=false;
   }
 // for pw confirmation
