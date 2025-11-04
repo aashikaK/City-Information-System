@@ -13,6 +13,9 @@ if(isset($_POST['changeBtn'])){
     $confirmPw=md5($_POST['confirmPw']);
     $username=$_SESSION['login'];
    
+     if($newPw !== $confirmPw){
+        $message = "New password and confirmation password do not match.";
+    } else {
     $sql="Select password from users where password=? AND username=?";
     $stmt=$pdo->prepare($sql);
     $stmt->execute([$oldPw,$username]);
