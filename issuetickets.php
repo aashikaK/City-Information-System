@@ -10,7 +10,7 @@ $categories = [
     'Hotel' => ['icon' => '🏨', 'image' => 'images/categories/hotel.jpg']
 ];
 
-$cities = ['Kathmandu', 'Pokhara', 'Lalitpur', 'Bhaktapur', 'Chitwan', 'Lumbini','Mustang'];
+$cities = ['Kathmandu','Bhaktapur','Lalitpur', 'Pokhara','Chitwan','Lumbini','Mustang'];
 
 // fetch available services if both city and category selected
 $services = [];
