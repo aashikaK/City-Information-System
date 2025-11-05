@@ -1,5 +1,6 @@
 <?php
 require "db.php";
+session_start();
 
 $selected_category = isset($_GET['category']) ? $_GET['category'] : '';
 $selected_city = isset($_GET['city']) ? $_GET['city'] : '';
@@ -9,8 +10,16 @@ $categories = [
     'Hotel' => ['icon' => '🏨', 'image' => 'images/categories/hotel.jpg']
 ];
 
-// Just sample cities — replace later with DB values
 $cities = ['Kathmandu', 'Pokhara', 'Lalitpur', 'Bhaktapur', 'Chitwan', 'Lumbini','Mustang'];
+
+// fetch available services if both city and category selected
+$services = [];
+if ($selected_city && $selected_category) {
+    $stmt = $pdo->prepare("SELECT * FROM city_services 
+                           WHERE city = ? AND category = ?");
+    $stmt->execute([$selected_city, $selected_category]);
+    $services = $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -31,6 +40,12 @@ body{background:#f4f7fb;}
 .category-card div{padding:15px;font-size:1.2rem;}
 .city-filter{text-align:center;margin:30px;}
 .city-filter select{padding:10px 15px;border:1px solid #ccc;border-radius:5px;font-size:1rem;}
+.service-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;width:85%;margin:20px auto;}
+.service-card{background:white;border-radius:10px;box-shadow:0 4px 10px rgba(0,0,0,0.1);overflow:hidden;}
+.service-card img{width:100%;height:200px;object-fit:cover;}
+.service-card .info{padding:15px;}
+.book-btn{background:#3F84B1;color:white;border:none;padding:8px 15px;border-radius:5px;cursor:pointer;}
+.book-btn:disabled{background:#999;cursor:not-allowed;}
 .footer{background:#3F84B1;color:white;text-align:center;padding:10px;margin-top:30px;}
 </style>
 </head>
@@ -68,8 +83,39 @@ body{background:#f4f7fb;}
 </div>
 
 <?php if ($selected_city): ?>
-<p style="text-align:center;font-size:1.2rem;">You selected <b><?php echo $selected_category; ?></b> in <b><?php echo $selected_city; ?></b>.</p>
-<p style="text-align:center;color:#555;">(You’ll display available places and booking options here later.)</p>
+<h2 style="text-align:center;margin-bottom:15px;">
+  Available <?php echo $selected_category; ?>s in <?php echo $selected_city; ?>
+</h2>
+
+<div class="service-list">
+  <?php if (count($services) > 0): ?>
+    <?php foreach($services as $s): ?>
+      <div class="service-card">
+        <img src="<?php echo htmlspecialchars($s['image']); ?>" alt="<?php echo htmlspecialchars($s['name']); ?>">
+        <div class="info">
+          <h3><?php echo htmlspecialchars($s['name']); ?></h3>
+          <p><?php echo htmlspecialchars($s['description']); ?></p>
+          <p><b>Contact:</b> <?php echo htmlspecialchars($s['contact_info']); ?></p>
+          <p><b>Address:</b> <?php echo htmlspecialchars($s['location']); ?></p>
+          <p><b>Available:</b> 
+             <?php echo max(0, $s['capacity'] - $s['current_bookings']); ?> /
+             <?php echo $s['capacity']; ?>
+          </p>
+          <form method="POST" action="book_now.php">
+            <input type="hidden" name="service_id" value="<?php echo $s['id']; ?>">
+            <input type="hidden" name="category" value="<?php echo $selected_category; ?>">
+            <button class="book-btn" 
+              <?php if($s['current_bookings'] >= $s['capacity']) echo 'disabled'; ?>>
+              <?php echo ($s['current_bookings'] >= $s['capacity']) ? 'Full' : 'Book Now'; ?>
+            </button>
+          </form>
+        </div>
+      </div>
+    <?php endforeach; ?>
+  <?php else: ?>
+    <p style="text-align:center;width:100%;">No <?php echo $selected_category; ?>s found in this city.</p>
+  <?php endif; ?>
+</div>
 <?php endif; ?>
 
 <?php endif; ?>
