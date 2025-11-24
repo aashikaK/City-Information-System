@@ -1,9 +1,15 @@
 <?php
 require "db.php";
-session_start();
+include('navbar.php'); 
+
+if(!isset($_SESSION['login']) || $_SESSION['login'] == ''){
+    header("Location: signin.php");
+    exit;
+}
 
 $selected_category = isset($_GET['category']) ? $_GET['category'] : '';
 $selected_city = isset($_GET['city']) ? $_GET['city'] : '';
+
 
 $categories = [
     'Hospital' => ['icon' => '🏥', 'image' => 'images/categories/hospital.jpg'],
@@ -51,15 +57,13 @@ body{background:#f4f7fb;}
 </head>
 <body>
 
-<?php include('navbar.php'); ?>
-
 <div class="page-header"><h1>Ticket Booking</h1></div>
 
 <?php if (!$selected_category): ?>
 <!-- Step 1: Choose Category -->
 <div class="category-container">
   <?php foreach($categories as $cat => $data): ?>
-    <div class="category-card" onclick="window.location='booking.php?category=<?php echo urlencode($cat); ?>'">
+    <div class="category-card" onclick="window.location='issuetickets.php?category=<?php echo urlencode($cat); ?>'">
         <img src="<?php echo $data['image']; ?>" alt="<?php echo $cat; ?>">
         <div><?php echo $data['icon'].' '.htmlspecialchars($cat); ?></div>
     </div>
@@ -69,7 +73,7 @@ body{background:#f4f7fb;}
 <?php else: ?>
 <!-- Step 2: Choose City -->
 <div class="city-filter">
-  <form method="GET" action="booking.php">
+  <form method="GET" action="issuetickets.php">
     <input type="hidden" name="category" value="<?php echo htmlspecialchars($selected_category); ?>">
     <select name="city" onchange="this.form.submit()">
       <option value="">-- Select City --</option>
