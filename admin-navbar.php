@@ -18,11 +18,11 @@ if(!isset($_SESSION['admin']) || $_SESSION['admin'] == ''){
 
 <style>
 * { margin:0; padding:0; box-sizing:border-box; font-family:"Segoe UI", Arial, sans-serif; }
-body { background:#f4f7fb; }
+body { background:#f4f7fb; } /* light gray */
 
 /* Top Header */
 .top-header{
-    background:#2c3e50;
+    background:#3f84b1; /* soft darker blue */
     color:white;
     font-size:14px;
     padding:6px 20px;
@@ -32,11 +32,11 @@ body { background:#f4f7fb; }
 }
 .top-header ul{ list-style:none; display:flex; gap:15px; align-items:center; }
 .top-header a{ color:white; text-decoration:none; }
-.top-header a:hover{ color:#ffe082; }
+.top-header a:hover{ color:#ffe082; } /* soft yellow accent */
 
 /* Navbar */
 .navbar{
-    background:linear-gradient(90deg,#34495e,#2c3e50);
+    background:linear-gradient(90deg,#4a90e2,#6bb9f0); /* soft blue gradient */
     padding:10px 20px;
     display:flex;
     justify-content:space-between;
@@ -56,17 +56,19 @@ body { background:#f4f7fb; }
 .navbar ul li a{
     color:white;
     text-decoration:none;
+    font-weight:500;
 }
 .navbar ul li a:hover{
-    color:#ffe082;
+    color:#ffe082; /* same soft yellow hover */
 }
 .menu-toggle{ display:none; font-size:26px; cursor:pointer; color:white; }
 
+/* Responsive */
 @media(max-width:768px){
     .navbar ul{
         display:none;
         flex-direction:column;
-        background:#2c3e50;
+        background:#6bb9f0; /* lighter blue for mobile menu */
         position:absolute;
         top:60px;
         left:0;

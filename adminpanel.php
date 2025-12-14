@@ -1,5 +1,5 @@
 <?php
-include "navbar.php";
+include "admin-navbar.php";
 
 // Check if admin is logged in
 if(!isset($_SESSION['admin']) || $_SESSION['admin'] == ''){
