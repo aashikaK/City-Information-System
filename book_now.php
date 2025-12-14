@@ -7,8 +7,8 @@ if (!isset($_SESSION['login'])) {
     exit;
 }
 
-$service_id = $_GET['service_id'];
-$user_id = $_SESSION['user_id'];
+$service_id = $_POST['service_id'] ?? $_GET['service_id'] ?? null;
+$user_id    = $_SESSION['user_id'];
 
 // Get service data
 $stmt = $pdo->prepare("SELECT * FROM city_services WHERE id = ?");

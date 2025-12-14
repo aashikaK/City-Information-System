@@ -22,7 +22,7 @@ if(isset($_POST['login'])){
        header("Location:adminpanel.php");
     } 
 }
-
+?>
 
 <!DOCTYPE html>
 <html lang="en">
