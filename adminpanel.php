@@ -1,8 +1,5 @@
 <?php
-// Only start session if it hasn't been started already
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
+include "navbar.php";
 
 // Check if admin is logged in
 if(!isset($_SESSION['admin']) || $_SESSION['admin'] == ''){
@@ -18,8 +15,7 @@ if(!isset($_SESSION['admin']) || $_SESSION['admin'] == ''){
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Admin Panel - CIS</title>
 </head>
-<body>
-    <?php include "navbar.php"; ?>
+<body>`
     <h1>Welcome to Admin Panel</h1>
     <p>Hello, <?php echo htmlentities($_SESSION['admin']); ?>!</p>
     <p>This is a dummy page to test admin session.</p>
