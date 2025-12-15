@@ -1,5 +1,5 @@
 <?php
-session_start();
+ include "admin-navbar.php"; 
 
 // Protect admin pages
 if (!isset($_SESSION['admin']) || $_SESSION['admin'] == '') {
@@ -22,8 +22,8 @@ $pendingBookingsCount = $pdo->query("SELECT COUNT(*) FROM bookings WHERE status=
 $tourismCount = $pdo->query("SELECT COUNT(*) FROM tourism")->fetchColumn();
 $servicesCount = $pdo->query("SELECT COUNT(*) FROM city_services")->fetchColumn();
 
-$issuesCount = $pdo->query("SELECT COUNT(*) FROM issue_tickets")->fetchColumn();
-$pendingIssuesCount = $pdo->query("SELECT COUNT(*) FROM issue_tickets WHERE status='pending'")->fetchColumn();
+// $issuesCount = $pdo->query("SELECT COUNT(*) FROM issue_tickets")->fetchColumn();
+// $pendingIssuesCount = $pdo->query("SELECT COUNT(*) FROM issue_tickets WHERE status='pending'")->fetchColumn();
 ?>
 
 <!DOCTYPE html>
@@ -60,12 +60,65 @@ body { background:#f4f7fb; }
 .card a:hover { text-decoration:underline; }
 
 /* Navbar from your admin style */
-<?php include "admin-navbar-style.php"; ?> /* optional if you keep navbar CSS separately */
+/* ---------- RESPONSIVE DESIGN ---------- */
+
+/* Tablets (≤ 992px) */
+@media (max-width: 992px) {
+    .dashboard-container {
+        padding: 0 15px;
+    }
+
+    .greeting {
+        font-size: 1.3rem;
+        text-align: center;
+    }
+
+    .card {
+        padding: 20px;
+    }
+
+    .card h2 {
+        font-size: 1.6rem;
+    }
+}
+
+/* Mobile (≤ 600px) */
+@media (max-width: 600px) {
+    .dashboard-container {
+        margin: 15px auto;
+    }
+
+    .greeting {
+        font-size: 1.2rem;
+        text-align: center;
+    }
+
+    .cards {
+        grid-template-columns: 1fr; /* single column */
+        gap: 20px;
+    }
+
+    .card {
+        padding: 18px;
+    }
+
+    .card i {
+        font-size: 2.2rem;
+    }
+
+    .card h2 {
+        font-size: 1.4rem;
+    }
+
+    .card a {
+        font-size: 0.95rem;
+    }
+}
 </style>
 </head>
 <body>
 
-<?php include "admin-navbar.php"; ?>
+
 
 <div class="dashboard-container">
     <div class="greeting">

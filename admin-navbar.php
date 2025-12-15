@@ -109,7 +109,6 @@ body { background:#f4f7fb; } /* light gray */
         <li><a href="manage-events.php">Events</a></li>
         <li><a href="manage-tourism.php">Tourism</a></li>
         <li><a href="manage-services.php">Services</a></li>
-        <li><a href="manage-map.php">Map</a></li>
         <li><a href="admin-issues.php">Issue Tickets</a></li>
         <li><a href="logout.php">Logout</a></li>
     </ul>
