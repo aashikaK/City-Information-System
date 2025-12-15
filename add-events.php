@@ -59,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
 <style>
-body { background:#f4f7fb; font-family:"Segoe UI", Arial, sans-serif; margin:20px; }
+body { background:#f4f7fb; font-family:"Segoe UI", Arial, sans-serif; margin:0; }
 .container { max-width:700px; margin:30px auto; background:white; padding:25px; border-radius:12px; box-shadow:0 5px 15px rgba(0,0,0,0.1); }
 h2 { text-align:center; color:#4a90e2; margin-bottom:20px; }
 form label { display:block; margin-top:15px; font-weight:bold; }

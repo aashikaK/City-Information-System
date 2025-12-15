@@ -22,7 +22,7 @@ $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
 
 <style>
-body { background:#f4f7fb; font-family:"Segoe UI", Arial, sans-serif; margin:20px; }
+body { background:#f4f7fb; font-family:"Segoe UI", Arial, sans-serif; margin:0; }
 .container {
     max-width:1100px;
     margin:30px auto;
@@ -44,6 +44,7 @@ h2 {
     color:white;
     border-radius:8px;
     text-decoration:none;
+    font-size:1rem; /* Added font-size for consistency */
 }
 .add-btn:hover { background:#357ab8; }
 
@@ -61,26 +62,68 @@ th {
     color:white;
 }
 
-/* BUTTONS */
+/* Image Style */
+td img {
+    max-width:80px; /* Constrain image size */
+    height:auto;
+    border-radius:4px;
+    vertical-align:middle; /* Align image better */
+}
+
+/* BUTTONS - Unified Style */
 .action-btn {
-    padding:5px 10px;
+    padding:6px 10px; /* Slightly adjusted padding for consistency */
     border:none;
-    border-radius:5px;
+    border-radius:6px; /* Unified border-radius */
     margin:2px;
     color:white;
     text-decoration:none;
+    display:inline-block; /* Ensures consistent size */
+    font-size:0.9rem; /* Added font-size for consistency */
+    line-height:1.2;
 }
+.action-btn:hover {
+    opacity:0.9;
+}
+
 .edit { background:#4a90e2; }
 .delete { background:red; }
-.popular { background:orange; }
+.popular { background:green; } /* Changed to green for a positive action */
 .unpopular { background:gray; }
 
 /* RESPONSIVE */
 @media (max-width:768px){
     table, thead, tbody, th, td, tr { display:block; }
-    th { display:none; }
-    td { padding:10px; border:none; text-align:left; }
-    td::before { content: attr(data-label); font-weight:bold; display:inline-block; width:120px; }
+    th { display:none; } /* Hide headers on small screens */
+    td {
+        padding:10px;
+        border:none; /* Remove individual cell borders in block view */
+        border-bottom:1px solid #eee; /* Add a separator between rows */
+        text-align:left; /* Left align for better mobile readability */
+        position:relative;
+        padding-left:140px; /* Space for the data-label */
+    }
+    /* Add a clean border for the last cell of each row */
+    tr:last-child td { border-bottom: none; }
+    
+    td::before { 
+        content: attr(data-label); 
+        font-weight:bold; 
+        display:block; /* Changed to block for full width alignment */
+        position:absolute;
+        left:10px;
+        width:120px; 
+        text-align:left;
+        top: 10px;
+    }
+    
+    /* Center the actions and image for better layout */
+    td[data-label="Image"] { text-align:center; padding-left:10px; }
+    td[data-label="Image"]::before { display:inline-block; position:static; width:auto; margin-right:10px; }
+    td[data-label="Actions"] { text-align:center; padding-left:10px; }
+    td[data-label="Actions"]::before { display:inline-block; position:static; width:auto; margin-right:10px; }
+    
+    td img { max-width:100px; height:auto; }
 }
 </style>
 </head>
