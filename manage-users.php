@@ -7,17 +7,17 @@ if (!isset($_SESSION['admin']) || $_SESSION['admin'] == '') {
 
 require "db.php";
 
-/* Handle Activate / Deactivate */
-if (isset($_GET['action']) && isset($_GET['id'])) {
+/* ACTIVATE / DEACTIVATE LOGIC */
+if (isset($_GET['action'], $_GET['id'])) {
     $id = (int)$_GET['id'];
 
-    if ($_GET['action'] == 'deactivate') {
-        $stmt = $pdo->prepare("UPDATE users SET status='inactive' WHERE id=?");
+    if ($_GET['action'] === 'deactivate') {
+        $stmt = $pdo->prepare("UPDATE users SET status = 0 WHERE id = ?");
         $stmt->execute([$id]);
     }
 
-    if ($_GET['action'] == 'activate') {
-        $stmt = $pdo->prepare("UPDATE users SET status='active' WHERE id=?");
+    if ($_GET['action'] === 'activate') {
+        $stmt = $pdo->prepare("UPDATE users SET status = 1 WHERE id = ?");
         $stmt->execute([$id]);
     }
 
@@ -25,7 +25,7 @@ if (isset($_GET['action']) && isset($_GET['id'])) {
     exit;
 }
 
-/* Fetch all users */
+/* FETCH USERS */
 $stmt = $pdo->query("SELECT id, username, email, role, status FROM users");
 $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
@@ -67,40 +67,38 @@ th {
     background:#4a90e2;
     color:white;
 }
-.status-active {
+
+/* STATUS COLORS */
+.active {
     color:green;
     font-weight:bold;
 }
-.status-inactive {
+.inactive {
     color:red;
     font-weight:bold;
 }
-.action-btn {
+
+/* BUTTONS */
+.btn {
     padding:6px 12px;
     border-radius:6px;
-    text-decoration:none;
     color:white;
+    text-decoration:none;
     font-size:0.9rem;
 }
 .activate { background:green; }
 .deactivate { background:red; }
 
 @media (max-width:600px){
-    table, thead, tbody, th, td, tr {
-        display:block;
-    }
-    th {
-        display:none;
-    }
+    table, thead, tbody, th, td, tr { display:block; }
+    th { display:none; }
     td {
         padding:10px;
         border:none;
-        position:relative;
     }
     td::before {
         content: attr(data-label);
         font-weight:bold;
-        display:block;
     }
 }
 </style>
@@ -108,7 +106,6 @@ th {
 
 <body>
 
-<?php include "admin-navbar.php"; ?>
 
 <div class="container">
     <h2>Manage Users</h2>
@@ -130,19 +127,25 @@ th {
                 <td data-label="Username"><?php echo htmlspecialchars($u['username']); ?></td>
                 <td data-label="Email"><?php echo htmlspecialchars($u['email']); ?></td>
                 <td data-label="Role"><?php echo $u['role']; ?></td>
+
+                <!-- STATUS -->
                 <td data-label="Status">
-                    <span class="<?php echo $u['status']=='active' ? 'status-active' : 'status-inactive'; ?>">
-                        <?php echo $u['status']; ?>
-                    </span>
+                    <?php if ($u['status'] == 1) { ?>
+                        <span class="active">Active</span>
+                    <?php } else { ?>
+                        <span class="inactive">Deactivated</span>
+                    <?php } ?>
                 </td>
+
+                <!-- ACTION -->
                 <td data-label="Action">
-                    <?php if ($u['status'] == 'active') { ?>
-                        <a class="action-btn deactivate"
+                    <?php if ($u['status'] == 1) { ?>
+                        <a class="btn deactivate"
                            href="?action=deactivate&id=<?php echo $u['id']; ?>">
                            Deactivate
                         </a>
                     <?php } else { ?>
-                        <a class="action-btn activate"
+                        <a class="btn activate"
                            href="?action=activate&id=<?php echo $u['id']; ?>">
                            Activate
                         </a>
