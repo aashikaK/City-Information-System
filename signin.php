@@ -9,7 +9,7 @@ if(isset($_POST['sign_in'])){
 
 
     // check if un exists
-    $sql="select username,password from users where username=? AND password=?";
+    $sql="select username,password from users where username=? AND password=? AND status=1";
     $stmt=$pdo->prepare($sql);
     $stmt->execute([$username,$password]);
     $result=$stmt->fetchAll(PDO::FETCH_ASSOC);  //fetch only for one row fetching
