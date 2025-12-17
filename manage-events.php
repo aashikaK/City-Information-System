@@ -64,10 +64,9 @@ td img {
     max-width:80px; 
     height:auto;
     border-radius:4px;
-    vertical-align:middle; /* Align image better */
+    vertical-align:middle; 
 }
 
-/* BUTTONS - Unified Style */
 .action-btn {
     padding:6px 10px; /* Slightly adjusted padding for consistency */
     border:none;
