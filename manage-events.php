@@ -68,7 +68,7 @@ td img {
 }
 
 .action-btn {
-    padding:6px 10px; /* Slightly adjusted padding for consistency */
+    padding:6px 10px; 
     border:none;
     border-radius:6px; /* Unified border-radius */
     margin:2px;
