@@ -93,8 +93,8 @@ td img {
     th { display:none; } 
     td {
         padding:10px;
-        border:none; /* Remove individual cell borders in block view */
-        border-bottom:1px solid #eee; /* Add a separator between rows */
+        border:none; 
+        border-bottom:1px solid #eee; 
         text-align:left; /* Left align for better mobile readability */
         position:relative;
         padding-left:140px; /* Space for the data-label */
