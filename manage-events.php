@@ -60,9 +60,8 @@ th {
     color:white;
 }
 
-/* Image Style */
 td img {
-    max-width:80px; /* Constrain image size */
+    max-width:80px; 
     height:auto;
     border-radius:4px;
     vertical-align:middle; /* Align image better */
