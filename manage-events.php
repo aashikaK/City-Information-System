@@ -42,7 +42,7 @@ h2 {
     color:white;
     border-radius:8px;
     text-decoration:none;
-    font-size:1rem; /* Added font-size for consistency */
+    font-size:1rem; 
 }
 .add-btn:hover { background:#357ab8; }
 
