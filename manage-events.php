@@ -95,9 +95,9 @@ td img {
         padding:10px;
         border:none; 
         border-bottom:1px solid #eee; 
-        text-align:left; /* Left align for better mobile readability */
+        text-align:left; 
         position:relative;
-        padding-left:140px; /* Space for the data-label */
+        padding-left:140px; 
     }
     /* Add a clean border for the last cell of each row */
     tr:last-child td { border-bottom: none; }
