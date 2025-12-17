@@ -84,13 +84,13 @@ td img {
 
 .edit { background:#4a90e2; }
 .delete { background:red; }
-.popular { background:green; } /* Changed to green for a positive action */
+.popular { background:green; } 
 .unpopular { background:gray; }
 
-/* RESPONSIVE */
+
 @media (max-width:768px){
     table, thead, tbody, th, td, tr { display:block; }
-    th { display:none; } /* Hide headers on small screens */
+    th { display:none; } 
     td {
         padding:10px;
         border:none; /* Remove individual cell borders in block view */
