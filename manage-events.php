@@ -70,12 +70,12 @@ td img {
 .action-btn {
     padding:6px 10px; 
     border:none;
-    border-radius:6px; /* Unified border-radius */
+    border-radius:6px; 
     margin:2px;
     color:white;
     text-decoration:none;
-    display:inline-block; /* Ensures consistent size */
-    font-size:0.9rem; /* Added font-size for consistency */
+    display:inline-block; 
+    font-size:0.9rem; 
     line-height:1.2;
 }
 .action-btn:hover {
