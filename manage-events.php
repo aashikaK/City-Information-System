@@ -7,7 +7,6 @@ if (!isset($_SESSION['admin']) || $_SESSION['admin'] == '') {
     exit;
 }
 
-// Fetch all events
 $stmt = $pdo->query("SELECT * FROM events ORDER BY event_date ASC");
 $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
