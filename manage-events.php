@@ -99,13 +99,12 @@ td img {
         position:relative;
         padding-left:140px; 
     }
-    /* Add a clean border for the last cell of each row */
     tr:last-child td { border-bottom: none; }
     
     td::before { 
         content: attr(data-label); 
         font-weight:bold; 
-        display:block; /* Changed to block for full width alignment */
+        display:block; 
         position:absolute;
         left:10px;
         width:120px; 
@@ -113,7 +112,6 @@ td img {
         top: 10px;
     }
     
-    /* Center the actions and image for better layout */
     td[data-label="Image"] { text-align:center; padding-left:10px; }
     td[data-label="Image"]::before { display:inline-block; position:static; width:auto; margin-right:10px; }
     td[data-label="Actions"] { text-align:center; padding-left:10px; }
