@@ -153,14 +153,35 @@ td img {
                 <td data-label="Image"><img src="<?= $event['image_path'] ?: 'images/events/default.jpg' ?>" alt="Event Image"></td>
                 <td data-label="Popular"><?= $event['is_popular'] ? "Yes" : "No" ?></td>
                 <td data-label="Actions">
-                    <a href="edit_event.php?id=<?= $event['event_id'] ?>" class="action-btn edit">Edit</a>
-                    <a href="delete_event.php?id=<?= $event['event_id'] ?>" class="action-btn delete" onclick="return confirm('Are you sure?')">Delete</a>
-                    <?php if($event['is_popular']): ?>
-                        <a href="toggle_popular.php?id=<?= $event['event_id'] ?>&action=unpopular" class="action-btn unpopular">Unmark</a>
-                    <?php else: ?>
-                        <a href="toggle_popular.php?id=<?= $event['event_id'] ?>&action=popular" class="action-btn popular">Mark Popular</a>
-                    <?php endif; ?>
-                </td>
+
+    <!-- EDIT -->
+    <a href="edit_event.php?id=<?= $event['event_id'] ?>" class="action-btn edit">
+        Edit
+    </a>
+
+    <!-- DELETE -->
+    <form method="POST" style="display:inline;" 
+          onsubmit="return confirm('Are you sure?')">
+        <input type="hidden" name="event_id" value="<?= $event['event_id'] ?>">
+        <input type="hidden" name="action" value="delete">
+        <button class="action-btn delete">Delete</button>
+    </form>
+
+    <!-- POPULAR TOGGLE -->
+    <form method="POST" style="display:inline;">
+        <input type="hidden" name="event_id" value="<?= $event['event_id'] ?>">
+
+        <?php if ($event['is_popular']) { ?>
+            <input type="hidden" name="action" value="unpopular">
+            <button class="action-btn unpopular">Unmark</button>
+        <?php } else { ?>
+            <input type="hidden" name="action" value="popular">
+            <button class="action-btn popular">Mark Popular</button>
+        <?php } ?>
+    </form>
+
+</td>
+
             </tr>
         <?php endforeach; ?>
         </tbody>
