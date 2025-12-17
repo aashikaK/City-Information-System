@@ -2,18 +2,15 @@
 require "db.php";
 include "navbar.php";
 
-
 $username = isset($_SESSION['login']) ? $_SESSION['login'] : '';
 $user_id = null;
 
-// Get user_id from username
 if ($username) {
     $stmt = $pdo->prepare("SELECT id FROM users WHERE username = :uname");
     $stmt->execute([':uname'=>$username]);
-    $user_id = $stmt->fetchColumn(); // returns user id or false
+    $user_id = $stmt->fetchColumn();
 }
 
-// Optional: get filter/sort from GET params
 $filter_city = isset($_GET['city']) ? $_GET['city'] : '';
 $sort_order = isset($_GET['sort']) && $_GET['sort'] == 'desc' ? 'DESC' : 'ASC';
 
@@ -31,11 +28,9 @@ try {
     $stmt->execute($params);
     $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // For filter dropdown, fetch distinct cities
     $city_stmt = $pdo->query("SELECT DISTINCT city FROM events ORDER BY city ASC");
     $cities = $city_stmt->fetchAll(PDO::FETCH_COLUMN);
 
-    // Fetch registered events for logged-in user
     $registered_events = [];
     if ($user_id) {
         $reg_stmt = $pdo->prepare("SELECT event_id FROM user_events WHERE user_id = :uid AND status = 'registered'");
@@ -47,7 +42,6 @@ try {
     echo "Error: " . $e->getMessage();
 }
 ?>
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -66,29 +60,102 @@ body { background:#f4f7fb; }
 .page-header h1 { font-size:2.5rem; }
 
 .filter-sort { display:flex; flex-wrap:wrap; justify-content:center; margin:20px 10px; gap:15px; }
-.filter-sort select, .filter-sort button { padding:8px 12px; font-size:1rem; border-radius:5px; border:1px solid #ccc; }
+.filter-sort select, .filter-sort button {
+    padding:8px 12px;
+    font-size:1rem;
+    border-radius:5px;
+    border:1px solid #ccc;
+}
 
-.events-container { display:grid; grid-template-columns:repeat(auto-fit, minmax(280px,1fr)); gap:20px; width:90%; margin:20px auto; }
-.event-card { background:rgba(200, 218, 233, 1); padding:15px; border-radius:10px; box-shadow:0 4px 8px rgba(0, 0, 0, 0.42); transition:0.3s; }
-.event-card:hover { transform: translateY(-5px); box-shadow:0 6px 12px rgba(0,0,0,0.2); }
+/* UPDATED */
+.events-container {
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(280px,1fr));
+    gap:20px;
+    width:90%;
+    margin:20px auto;
+    justify-items:center;
+}
+
+.event-card {
+    background:rgba(200, 218, 233, 1);
+    padding:15px;
+    border-radius:10px;
+    box-shadow:0 4px 8px rgba(0, 0, 0, 0.42);
+    transition:0.3s;
+    max-width:360px;
+    width:100%;
+}
+
+.event-card:hover {
+    transform: translateY(-5px);
+    box-shadow:0 6px 12px rgba(0,0,0,0.2);
+}
+
 .event-card strong { font-size:1.5rem; color:#222; }
 .event-date { color:#555; font-size:0.95rem; }
 .event-location { font-style:italic; color:#777; font-size:0.9rem; }
-.popular-badge { display:inline-block; background:#ffe082; color:#333; font-weight:bold; padding:3px 6px; border-radius:5px; margin-left:5px; font-size:0.85rem; }
-.event-image { width:100%; height:180px; object-fit:cover; border-radius:10px; margin-bottom:10px; }
-.register-btn { background:#3F84B1; color:white; padding:8px 12px; border:none; border-radius:5px; cursor:pointer; margin-top:10px; }
+
+.popular-badge {
+    display:inline-block;
+    background:#ffe082;
+    color:#333;
+    font-weight:bold;
+    padding:3px 6px;
+    border-radius:5px;
+    margin-left:5px;
+    font-size:0.85rem;
+}
+
+/* UPDATED IMAGE FIX */
+.event-image {
+    width:100%;
+    height:180px;
+    object-fit:contain;
+    object-position:center;
+    background:#e9eef3;
+    border-radius:10px;
+    margin-bottom:10px;
+}
+
+.register-btn {
+    background:#3F84B1;
+    color:white;
+    padding:8px 12px;
+    border:none;
+    border-radius:5px;
+    cursor:pointer;
+    margin-top:10px;
+}
+
 .register-btn:hover { background:#4a90e2; }
-.registered { background:#555; color:white; padding:8px 12px; border-radius:5px; margin-top:10px; display:inline-block; }
 
-.footer { background:#3F84B1; color:white; text-align:center; padding:15px 20px; margin-top:30px; }
+.registered {
+    background:#555;
+    color:white;
+    padding:8px 12px;
+    border-radius:5px;
+    margin-top:10px;
+    display:inline-block;
+}
 
-[data-aos] { opacity: 1 !important; transform: none !important; }
+.footer {
+    background:#3F84B1;
+    color:white;
+    text-align:center;
+    padding:15px 20px;
+    margin-top:30px;
+}
 
-@media(max-width:768px){ .filter-sort { flex-direction:column; align-items:center; } }
+[data-aos] { opacity:1 !important; transform:none !important; }
+
+@media(max-width:768px){
+    .filter-sort { flex-direction:column; align-items:center; }
+}
 </style>
 </head>
-<body>
 
+<body>
 
 <div class="page-header" data-aos="fade-down">
     <h1>All Upcoming Events</h1>
@@ -99,15 +166,17 @@ body { background:#f4f7fb; }
         <select name="city">
             <option value="">All Cities</option>
             <?php foreach($cities as $city): ?>
-                <option value="<?php echo htmlspecialchars($city); ?>" <?php if($filter_city==$city) echo 'selected'; ?>>
-                    <?php echo htmlspecialchars($city); ?>
+                <option value="<?= htmlspecialchars($city) ?>" <?= ($filter_city==$city)?'selected':'' ?>>
+                    <?= htmlspecialchars($city) ?>
                 </option>
             <?php endforeach; ?>
         </select>
+
         <select name="sort">
-            <option value="asc" <?php if($sort_order=='ASC') echo 'selected'; ?>>Earliest First</option>
-            <option value="desc" <?php if($sort_order=='DESC') echo 'selected'; ?>>Latest First</option>
+            <option value="asc" <?= ($sort_order=='ASC')?'selected':'' ?>>Earliest First</option>
+            <option value="desc" <?= ($sort_order=='DESC')?'selected':'' ?>>Latest First</option>
         </select>
+
         <button type="submit">Apply</button>
     </form>
 </div>
@@ -118,27 +187,25 @@ if ($events) {
     $delay = 0;
     foreach ($events as $event) {
         echo "<div class='event-card' data-aos='fade-up' data-aos-delay='{$delay}'>";
-        // Event image
+
         $img_path = !empty($event['image_path']) ? htmlspecialchars($event['image_path']) : 'images/events/default.jpg';
         echo "<img src='{$img_path}' class='event-image' alt='Event Image'>";
-        // Name & popular badge
+
         echo "<strong>" . htmlspecialchars($event['event_name']) . "</strong>";
         if ($event['is_popular']) echo "<span class='popular-badge'>Popular</span>";
-        // Date & location
+
         echo "<div class='event-date'>" . date("d M Y", strtotime($event['event_date'])) . "</div>";
         echo "<div class='event-location'>📍 " . htmlspecialchars($event['city']) . " - " . htmlspecialchars($event['location']) . "</div>";
-        // Description
         echo "<p>" . htmlspecialchars($event['description']) . "</p>";
 
-        // Register button for logged-in users
         if ($user_id) {
             if (in_array($event['event_id'], $registered_events)) {
                 echo "<div class='registered'>Registered</div>";
             } else {
-                echo "<form method='POST' action='register_event.php'>";
-                echo "<input type='hidden' name='event_id' value='{$event['event_id']}'>";
-                echo "<button type='submit' class='register-btn'>Register</button>";
-                echo "</form>";
+                echo "<form method='POST' action='register_event.php'>
+                        <input type='hidden' name='event_id' value='{$event['event_id']}'>
+                        <button type='submit' class='register-btn'>Register</button>
+                      </form>";
             }
         }
 
@@ -146,7 +213,7 @@ if ($events) {
         $delay += 100;
     }
 } else {
-    echo "<p style='text-align:center; color:#777;'>No upcoming events found.</p>";
+    echo "<p style='text-align:center;color:#777;'>No upcoming events found.</p>";
 }
 ?>
 </div>
@@ -157,8 +224,8 @@ if ($events) {
 
 <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
 <script>
-  AOS.init({ duration:800, once:true });
-  window.addEventListener('load', AOS.refresh);
+AOS.init({ duration:800, once:true });
+window.addEventListener('load', AOS.refresh);
 </script>
 
 </body>

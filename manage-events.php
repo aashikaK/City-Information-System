@@ -9,6 +9,35 @@ if (!isset($_SESSION['admin']) || $_SESSION['admin'] == '') {
 
 $stmt = $pdo->query("SELECT * FROM events ORDER BY event_date ASC");
 $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Handling delete and mark
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+    $event_id = (int)$_POST['event_id'];
+    $action = $_POST['action'];
+
+    // DELETE
+    if ($action === 'delete') {
+        $stmt = $pdo->prepare("DELETE FROM events WHERE event_id = ?");
+        $stmt->execute([$event_id]);
+    }
+
+    // MARK POPULAR
+    if ($action === 'popular') {
+        $stmt = $pdo->prepare("UPDATE events SET is_popular = 1 WHERE event_id = ?");
+        $stmt->execute([$event_id]);
+    }
+
+    // UNMARK POPULAR
+    if ($action === 'unpopular') {
+        $stmt = $pdo->prepare("UPDATE events SET is_popular = 0 WHERE event_id = ?");
+        $stmt->execute([$event_id]);
+    }
+
+    header("Location: manage-events.php");
+    exit;
+}
+
 ?>
 
 <!DOCTYPE html>
