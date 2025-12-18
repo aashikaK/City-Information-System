@@ -1,17 +1,17 @@
 <?php
-session_start();
 
-// Protect admin pages
+include "admin-navbar.php";
+
+
 if(!isset($_SESSION['admin']) || $_SESSION['admin'] == ''){
     header("Location: admin_login.php");
     exit;
 }
 
 require "db.php";
-include "navbar.php";
 
 try {
-    // Fetch all popular events
+    
     $sql = "SELECT * FROM events WHERE is_popular = 1 ORDER BY event_date ASC";
     $stmt = $pdo->query($sql);
     $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
