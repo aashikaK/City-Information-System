@@ -25,8 +25,9 @@ if (isset($_GET['action'], $_GET['id'])) {
     exit;
 }
 
-/* FETCH USERS */
-$stmt = $pdo->query("SELECT id, username, email, role, status FROM users");
+/* Fetch Admins */
+$stmt = $pdo->prepare("SELECT id, username, email, role, status FROM users WHERE role=?");
+$stmt->execute(['admin']);
 $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
