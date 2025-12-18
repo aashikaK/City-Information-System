@@ -19,13 +19,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $contact_info = $_POST['contact_info'];
 
     // Image upload (optional)
-    $image_path = '';
-    if (isset($_FILES['image']) && $_FILES['image']['name'] != '') {
-        $upload_dir = "images/tourism/";
-        if (!is_dir($upload_dir)) { mkdir($upload_dir, 0777, true); }
-        $image_path = $upload_dir . time() . "_" . basename($_FILES['image']['name']);
-        move_uploaded_file($_FILES['image']['tmp_name'], $image_path);
+    // Image upload (optional)
+$image_path = '';
+if (isset($_FILES['image']) && $_FILES['image']['name'] != '') {
+
+    // Make city folder inside tourism (replace spaces with underscores)
+    $city_folder = preg_replace('/\s+/', '_', strtolower($city));
+    $upload_dir = "images/tourism/$city_folder/";
+
+    // Create folder if it doesn't exist
+    if (!is_dir($upload_dir)) {
+        mkdir($upload_dir, 0777, true);
     }
+
+    // Save the image
+    $image_path = $upload_dir . time() . "_" . basename($_FILES['image']['name']);
+    move_uploaded_file($_FILES['image']['tmp_name'], $image_path);
+}
+
 
     $stmt = $pdo->prepare("
         INSERT INTO tourism (city, place_name, category, description, population, area, contact_info, image, status)
