@@ -7,7 +7,6 @@ if (!isset($_SESSION['admin']) || $_SESSION['admin'] == '') {
     exit;
 }
 
-// 1️⃣ Get event ID from URL
 if (!isset($_GET['id'])) {
     header("Location: manage-events.php");
     exit;
@@ -15,7 +14,6 @@ if (!isset($_GET['id'])) {
 
 $event_id = (int)$_GET['id'];
 
-// 2️⃣ Fetch existing event data
 $stmt = $pdo->prepare("SELECT * FROM events WHERE event_id = ?");
 $stmt->execute([$event_id]);
 $event = $stmt->fetch(PDO::FETCH_ASSOC);
