@@ -7,8 +7,6 @@ if (!isset($_SESSION['admin']) || $_SESSION['admin'] == '') {
     exit;
 }
 
-$stmt = $pdo->query("SELECT * FROM events ORDER BY event_date ASC");
-$events = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Handling delete and mark
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -37,6 +35,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     header("Location: manage-events.php");
     exit;
 }
+
+$stmt = $pdo->query("SELECT * FROM events ORDER BY event_date ASC");
+$events = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 ?>
 
