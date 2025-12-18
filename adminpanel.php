@@ -151,7 +151,7 @@ body { background:#f4f7fb; }
             <i class="fas fa-star"></i>
             <h2><?php echo $popularEventsCount; ?></h2>
             Popular Events
-            <a href="manage-events.php">View Popular</a>
+            <a href="popular-events.php">View Popular</a>
         </div>
 
         <div class="card">
