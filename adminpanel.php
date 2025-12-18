@@ -137,7 +137,7 @@ body { background:#f4f7fb; }
             <i class="fas fa-user-shield"></i>
             <h2><?php echo $adminsCount; ?></h2>
             Admins
-            <a href="manage-users.php">Manage Admins</a>
+            <a href="manage-admins.php">Manage Admins</a>
         </div>
 
         <div class="card">
