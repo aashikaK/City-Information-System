@@ -1,5 +1,5 @@
 <?php
- include "admin-navbar.php"; 
+ include "navbar.php"; 
 
 // Protect admin pages
 if (!isset($_SESSION['admin']) || $_SESSION['admin'] == '') {

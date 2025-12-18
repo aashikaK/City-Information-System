@@ -1,42 +1,20 @@
 <?php
+session_start();
+
+// Protect admin pages
+if(!isset($_SESSION['admin']) || $_SESSION['admin'] == ''){
+    header("Location: admin_login.php");
+    exit;
+}
+
 require "db.php";
 include "navbar.php";
 
-$username = isset($_SESSION['login']) ? $_SESSION['login'] : '';
-$user_id = null;
-
-if ($username) {
-    $stmt = $pdo->prepare("SELECT id FROM users WHERE username = :uname");
-    $stmt->execute([':uname'=>$username]);
-    $user_id = $stmt->fetchColumn();
-}
-
-$filter_city = isset($_GET['city']) ? $_GET['city'] : '';
-$sort_order = isset($_GET['sort']) && $_GET['sort'] == 'desc' ? 'DESC' : 'ASC';
-
 try {
-    $sql = "SELECT * FROM events WHERE event_date >= CURDATE()";
-    $params = [];
-
-    if ($filter_city != '') {
-        $sql .= " AND city = :city";
-        $params[':city'] = $filter_city;
-    }
-
-    $sql .= " ORDER BY event_date $sort_order";
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute($params);
+    // Fetch all popular events
+    $sql = "SELECT * FROM events WHERE is_popular = 1 ORDER BY event_date ASC";
+    $stmt = $pdo->query($sql);
     $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-    $city_stmt = $pdo->query("SELECT DISTINCT city FROM events ORDER BY city ASC");
-    $cities = $city_stmt->fetchAll(PDO::FETCH_COLUMN);
-
-    $registered_events = [];
-    if ($user_id) {
-        $reg_stmt = $pdo->prepare("SELECT event_id FROM user_events WHERE user_id = :uid AND status = 'registered'");
-        $reg_stmt->execute([':uid'=>$user_id]);
-        $registered_events = $reg_stmt->fetchAll(PDO::FETCH_COLUMN);
-    }
 
 } catch (PDOException $e) {
     echo "Error: " . $e->getMessage();
@@ -48,9 +26,8 @@ try {
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Events - City Information System</title>
+<title>Admin - Popular Events</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css"/>
-<link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
 
 <style>
 * { margin:0; padding:0; box-sizing:border-box; font-family:"Segoe UI", Arial, sans-serif; }
@@ -59,15 +36,6 @@ body { background:#f4f7fb; }
 .page-header { background:#3F84B1; color:white; padding:40px 20px; text-align:center; }
 .page-header h1 { font-size:2.5rem; }
 
-.filter-sort { display:flex; flex-wrap:wrap; justify-content:center; margin:20px 10px; gap:15px; }
-.filter-sort select, .filter-sort button {
-    padding:8px 12px;
-    font-size:1rem;
-    border-radius:5px;
-    border:1px solid #ccc;
-}
-
-/* UPDATED */
 .events-container {
     display:grid;
     grid-template-columns:repeat(auto-fit, minmax(280px,1fr));
@@ -81,7 +49,7 @@ body { background:#f4f7fb; }
     background:rgba(200, 218, 233, 1);
     padding:15px;
     border-radius:10px;
-    box-shadow:0 4px 8px rgba(0, 0, 0, 0.42);
+    box-shadow:0 4px 8px rgba(0,0,0,0.42);
     transition:0.3s;
     max-width:360px;
     width:100%;
@@ -107,36 +75,13 @@ body { background:#f4f7fb; }
     font-size:0.85rem;
 }
 
-/* UPDATED IMAGE FIX */
 .event-image {
     width:100%;
     height:180px;
     object-fit:contain;
-    object-position:center;
     background:#e9eef3;
     border-radius:10px;
     margin-bottom:10px;
-}
-
-.register-btn {
-    background:#3F84B1;
-    color:white;
-    padding:8px 12px;
-    border:none;
-    border-radius:5px;
-    cursor:pointer;
-    margin-top:10px;
-}
-
-.register-btn:hover { background:#4a90e2; }
-
-.registered {
-    background:#555;
-    color:white;
-    padding:8px 12px;
-    border-radius:5px;
-    margin-top:10px;
-    display:inline-block;
 }
 
 .footer {
@@ -146,74 +91,35 @@ body { background:#f4f7fb; }
     padding:15px 20px;
     margin-top:30px;
 }
-
-[data-aos] { opacity:1 !important; transform:none !important; }
-
-@media(max-width:768px){
-    .filter-sort { flex-direction:column; align-items:center; }
-}
 </style>
 </head>
-
 <body>
 
-<div class="page-header" data-aos="fade-down">
-    <h1>All Upcoming Events</h1>
-</div>
-
-<div class="filter-sort">
-    <form method="GET" action="events.php">
-        <select name="city">
-            <option value="">All Cities</option>
-            <?php foreach($cities as $city): ?>
-                <option value="<?= htmlspecialchars($city) ?>" <?= ($filter_city==$city)?'selected':'' ?>>
-                    <?= htmlspecialchars($city) ?>
-                </option>
-            <?php endforeach; ?>
-        </select>
-
-        <select name="sort">
-            <option value="asc" <?= ($sort_order=='ASC')?'selected':'' ?>>Earliest First</option>
-            <option value="desc" <?= ($sort_order=='DESC')?'selected':'' ?>>Latest First</option>
-        </select>
-
-        <button type="submit">Apply</button>
-    </form>
+<div class="page-header">
+    <h1>Popular Events</h1>
 </div>
 
 <div class="events-container">
 <?php
 if ($events) {
-    $delay = 0;
     foreach ($events as $event) {
-        echo "<div class='event-card' data-aos='fade-up' data-aos-delay='{$delay}'>";
+        echo "<div class='event-card'>";
 
-        $img_path = !empty($event['image_path']) ? htmlspecialchars($event['image_path']) : 'images/events/default.jpg';
-        echo "<img src='{$img_path}' class='event-image' alt='Event Image'>";
+        $img_path = !empty($event['image_path'])
+            ? htmlspecialchars($event['image_path'])
+            : 'images/events/default.jpg';
 
+        echo "<img src='{$img_path}' class='event-image'>";
         echo "<strong>" . htmlspecialchars($event['event_name']) . "</strong>";
-        if ($event['is_popular']) echo "<span class='popular-badge'>Popular</span>";
+        echo "<span class='popular-badge'>Popular</span>";
 
         echo "<div class='event-date'>" . date("d M Y", strtotime($event['event_date'])) . "</div>";
-        echo "<div class='event-location'>📍 " . htmlspecialchars($event['city']) . " - " . htmlspecialchars($event['location']) . "</div>";
+        echo "<div class='event-location'>📍 " . htmlspecialchars($event['city']) .
+             " - " . htmlspecialchars($event['location']) . "</div>";
         echo "<p>" . htmlspecialchars($event['description']) . "</p>";
 
-        if ($user_id) {
-            if (in_array($event['event_id'], $registered_events)) {
-                echo "<div class='registered'>Registered</div>";
-            } else {
-                echo "<form method='POST' action='register_event.php'>
-                        <input type='hidden' name='event_id' value='{$event['event_id']}'>
-                        <button type='submit' class='register-btn'>Register</button>
-                      </form>";
-            }
-        }
-
         echo "</div>";
-        $delay += 100;
     }
-} else {
-    echo "<p style='text-align:center;color:#777;'>No upcoming events found.</p>";
 }
 ?>
 </div>
@@ -221,12 +127,6 @@ if ($events) {
 <div class="footer">
     &copy; 2025 City Information System. All rights reserved.
 </div>
-
-<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
-<script>
-AOS.init({ duration:800, once:true });
-window.addEventListener('load', AOS.refresh);
-</script>
 
 </body>
 </html>
