@@ -23,7 +23,6 @@ if (!$event) {
     exit;
 }
 
-// 3️⃣ Handle update
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $name = $_POST['event_name'];
