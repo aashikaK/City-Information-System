@@ -1,5 +1,5 @@
 <?php
-include "admin-navbar.php";
+session_start();
 
 // Protect admin pages
 if(!isset($_SESSION['admin']) || $_SESSION['admin'] == ''){
@@ -8,6 +8,7 @@ if(!isset($_SESSION['admin']) || $_SESSION['admin'] == ''){
 }
 
 require "db.php";
+include "admin-navbar.php";
 
 // Handle DELETE
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -34,7 +35,7 @@ $categories = $cat_stmt->fetchAll(PDO::FETCH_COLUMN);
 $city_stmt = $pdo->query("SELECT DISTINCT city FROM city_services ORDER BY city ASC");
 $cities = $city_stmt->fetchAll(PDO::FETCH_COLUMN);
 
-// Fetch services
+// Fetch services with filters
 $sql = "SELECT * FROM city_services WHERE 1";
 $params = [];
 
@@ -48,7 +49,8 @@ if($selected_city){
     $params[':city'] = $selected_city;
 }
 
-$sql .= " ORDER BY category ASC, city ASC";
+// Order by city ascending
+$sql .= " ORDER BY city ASC";
 $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $services = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -70,8 +72,11 @@ h2 { text-align:center; color:#4a90e2; margin-bottom:20px; }
 .add-btn { display:inline-block; margin-bottom:15px; padding:8px 15px; background:#4a90e2; color:white; border-radius:8px; text-decoration:none; font-size:1rem; }
 .add-btn:hover { background:#357ab8; }
 
+/* Filters */
 .filter-section { margin-bottom:20px; text-align:center; }
 .filter-section select { padding:8px 12px; border-radius:5px; border:1px solid #ccc; font-size:1rem; margin:0 5px; }
+.filter-section button { padding:8px 12px; border-radius:5px; border:none; background:#4a90e2; color:white; cursor:pointer; font-size:1rem; }
+.filter-section button:hover { background:#357ab8; }
 
 table { width:100%; border-collapse:collapse; }
 th, td { padding:12px; border-bottom:1px solid #ddd; text-align:center; }
@@ -100,7 +105,7 @@ td img { max-width:80px; height:auto; border-radius:4px; vertical-align:middle; 
     <!-- Filters -->
     <div class="filter-section">
         <form method="GET" action="manage-services.php">
-            <select name="category" onchange="this.form.submit()">
+            <select name="category">
                 <option value="">All Categories</option>
                 <?php foreach($categories as $cat): ?>
                     <option value="<?= htmlspecialchars($cat) ?>" <?= $selected_category==$cat?'selected':'' ?>>
@@ -109,7 +114,7 @@ td img { max-width:80px; height:auto; border-radius:4px; vertical-align:middle; 
                 <?php endforeach; ?>
             </select>
 
-            <select name="city" onchange="this.form.submit()">
+            <select name="city">
                 <option value="">All Cities</option>
                 <?php foreach($cities as $city): ?>
                     <option value="<?= htmlspecialchars($city) ?>" <?= $selected_city==$city?'selected':'' ?>>
@@ -117,6 +122,8 @@ td img { max-width:80px; height:auto; border-radius:4px; vertical-align:middle; 
                     </option>
                 <?php endforeach; ?>
             </select>
+
+            <button type="submit"></i>Filter</button>
         </form>
     </div>
 
