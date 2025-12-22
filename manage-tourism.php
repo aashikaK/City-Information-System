@@ -20,8 +20,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exit;
 }
 
-// Fetch all tourism places
-$stmt = $pdo->query("SELECT * FROM tourism ORDER BY city ASC;");
+// Fetch distinct cities and categories for filter dropdown
+$city_stmt = $pdo->query("SELECT DISTINCT city FROM tourism ORDER BY city ASC");
+$cities = $city_stmt->fetchAll(PDO::FETCH_COLUMN);
+
+$cat_stmt = $pdo->query("SELECT DISTINCT category FROM tourism ORDER BY category ASC");
+$categories = $cat_stmt->fetchAll(PDO::FETCH_COLUMN);
+
+$filter_city = isset($_GET['city']) ? $_GET['city'] : '';
+$filter_category = isset($_GET['category']) ? $_GET['category'] : '';
+
+// Fetch all tourism places with optional filters
+$sql = "SELECT * FROM tourism WHERE 1=1";
+$params = [];
+
+if ($filter_city != '') {
+    $sql .= " AND city=:city";
+    $params[':city'] = $filter_city;
+}
+
+if ($filter_category != '') {
+    $sql .= " AND category=:category";
+    $params[':category'] = $filter_category;
+}
+
+$sql .= " ORDER BY city ASC;";
+$stmt = $pdo->prepare($sql);
+$stmt->execute($params);
 $places = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
@@ -50,6 +75,11 @@ td img { max-width:80px; height:auto; border-radius:4px; vertical-align:middle; 
 .delete { background:red; }
 .action-btn:hover { opacity:0.9; }
 
+.filter-form { text-align:center; margin-bottom:15px; }
+.filter-form select { padding:6px 10px; margin-right:10px; border-radius:6px; border:1px solid #ccc; }
+.filter-form button { padding:6px 12px; border:none; border-radius:6px; background:#4a90e2; color:white; cursor:pointer; }
+.filter-form button:hover { background:#357ab8; }
+
 @media (max-width:768px){
     table, thead, tbody, th, td, tr { display:block; }
     th { display:none; }
@@ -64,6 +94,25 @@ td img { max-width:80px; height:auto; border-radius:4px; vertical-align:middle; 
 <div class="container">
     <h2>Manage Tourism Places</h2>
     <a href="add_tourism.php" class="add-btn"><i class="fas fa-plus"></i> Add Place</a>
+
+    <!-- Filter Form -->
+    <form method="GET" class="filter-form">
+        <select name="city">
+            <option value="">All Cities</option>
+            <?php foreach($cities as $city): ?>
+                <option value="<?= htmlspecialchars($city) ?>" <?= $filter_city==$city?'selected':'' ?>><?= htmlspecialchars($city) ?></option>
+            <?php endforeach; ?>
+        </select>
+
+        <select name="category">
+            <option value="">All Categories</option>
+            <?php foreach($categories as $cat): ?>
+                <option value="<?= htmlspecialchars($cat) ?>" <?= $filter_category==$cat?'selected':'' ?>><?= htmlspecialchars($cat) ?></option>
+            <?php endforeach; ?>
+        </select>
+
+        <button type="submit">Filter</button>
+    </form>
 
     <table>
         <thead>
