@@ -21,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 // Fetch all tourism places
-$stmt = $pdo->query("SELECT * FROM tourism");
+$stmt = $pdo->query("SELECT * FROM tourism ORDER BY city ASC;");
 $places = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 

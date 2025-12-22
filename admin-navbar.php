@@ -89,7 +89,7 @@ body { background:#f4f7fb; } /* light gray */
 <div class="top-header">
     <ul>
         <li><a href="/CIS/index.php"><i class="fas fa-home"></i> Home</a></li>
-        <li><a href="/CIS/adminpanel.php"><i class="fas fa-user-shield"></i> Admin Panel</a></li>
+        <!-- <li><a href="/CIS/adminpanel.php"><i class="fas fa-user-shield"></i> Admin Panel</a></li> -->
     </ul>
     <ul>
         <li>Welcome Admin:</li>
