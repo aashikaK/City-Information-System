@@ -46,12 +46,11 @@ $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <style>
 * { margin:0; padding:0; box-sizing:border-box; font-family:"Segoe UI", Arial, sans-serif; }
 body { background:#f4f7fb; }
-
 .page-header { background:#3F84B1; color:white; padding:40px 20px; text-align:center; }
 .page-header h1 { font-size:2.5rem; }
-
-.events-container { display:grid; grid-template-columns:repeat(auto-fit, minmax(280px,1fr)); gap:20px; width:90%; margin:20px auto; }
-.event-card { background:rgba(200, 218, 233, 1); padding:15px; border-radius:10px; box-shadow:0 4px 8px rgba(0, 0, 0, 0.42); transition:0.3s; }
+.events-container { display:grid; grid-template-columns:repeat(auto-fit, minmax(280px,1fr)); gap:20px; width:90%; margin:20px auto; justify-items:center; }
+.event-card { background:rgba(200, 218, 233, 1); padding:15px; border-radius:10px; box-shadow:0 4px 8px rgba(0, 0, 0, 0.42); transition:0.3s;max-width:360px;
+    width:100%; }
 .event-card:hover { transform: translateY(-5px); box-shadow:0 6px 12px rgba(0,0,0,0.2); }
 .event-card strong { font-size:1.5rem; color:#222; }
 .event-date { color:#555; font-size:0.95rem; }
@@ -61,14 +60,16 @@ body { background:#f4f7fb; }
 .register-btn, .save-btn { background:#3F84B1; color:white; padding:6px 12px; border:none; border-radius:5px; cursor:pointer; margin-top:10px; }
 .register-btn:hover, .save-btn:hover { background:#4a90e2; }
 .registered, .cancelled { background:#555; color:white; padding:8px 12px; border-radius:5px; margin-top:10px; display:inline-block; }
-
 textarea, input[type=number] { width:100%; padding:6px; margin-top:5px; border-radius:5px; border:1px solid #ccc; resize:none; }
-
 .footer { background:#3F84B1; color:white; text-align:center; padding:15px 20px; margin-top:30px; }
 
 [data-aos] { opacity: 1 !important; transform: none !important; }
 
-@media(max-width:768px){ .events-container { grid-template-columns:1fr; } }
+@media(max-width:768px){ 
+.events-container { 
+grid-template-columns:1fr;
+ } 
+ }
 </style>
 </head>
 <body>

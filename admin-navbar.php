@@ -107,7 +107,7 @@ body { background:#f4f7fb; } /* light gray */
     <span class="menu-toggle" onclick="toggleMenu()">☰</span>
 
     <ul id="menu">
-        <li><a href="adminpanel.php">AdminPanel</a></li>
+        <li><a href="adminpanel.php">Dashboard</a></li>
         <li><a href="manage-users.php">Users</a></li>
         <li><a href="manage-events.php">Events</a></li>
         <li><a href="manage-tourism.php">Tourism</a></li>
