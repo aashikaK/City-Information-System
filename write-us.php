@@ -1,19 +1,18 @@
 <?php
 include "navbar.php";
-include "db.php";   // your DB connection file
+include "db.php";   
 
-// redirect if not logged in
 if(!isset($_SESSION['login']) || $_SESSION['login'] == ''){
     header("Location: signin.php");
     exit;
 }
 
-// message feedback
+
 $success = "";
 $error = "";
 
-// ================= FORM PROCESS =================
 if(isset($_POST['submit'])){
+    $user_id  = $_SESSION['user_id'];
     $username = $_SESSION['login'];
     $email    = trim($_POST['email']);
     $subject  = trim($_POST['subject']);
@@ -22,15 +21,19 @@ if(isset($_POST['submit'])){
     if($email == "" || $subject == "" || $message == ""){
         $error = "All fields are required!";
     } else {
+$sql = "INSERT INTO write_us
+        (user_id, username, email, subject, message)
+        VALUES (?, ?, ?, ?, ?)";
 
-        $sql = "INSERT INTO write_us(username,email,subject,message)
-                VALUES(:username,:email,:subject,:message)";
+$query = $dbh->prepare($sql);
 
-        $query = $dbh->prepare($sql);
-        $query->bindParam(':username',$username,PDO::PARAM_STR);
-        $query->bindParam(':email',$email,PDO::PARAM_STR);
-        $query->bindParam(':subject',$subject,PDO::PARAM_STR);
-        $query->bindParam(':message',$message,PDO::PARAM_STR);
+$query->execute([
+    $user_id,
+    $username,
+    $email,
+    $subject,
+    $message
+]);
 
         if($query->execute()){
             $success = "Your message has been sent successfully!";
@@ -39,6 +42,8 @@ if(isset($_POST['submit'])){
         }
     }
 }
+
+
 ?>
 
 <!DOCTYPE html>
