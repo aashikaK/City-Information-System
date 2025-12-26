@@ -7,27 +7,30 @@ if(!isset($_SESSION['login']) || $_SESSION['login'] == ''){
     exit;
 }
 
-
 $success = "";
 $error = "";
 
+// Fetch username and email from users table
+$user_id = $_SESSION['user_id'];
+$sqlUser = "SELECT username, email FROM users WHERE id = ?";
+$stmtUser = $dbh->prepare($sqlUser);
+$stmtUser->execute([$user_id]);
+$userData = $stmtUser->fetch(PDO::FETCH_ASSOC);
+
+$username = $userData['username'];
+$email = $userData['email'];
+
 if(isset($_POST['submit'])){
-    $user_id  = $_SESSION['user_id'];
-    $username = $_SESSION['login'];
-    $email    = trim($_POST['email']);
     $subject  = trim($_POST['subject']);
     $message  = trim($_POST['message']);
 
-    if($email == "" || $subject == "" || $message == ""){
+    if($subject == "" || $message == ""){
         $error = "All fields are required!";
     } else {
-
         $sql = "INSERT INTO write_us
                 (user_id, username, email, subject, message)
                 VALUES (?, ?, ?, ?, ?)";
-
         $query = $dbh->prepare($sql);
-
         $result = $query->execute([
             $user_id,
             $username,
@@ -43,10 +46,8 @@ if(isset($_POST['submit'])){
         }
     }
 }
-
-
-
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -145,14 +146,15 @@ body { background:#f4f7fb; }
 
         <form method="post">
             <div class="form-group">
-                <label>Your Name</label>
-                <input type="text" value="<?php echo htmlentities($_SESSION['login']); ?>" readonly>
-            </div>
+    <label>Your Name</label>
+    <input type="text" value="<?php echo htmlentities($username); ?>" readonly>
+</div>
 
-            <div class="form-group">
-                <label>Email</label>
-                <input type="email" name="email" required>
-            </div>
+<div class="form-group">
+    <label>Email</label>
+    <input type="email" value="<?php echo htmlentities($email); ?>" readonly>
+</div>
+
 
             <div class="form-group">
                 <label>Subject</label>
