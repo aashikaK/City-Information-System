@@ -21,27 +21,29 @@ if(isset($_POST['submit'])){
     if($email == "" || $subject == "" || $message == ""){
         $error = "All fields are required!";
     } else {
-$sql = "INSERT INTO write_us
-        (user_id, username, email, subject, message)
-        VALUES (?, ?, ?, ?, ?)";
 
-$query = $dbh->prepare($sql);
+        $sql = "INSERT INTO write_us
+                (user_id, username, email, subject, message)
+                VALUES (?, ?, ?, ?, ?)";
 
-$query->execute([
-    $user_id,
-    $username,
-    $email,
-    $subject,
-    $message
-]);
+        $query = $dbh->prepare($sql);
 
-        if($query->execute()){
+        $result = $query->execute([
+            $user_id,
+            $username,
+            $email,
+            $subject,
+            $message
+        ]);
+
+        if($result){
             $success = "Your message has been sent successfully!";
         } else {
             $error = "Something went wrong. Please try again.";
         }
     }
 }
+
 
 
 ?>
