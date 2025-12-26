@@ -2,6 +2,7 @@
 include "navbar.php";
 include "db.php";   
 
+// --- Redirect if not logged in ---
 if(!isset($_SESSION['login']) || $_SESSION['login'] == ''){
     header("Location: signin.php");
     exit;
@@ -11,15 +12,17 @@ $success = "";
 $error = "";
 
 // Fetch username and email from users table
-$user_id = $_SESSION['user_id'];
-$sqlUser = "SELECT username, email FROM users WHERE id = ?";
-$stmtUser = $dbh->prepare($sqlUser);
-$stmtUser->execute([$user_id]);
+$username = $_SESSION['login'];
+$sqlUser = "SELECT id, email FROM users WHERE username=?";
+$stmtUser = $pdo->prepare($sqlUser);
+$stmtUser->execute([$username]);
 $userData = $stmtUser->fetch(PDO::FETCH_ASSOC);
 
-$username = $userData['username'];
-$email = $userData['email'];
+    $userid = $userData['id'];
+    $email    = $userData['email'];
 
+
+// Handle form submission
 if(isset($_POST['submit'])){
     $subject  = trim($_POST['subject']);
     $message  = trim($_POST['message']);
@@ -27,17 +30,9 @@ if(isset($_POST['submit'])){
     if($subject == "" || $message == ""){
         $error = "All fields are required!";
     } else {
-        $sql = "INSERT INTO write_us
-                (user_id, username, email, subject, message)
-                VALUES (?, ?, ?, ?, ?)";
-        $query = $dbh->prepare($sql);
-        $result = $query->execute([
-            $user_id,
-            $username,
-            $email,
-            $subject,
-            $message
-        ]);
+        $sql = "INSERT INTO write_us (user_id, username, email, subject, message) VALUES (?, ?, ?, ?, ?)";
+        $query = $pdo->prepare($sql);
+        $result = $query->execute([$userid, $username, $email, $subject, $message]);
 
         if($result){
             $success = "Your message has been sent successfully!";
@@ -146,15 +141,14 @@ body { background:#f4f7fb; }
 
         <form method="post">
             <div class="form-group">
-    <label>Your Name</label>
-    <input type="text" value="<?php echo htmlentities($username); ?>" readonly>
-</div>
+                <label>Your Name</label>
+                <input type="text" name="username" value="<?php echo htmlentities($username); ?>" readonly>
+            </div>
 
-<div class="form-group">
-    <label>Email</label>
-    <input type="email" value="<?php echo htmlentities($email); ?>" readonly>
-</div>
-
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" name="email" value="<?php echo htmlentities($email); ?>" readonly>
+            </div>
 
             <div class="form-group">
                 <label>Subject</label>
