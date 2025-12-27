@@ -1,5 +1,5 @@
 <?php
-include "admin-navbar.php";  // your admin navbar already starts session
+include "admin-navbar.php";  
 require "db.php";
 
 // Fetch all messages from write_us table
@@ -18,7 +18,7 @@ $messages = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 <style>
 * { margin:0; padding:0; box-sizing:border-box; font-family:"Segoe UI", Arial, sans-serif; }
-body { background:#f4f7fb; padding:20px; }
+body { background:#f4f7fb;  }
 
 h2 { text-align:center; margin-bottom:25px; color:#4a90e2; }
 
