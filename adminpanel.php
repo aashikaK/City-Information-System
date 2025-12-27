@@ -22,8 +22,7 @@ $pendingBookingsCount = $pdo->query("SELECT COUNT(*) FROM bookings WHERE status=
 $tourismCount = $pdo->query("SELECT COUNT(*) FROM tourism")->fetchColumn();
 $servicesCount = $pdo->query("SELECT COUNT(*) FROM city_services")->fetchColumn();
 
-$writeUsCount = $pdo->query("SELECT COUNT(*) FROM write_us")->fetchColumn();
-$pendingMessagesCount = $pdo->query("SELECT COUNT(*) FROM write_us WHERE status='new'")->fetchColumn();
+$writeUsCount = $pdo->query("SELECT COUNT(*) FROM write_us WHERE status='new'")->fetchColumn();
 
 
 
@@ -208,12 +207,6 @@ body { background:#f4f7fb; }
     <a href="manage-messages.php">View Messages</a>
 </div>
 
-<div class="card">
-    <i class="fas fa-envelope-open"></i>
-    <h2><?php echo $pendingMessagesCount; ?></h2>
-    Pending Messages
-    <a href="manage-messages.php">View Pending</a>
-</div>
 
     </div>
 </div>
