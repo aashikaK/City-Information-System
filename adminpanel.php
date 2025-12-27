@@ -209,6 +209,12 @@ body { background:#f4f7fb; }
 </div>
 
 
+<div class="card">
+    <i class="fas fa-envelope-open"></i>
+    <h2><?php echo $pendingMessagesCount; ?></h2>
+    Pending Messages
+    <a href="manage-messages.php">View Pending</a>
+</div>
     </div>
 </div>
 
