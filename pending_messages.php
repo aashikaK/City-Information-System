@@ -3,18 +3,7 @@ include "admin-navbar.php";
 require "db.php";
 
 /* -------------------------------------------------
-   1. Convert NEW → PENDING
-   ONLY when NOT opened from dashboard
--------------------------------------------------- */
-if (!isset($_GET['from'])) {
-    $stmt = $pdo->prepare(
-        "UPDATE write_us SET status='pending' WHERE status='new'"
-    );
-    $stmt->execute();
-}
-
-/* -------------------------------------------------
-   2. Handle manual status update
+   Handle manual status update
 -------------------------------------------------- */
 if (isset($_POST['update_status'])) {
 
@@ -28,32 +17,27 @@ if (isset($_POST['update_status'])) {
         $new_status = 'pending';
     }
 
-    $stmt = $pdo->prepare(
-        "UPDATE write_us SET status=? WHERE id=?"
-    );
+    $stmt = $pdo->prepare("UPDATE write_us SET status=? WHERE id=?");
     $stmt->execute([$new_status, $msg_id]);
 
-    header("Location: manage-messages.php");
+    header("Location: pending_messages.php");
     exit;
 }
 
 /* -------------------------------------------------
-   3. Fetch messages
+   Fetch only pending messages
 -------------------------------------------------- */
-$stmt = $pdo->query(
-    "SELECT * FROM write_us ORDER BY created_at DESC"
-);
+$stmt = $pdo->query("SELECT * FROM write_us WHERE status='pending' ORDER BY created_at DESC");
 $messages = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Manage Messages</title>
+<title>Pending Messages</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<link rel="stylesheet"
- href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:"Segoe UI",Arial;}
@@ -80,34 +64,9 @@ th{
 }
 tr:hover{background:#f1f1f1;}
 
-.status-new{
-    background:#dc3545;
-    color:white;
-    padding:4px 8px;
-    border-radius:6px;
-    font-weight:bold;
-}
-.status-pending{
-    background:#ffc107;
-    color:#212529;
-    padding:4px 8px;
-    border-radius:6px;
-    font-weight:bold;
-}
-.status-read{
-    background:#28a745;
-    color:white;
-    padding:4px 8px;
-    border-radius:6px;
-    font-weight:bold;
-}
-.status-replied{
-    background:#007bff;
-    color:white;
-    padding:4px 8px;
-    border-radius:6px;
-    font-weight:bold;
-}
+.status-pending{background:#ffc107;color:#212529;padding:4px 8px;border-radius:6px;font-weight:bold;}
+.status-read{background:#28a745;color:white;padding:4px 8px;border-radius:6px;font-weight:bold;}
+.status-replied{background:#007bff;color:white;padding:4px 8px;border-radius:6px;font-weight:bold;}
 
 button{
     background:#4a90e2;
@@ -139,10 +98,10 @@ button:hover{background:#3a78c2;}
 
 <body>
 
-<h2><i class="fas fa-envelope"></i> User Messages</h2>
+<h2><i class="fas fa-envelope"></i> Pending Messages</h2>
 
 <?php if (!$messages): ?>
-<p style="text-align:center;color:#555;">No messages found.</p>
+<p style="text-align:center;color:#555;">No pending messages.</p>
 <?php else: ?>
 
 <table>
@@ -164,7 +123,6 @@ button:hover{background:#3a78c2;}
 <tbody>
 <?php foreach ($messages as $msg): ?>
 <tr>
-
 <td data-label="ID"><?= $msg['id'] ?></td>
 <td data-label="User"><?= htmlentities($msg['username']) ?></td>
 <td data-label="Email"><?= htmlentities($msg['email']) ?></td>
@@ -173,26 +131,19 @@ button:hover{background:#3a78c2;}
 
 <td data-label="Status">
 <?php
-if ($msg['status'] === 'new')
-    echo '<span class="status-new">New</span>';
-elseif ($msg['status'] === 'pending')
-    echo '<span class="status-pending">Pending</span>';
-elseif ($msg['status'] === 'read')
-    echo '<span class="status-read">Read</span>';
-elseif ($msg['status'] === 'replied')
-    echo '<span class="status-replied">Replied</span>';
+if ($msg['status'] === 'pending') echo '<span class="status-pending">Pending</span>';
+elseif ($msg['status'] === 'read') echo '<span class="status-read">Read</span>';
+elseif ($msg['status'] === 'replied') echo '<span class="status-replied">Replied</span>';
 ?>
 </td>
 
 <form method="post">
 <td data-label="Read">
-<input type="checkbox" name="read"
-<?= ($msg['status']=='read' || $msg['status']=='replied') ? 'checked' : '' ?>>
+<input type="checkbox" name="read" <?= ($msg['status']=='read' || $msg['status']=='replied') ? 'checked' : '' ?>>
 </td>
 
 <td data-label="Replied">
-<input type="checkbox" name="replied"
-<?= ($msg['status']=='replied') ? 'checked' : '' ?>>
+<input type="checkbox" name="replied" <?= ($msg['status']=='replied') ? 'checked' : '' ?>>
 </td>
 
 <td data-label="Sent At"><?= $msg['created_at'] ?></td>
