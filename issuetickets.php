@@ -35,24 +35,155 @@ if ($selected_city && $selected_category) {
 <title>Booking - City Information System</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css"/>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:"Segoe UI",Arial;}
-body{background:#f4f7fb;}
-.page-header{background:#3F84B1;color:white;padding:40px 20px;text-align:center;}
-.page-header h1{font-size:2.3rem;}
-.category-container{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:25px;width:85%;margin:40px auto;}
-.category-card{background:white;border-radius:10px;overflow:hidden;box-shadow:0 6px 12px rgba(0,0,0,0.15);cursor:pointer;transition:0.3s;text-align:center;}
-.category-card:hover{transform:translateY(-5px);}
-.category-card img{width:100%;height:230px;object-fit:cover;}
-.category-card div{padding:15px;font-size:1.2rem;}
-.city-filter{text-align:center;margin:30px;}
-.city-filter select{padding:10px 15px;border:1px solid #ccc;border-radius:5px;font-size:1rem;}
-.service-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;width:85%;margin:20px auto;}
-.service-card{background:white;border-radius:10px;box-shadow:0 4px 10px rgba(0,0,0,0.1);overflow:hidden;}
-.service-card img{width:100%;height:200px;object-fit:cover;}
-.service-card .info{padding:15px;}
-.book-btn{background:#3F84B1;color:white;border:none;padding:8px 15px;border-radius:5px;cursor:pointer;}
-.book-btn:disabled{background:#999;cursor:not-allowed;}
-.footer{background:#3F84B1;color:white;text-align:center;padding:10px;margin-top:30px;}
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:"Segoe UI", Arial;
+}
+
+body{
+    background:#f4f7fb;
+}
+
+/* Page header */
+.page-header{
+    background:#3F84B1;
+    color:white;
+    padding:40px 20px;
+    text-align:center;
+}
+
+.page-header h1{
+    font-size:2.3rem;
+}
+
+/* Category section */
+.category-container{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+    gap:30px;
+    width:85%;
+    margin:40px auto;
+    justify-items:center;
+}
+
+.category-card{
+    background:white;
+    border-radius:10px;
+    overflow:hidden;
+    box-shadow:0 6px 12px rgba(0,0,0,0.15);
+    cursor:pointer;
+    transition:0.3s;
+    text-align:center;
+}
+
+.category-card:hover{
+    transform:translateY(-5px);
+}
+
+.category-card img{
+    width:100%;
+    height:230px;
+    object-fit:cover;
+}
+
+.category-card div{
+    padding:15px;
+    font-size:1.2rem;
+}
+
+/* City filter */
+.city-filter{
+    text-align:center;
+    margin:30px;
+}
+
+.city-filter select{
+    padding:10px 15px;
+    border:1px solid #ccc;
+    border-radius:5px;
+    font-size:1rem;
+}
+
+/* Service list */
+.service-list{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+    gap:30px;
+    width:85%;
+    margin:20px auto;
+    justify-items:center;
+}
+
+.service-card{
+    background:rgba(200, 218, 233, 1);
+    padding:15px;
+    border-radius:10px;
+    box-shadow:0 4px 8px rgba(0, 0, 0, 0.42);
+    transition:0.3s;
+    max-width:360px;
+    width:100%;
+}
+
+.service-card:hover{
+    transform:translateY(-4px);
+    box-shadow:0 8px 18px rgba(0,0,0,0.18);
+}
+
+.service-card img{
+    width:100%;
+    height:200px;
+    object-fit:cover;
+}
+
+/* Info spacing (THIS is what you wanted) */
+.service-card .info{
+    padding:15px;
+}
+
+.service-card .info h3{
+    margin-bottom:8px;
+}
+
+.service-card .info p{
+    margin-bottom:6px;
+    line-height:1.5;
+}
+
+/* Button interaction */
+.book-btn{
+    background:#3F84B1;
+    color:white;
+    border:none;
+    padding:8px 15px;
+    border-radius:5px;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.book-btn:hover{
+    background:#2f6f96;
+    transform:translateY(-2px);
+    box-shadow:0 5px 10px rgba(0,0,0,0.2);
+}
+
+.book-btn:disabled{
+    background:#999;
+    cursor:not-allowed;
+    transform:none;
+    box-shadow:none;
+}
+
+/* Footer */
+.footer{
+    background:#3F84B1;
+    color:white;
+    text-align:center;
+    padding:10px;
+    margin-top:30px;
+}
+
 </style>
 </head>
 <body>
