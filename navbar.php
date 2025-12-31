@@ -158,12 +158,13 @@ body {
                 </button>
             </li>
 
-        <?php } else { ?>
+        <?php } 
+        // else { 
+        // ?>
 
             <!-- Before login -->
-            <li><a href="/CIS/admin_login.php"><i class="fas fa-user-shield"></i> Admin Login</a></li>
+            <!-- <li><a href="/CIS/admin_login.php"><i class="fas fa-user-shield"></i> Admin Login</a></li> -->
 
-        <?php } ?>
     </ul>
 
     <ul>
@@ -171,7 +172,7 @@ body {
 
             <li>Welcome :</li>
             <li><?php echo htmlentities($_SESSION['login']); ?></li>
-            <li><a href="/CIS/logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+            <!-- <li><a href="/CIS/logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li> -->
 
         <?php } else { ?>
 
