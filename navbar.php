@@ -72,7 +72,7 @@ body {
 .navbar .logo a { 
     color:white; 
     text-decoration:none; 
-    font-size:24px; 
+    font-size:18px; 
     font-weight:bold; 
 }
 .navbar .logo a span { 
@@ -81,12 +81,12 @@ body {
 .navbar ul { 
     display:flex; 
     list-style:none; 
-    gap:15px; 
+    gap:13px; 
 }
 .navbar ul li a { 
     color:white; 
     text-decoration:none; 
-    font-weight:500; 
+    font-weight:490; 
     transition:0.3s; 
 }
 .navbar ul li a:hover { 
@@ -172,7 +172,7 @@ body {
 
             <li>Welcome :</li>
             <li><?php echo htmlentities($_SESSION['login']); ?></li>
-            <!-- <li><a href="/CIS/logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li> -->
+            <li><a href="/CIS/logout.php" style="font-size:16px;font-weight:500;"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
 
         <?php } else { ?>
 
@@ -202,9 +202,10 @@ body {
 <li><a href="/CIS/profile.php"><i class="fas fa-user"></i> My Profile</a></li>
 <li><a href="/CIS/eventhistory.php"><i class="fas fa-calendar-alt"></i> Event History</a></li>
 <li><a href="/CIS/tour-history.php"><i class="fas fa-ticket-alt"></i> Booking History</a></li>
-<li><a href="/CIS/write-us.php"><i class="fas fa-pen"></i> Write Us</a></li>
 <li><a href="/CIS/events.php"><i class="fas fa-calendar"></i> Events</a></li>
-<li><a href="/CIS/logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+ <li><a href="issuetickets.php"><i class="fas fa-ticket-alt"></i> Issue Ticket</a></li>
+<li><a href="/CIS/write-us.php"><i class="fas fa-pen"></i> Write Us</a></li>
+<!-- <li><a href="/CIS/logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li> -->
 
 
 <?php } else { ?>
