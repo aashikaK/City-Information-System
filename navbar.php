@@ -177,8 +177,8 @@ body {
 
             <!-- Toll number MUST stay -->
             <li>Toll Number: 123-4568790</li>
-            <li><a href="/CIS/signup.php"><i class="fas fa-user-plus"></i> Sign Up</a></li>
-            <li><a href="/CIS/signin.php"><i class="fas fa-sign-in-alt"></i> Sign In</a></li>
+            <!-- <li><a href="/CIS/signup.php"><i class="fas fa-user-plus"></i> Sign Up</a></li>
+            <li><a href="/CIS/signin.php"><i class="fas fa-sign-in-alt"></i> Sign In</a></li> -->
 
         <?php } ?>
     </ul>

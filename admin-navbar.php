@@ -94,7 +94,7 @@ body { background:#f4f7fb; } /* light gray */
     <ul>
         <li>Welcome Admin:</li>
         <li><strong><?php echo htmlentities($_SESSION['admin']); ?></strong></li>
-        <li><a href="/CIS/logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+        <!-- <li><a href="/CIS/logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li> -->
     </ul>
 </div>
 
@@ -113,7 +113,7 @@ body { background:#f4f7fb; } /* light gray */
         <li><a href="manage-tourism.php">Tourism</a></li>
         <li><a href="manage-services.php">Services</a></li>
         <li><a href="admin-issues.php">Issue Tickets</a></li>
-        <li><a href="logout.php">Logout</a></li>
+        <li><a href="/CIS/logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
     </ul>
 </nav>
 

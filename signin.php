@@ -1,29 +1,35 @@
 <?php
-$error_message="";
+$error_message = "";
 require "db.php";
 session_start();
 
-if(isset($_POST['sign_in'])){
+if (isset($_POST['login'])) {
+
     $username = trim($_POST['username']);
-    $password=md5($_POST['password']);
+    $password = md5($_POST['password']); // same as your existing system
 
+    $sql = "SELECT username, role 
+            FROM users 
+            WHERE username = ? AND password = ? AND status = 1";
 
-    // check if un exists
-    $sql="select username,password from users where username=? AND password=? AND status=1";
-    $stmt=$pdo->prepare($sql);
-    $stmt->execute([$username,$password]);
-    $result=$stmt->fetchAll(PDO::FETCH_ASSOC);  //fetch only for one row fetching
-    
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([$username, $password]);
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
+    if (!$user) {
+        $error_message = "Either username or password do not match.";
+    } else {
 
-    if(!$result){
-        $error_message= "Either username or password do not match. Please Enter correct username and password";
-        
+        if ($user['role'] === 'admin') {
+            $_SESSION['admin'] = $user['username'];
+            header("Location: adminpanel.php");
+            exit;
+        } else {
+            $_SESSION['login'] = $user['username'];
+            header("Location: dashboard.php");
+            exit;
+        }
     }
-       else{
-        $_SESSION['login']=$username;
-       header("Location:dashboard.php");
-    } 
 }
 ?>
 
@@ -32,133 +38,135 @@ if(isset($_POST['sign_in'])){
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sign In - City Information System</title>
+<title>Login - City Information System</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
 
 <style>
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: "Segoe UI", Arial, sans-serif;
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:"Segoe UI", Arial, sans-serif;
 }
-body {
-  background: linear-gradient(135deg, #0766a9ff, #032c5cff);
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+body{
+  background: linear-gradient(135deg,#0766a9ff,#032c5cff);
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
 }
-
-.form-container {
-  background: rgba(255, 255, 255, 0.15);
+.form-container{
+  background: rgba(255,255,255,0.15);
   backdrop-filter: blur(10px);
-  border-radius: 15px;
-  padding: 40px 30px;
-  width: 380px;
-  color: white;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-  text-align: center;
+  border-radius:15px;
+  padding:40px 30px;
+  width:380px;
+  color:white;
+  text-align:center;
+  box-shadow:0 8px 20px rgba(0,0,0,0.3);
 }
-
-.form-container h2 {
-  margin-bottom: 20px;
-  font-size: 1.8rem;
-  letter-spacing: 1px;
+.form-container h2{
+  margin-bottom:20px;
 }
-
-.input-group {
-  margin-bottom: 15px;
-  text-align: left;
+.input-group{
+  margin-bottom:15px;
+  text-align:left;
 }
-
-.input-group label {
-  display: block;
-  margin-bottom: 5px;
-  font-weight: 500;
+.input-group label{
+  display:block;
+  margin-bottom:5px;
 }
-
-.input-group input {
-  width: 100%;
-  padding: 10px 12px;
-  border-radius: 8px;
-  border: none;
-  outline: none;
-  background: rgba(255,255,255,0.8);
-  font-size: 14px;
+.input-group input{
+  width:100%;
+  padding:10px;
+  border-radius:8px;
+  border:none;
+  outline:none;
 }
-
-.btn {
-  width: 100%;
-  padding: 10px;
-  background: #ffe082;
-  color: #333;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 600;
-  transition: 0.3s;
+.btn{
+  width:100%;
+  padding:10px;
+  background:#ffe082;
+  border:none;
+  border-radius:8px;
+  font-weight:600;
+  cursor:pointer;
 }
-
-.btn:hover {
-  background: #ffd54f;
+.btn:hover{
+  background:#ffd54f;
+}
+.signup-link{
+  margin-top:15px;
+  font-size:14px;
+}
+.signup-link a{
+  color:#ffe082;
+  text-decoration:none;
+  font-weight:bold;
+}
+.signup-link a:hover{
+  text-decoration:underline;
 }
 </style>
 </head>
+
 <body>
 
 <div class="form-container">
   <h2><i class="fas fa-user"></i> Sign In</h2>
-<!-- to display error or succes message -->
-  <?php if($error_message != "") { ?>
-   <div style="color: #ffd54f; margin-bottom: 10px; font-weight:bold;"><?php echo $error_message; ?></div>
-<?php } ?>
 
-  <form method="POST" onSubmit="return validateForm()" novalidate>
-  
-  <div class="input-group">
-      <label for="username">Username</label>
-      <input type="text" name="username" id="username" placeholder="Enter your username" required>
-      <p id="un-err-msg" style="color: #ffd54f;"></p>
+  <!-- Error message -->
+  <?php if($error_message!=""){ ?>
+    <div style="color:#ffd54f;margin-bottom:10px;font-weight:bold;">
+      <?php echo $error_message; ?>
+    </div>
+  <?php } ?>
+
+  <form method="POST" onsubmit="return validateForm()">
+    
+    <div class="input-group">
+      <label>Username</label>
+      <input type="text" name="username" id="username">
+      <p id="un-err-msg" style="color:#ffd54f;"></p>
     </div>
 
     <div class="input-group">
-      <label for="password">Password</label>
-      <input type="password" name="password" id="password" placeholder="Enter your password" 
-    required>
-        <p id="pw-err-msg" style="color: #ffd54f;"></p>
+      <label>Password</label>
+      <input type="password" name="password" id="password">
+      <p id="pw-err-msg" style="color:#ffd54f;"></p>
     </div>
 
-    <button type="submit" name="sign_in" class="btn">Sign In</button>
+    <button type="submit" name="login" class="btn">Sign In</button>
   </form>
+
+  <!-- SIGNUP LINK -->
+  <div class="signup-link">
+    Don’t have an account?
+    <a href="signup.php">Sign up</a>
+  </div>
+
 </div>
 
 <script>
-  function validateForm(){
-  var un= document.getElementById("username").value.trim();
-  var pw= document.getElementById("password").value.trim();
+function validateForm(){
+  let un=document.getElementById("username").value.trim();
+  let pw=document.getElementById("password").value.trim();
 
-  document.getElementById("un-err-msg").innerHTML = "";
-  document.getElementById("pw-err-msg").innerHTML = "";
-
+  document.getElementById("un-err-msg").innerHTML="";
+  document.getElementById("pw-err-msg").innerHTML="";
   let valid=true;
-  // checking for empty un field
 
   if(un===""){
     document.getElementById("un-err-msg").innerHTML="Please enter username";
     valid=false;
   }
-
-  // password validation
-
   if(pw===""){
     document.getElementById("pw-err-msg").innerHTML="Please enter password";
     valid=false;
   }
- 
-      return valid;
-    }
-  </script>
+  return valid;
+}
+</script>
+
 </body>
 </html>
-
