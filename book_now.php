@@ -3,12 +3,22 @@ require "db.php";
 session_start();
 
 if (!isset($_SESSION['login'])) {
-    header("Location: login.php");
+    header("Location: signin.php");
     exit;
 }
 
 $service_id = $_POST['service_id'] ?? $_GET['service_id'] ?? null;
-$user_id    = $_SESSION['user_id'];
+$username    = $_SESSION['login'];
+
+// fetching user's id using username session
+$stmt=$pdo->prepare("SELECT id from users where username=?");
+$stmt->execute([$username]);
+$user=$stmt->fetch(PDO::FETCH_ASSOC);
+if (!$user) {
+    die("User not found. Please login again.");
+}
+
+$user_id = $user['id'];
 
 // Get service data
 $stmt = $pdo->prepare("SELECT * FROM city_services WHERE id = ?");
