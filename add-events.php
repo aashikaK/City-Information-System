@@ -4,7 +4,7 @@ require "db.php";
 
 // Protect admin pages
 if (!isset($_SESSION['admin']) || $_SESSION['admin'] == '') {
-    header("Location: admin_login.php");
+    header("Location: signin.php");
     exit;
 }
 

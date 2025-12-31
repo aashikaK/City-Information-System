@@ -3,7 +3,7 @@ require "db.php";
 include "admin-navbar.php";
 
 if (!isset($_SESSION['admin']) || $_SESSION['admin'] == '') {
-    header("Location: admin_login.php");
+    header("Location: signin.php");
     exit;
 }
 
