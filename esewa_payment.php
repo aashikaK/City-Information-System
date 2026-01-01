@@ -10,7 +10,7 @@ $amount     = $_GET['amount'] ?? null;
 if (!$service_id || !$amount) {
     die("Invalid payment request");
 }
-$pid = "BOOK_" . time();
+$pid = "BOOK_" . time() . rand(1000, 9999);
 $_SESSION['pid'] = $pid;
 $_SESSION['service_id'] = $service_id;
 $_SESSION['amount'] = $amount;
