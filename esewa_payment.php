@@ -7,3 +7,14 @@ if (!isset($_SESSION['login'])) {
 
 $service_id = $_GET['service_id'] ?? null;
 $amount     = $_GET['amount'] ?? null;
+if (!$service_id || !$amount) {
+    die("Invalid payment request");
+}
+?>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Confirm Payment</title>
+    <meta charset="UTF-8">
+</head>
+<body>
