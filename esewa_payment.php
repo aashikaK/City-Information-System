@@ -11,6 +11,10 @@ if (!$service_id || !$amount) {
     die("Invalid payment request");
 }
 $pid = "BOOK_" . time();
+$_SESSION['pid'] = $pid;
+$_SESSION['service_id'] = $service_id;
+$_SESSION['amount'] = $amount;
+
 ?>
 <!DOCTYPE html>
 <html>
