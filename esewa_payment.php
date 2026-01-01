@@ -18,3 +18,18 @@ if (!$service_id || !$amount) {
     <meta charset="UTF-8">
 </head>
 <body>
+<h2>Confirm Your Payment</h2>
+
+<p>
+    <strong>Service ID:</strong> <?php echo htmlspecialchars($service_id); ?>
+</p>
+
+<p>
+    <strong>Amount:</strong> Rs. <?php echo htmlspecialchars($amount); ?>
+</p>
+<form method="POST" action="esewa_process.php">
+    <input type="hidden" name="service_id" value="<?php echo $service_id; ?>">
+    <input type="hidden" name="amount" value="<?php echo $amount; ?>">
+
+    <button type="submit">Proceed to eSewa</button>
+</form>
