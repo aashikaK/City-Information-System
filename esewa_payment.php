@@ -10,6 +10,7 @@ $amount     = $_GET['amount'] ?? null;
 if (!$service_id || !$amount) {
     die("Invalid payment request");
 }
+$pid = "BOOK_" . time();
 ?>
 <!DOCTYPE html>
 <html>
