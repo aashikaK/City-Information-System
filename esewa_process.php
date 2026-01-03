@@ -1,25 +1,23 @@
 <?php
 session_start();
-
 if (!isset($_SESSION['login'])) {
     header("Location: signin.php");
     exit;
 }
 
-$service_id = $_POST['service_id'] ?? null;
-$amount     = $_POST['amount'] ?? null;
+$service_id = $_GET['service_id'] ?? null;
+$amount     = $_GET['amount'] ?? null;
 
 if (!$service_id || !$amount) {
     die("Invalid payment request");
 }
-if (
-    $service_id != $_SESSION['service_id'] ||
-    $amount != $_SESSION['amount']
-) {
-    die("Payment data mismatch");
-}
 
+/* Store in session */
+$_SESSION['service_id'] = $service_id;
+$_SESSION['amount'] = number_format((float)$amount, 2, '.', '');
 ?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
