@@ -1,51 +1,67 @@
 <?php
 session_start();
 
-// 1️⃣ Check if user is logged in
+
 if (!isset($_SESSION['login'])) {
     header("Location: signin.php");
     exit;
 }
 
-// 2️⃣ Get payment data sent by eSewa
-$pid       = $_POST['pid'] ?? null;    // the payment ID
-$amt       = $_POST['amt'] ?? null;    // the amount paid
-$refId     = $_POST['refId'] ?? null;  // eSewa transaction reference
 
-// 3️⃣ Validate that we have all required data
-if (!$pid || !$amt || !$refId) {
-    die("Payment data missing. Something went wrong!");
+if (
+    !isset($_SESSION['transaction_uuid']) ||
+    !isset($_SESSION['service_id']) ||
+    !isset($_SESSION['amount'])
+) {
+    die("Invalid session payment data");
 }
 
-// 4️⃣ Optional: check if PID matches the one stored in session
-if ($pid != $_SESSION['pid']) {
-    die("Payment ID mismatch!");
-}
 
-// 5️⃣ At this point, you can mark the booking as successful in your database
-// Example (assuming $pdo is your PDO database connection):
+$transaction_uuid = $_SESSION['transaction_uuid'];
+$service_id       = $_SESSION['service_id'];
+$amount           = $_SESSION['amount'];
+
+//  fake reference ID 
+$refId = "UAT_" . strtoupper(substr(md5(time()), 0, 8));
+
 require "db.php";
 
-// Insert transaction into bookings table
-$stmt = $pdo->prepare("INSERT INTO bookings (user_id, service_id, pid, amount, ref_id, status) VALUES (?, ?, ?, ?, ?, ?)");
+$username = $_SESSION['login'];
+$sqlUser = "SELECT id FROM users WHERE username=?";
+$stmtUser = $pdo->prepare($sqlUser);
+$stmtUser->execute([$_SESSION['login']]);
+$userData = $stmtUser->fetch(PDO::FETCH_ASSOC);
+
+    $userid = $userData['id'];
+
+$stmt = $pdo->prepare("
+    INSERT INTO bookings 
+    (user_id, service_id, category, booking_date,payment_amount,payment_status, status)
+    VALUES (?, ?, ?, NOW(), ?,?,?)
+");
+
 $stmt->execute([
-    $_SESSION['user_id'],       // who booked
-    $_SESSION['service_id'],    // which service
-    $pid,                       // unique booking/payment ID
-    $amt,                       // amount
-    $refId,                     // eSewa reference ID
-    'success'                   // status
+    $userid,
+    $service_id,
+    $_SESSION['category'],  // you can fetch category from services table if needed
+    $amount,
+    'succcess',
+    'pending'         // booking approved automatically
 ]);
 
-// 6️⃣ Optionally, increase current bookings of the service
-$stmt = $pdo->prepare("UPDATE city_services SET current_bookings = current_bookings + 1 WHERE id = ?");
-$stmt->execute([$_SESSION['service_id']]);
 
-// 7️⃣ Clear session pid to prevent re-submission
-unset($_SESSION['pid']);
+// Update booking count
+$stmt = $pdo->prepare("
+    UPDATE city_services 
+    SET current_bookings = current_bookings + 1
+    WHERE id = ?
+");
+$stmt->execute([$service_id]);
+
+//  Clear session
+unset($_SESSION['transaction_uuid']);
 unset($_SESSION['service_id']);
 unset($_SESSION['amount']);
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -61,10 +77,10 @@ unset($_SESSION['amount']);
 </head>
 <body>
 
-<div class="success">🎉 Payment Successful!</div>
-<div class="info"><strong>Booking ID:</strong> <?php echo htmlspecialchars($pid); ?></div>
-<div class="info"><strong>Amount Paid:</strong> Rs. <?php echo htmlspecialchars($amt); ?></div>
-<div class="info"><strong>eSewa Ref ID:</strong> <?php echo htmlspecialchars($refId); ?></div>
+<div class="success"> Payment Successful!</div>
+<div class="info"><strong>Transaction ID:</strong> <?php echo htmlspecialchars($transaction_uuid); ?></div>
+<div class="info"><strong>Amount Paid:</strong> Rs. <?php echo htmlspecialchars($amount); ?></div>
+<div class="info"><strong>Reference ID:</strong> <?php echo htmlspecialchars($refId); ?></div>
 
 <a href="issuetickets.php" class="button">Back to Services</a>
 

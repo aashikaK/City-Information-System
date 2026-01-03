@@ -8,6 +8,7 @@ if(!isset($_SESSION['login']) || $_SESSION['login'] == ''){
 }
 
 $selected_category = isset($_GET['category']) ? $_GET['category'] : '';
+$_SESSION['category']=$selected_category;
 $selected_city = isset($_GET['city']) ? $_GET['city'] : '';
 
 
