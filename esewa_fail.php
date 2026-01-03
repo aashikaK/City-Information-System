@@ -61,7 +61,7 @@ unset($_SESSION['amount']);
 </head>
 <body>
 
-<div class="failed">⚠️ Payment Failed!</div>
+<div class="failed">Payment Failed!</div>
 <div class="info"><strong>Transaction ID:</strong> <?php echo htmlspecialchars($transaction_uuid); ?></div>
 <div class="info"><strong>Amount:</strong> Rs. <?php echo htmlspecialchars($amount); ?></div>
 <div class="info"><strong>Reference ID:</strong> <?php echo htmlspecialchars($refId); ?></div>
