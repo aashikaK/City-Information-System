@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-// 1️⃣ Check session
+
 if (
     !isset($_SESSION['transaction_uuid']) ||
     !isset($_SESSION['service_id']) ||
@@ -38,7 +38,7 @@ $stmt->execute([
     $_SESSION['category'] ?? 'unknown', // fallback if category not set
     $amount,
     'failed',
-    'cancelled'  // failed payment → automatically cancelled
+    'cancelled'  
 ]);
 
 // Clear session
