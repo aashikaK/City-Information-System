@@ -66,7 +66,7 @@ body { background:#f4f7fb; }
         <div class="card">
             <i class="fas fa-ticket-alt"></i>
             Booking History
-            <a href="tour-history.php">View Bookings</a>
+            <a href="booking_history.php">View Bookings</a>
         </div>
 
         

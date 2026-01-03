@@ -201,7 +201,7 @@ body {
         <li><a href="/CIS/dashboard.php"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
 <li><a href="/CIS/profile.php"><i class="fas fa-user"></i> My Profile</a></li>
 <li><a href="/CIS/eventhistory.php"><i class="fas fa-calendar-alt"></i> Event History</a></li>
-<li><a href="/CIS/tour-history.php"><i class="fas fa-ticket-alt"></i> Booking History</a></li>
+<li><a href="/CIS/booking_history.php"><i class="fas fa-ticket-alt"></i> Booking History</a></li>
 <li><a href="/CIS/events.php"><i class="fas fa-calendar"></i> Events</a></li>
  <li><a href="issuetickets.php"><i class="fas fa-ticket-alt"></i> Issue Ticket</a></li>
 <li><a href="/CIS/write-us.php"><i class="fas fa-pen"></i> Write Us</a></li>
