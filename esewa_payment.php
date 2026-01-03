@@ -7,15 +7,16 @@ if (!isset($_SESSION['login'])) {
 
 $service_id = $_GET['service_id'] ?? null;
 $amount     = $_GET['amount'] ?? null;
+
 if (!$service_id || !$amount) {
     die("Invalid payment request");
 }
-$pid = "BOOK_" . time() . rand(1000, 9999);
-$_SESSION['pid'] = $pid;
-$_SESSION['service_id'] = $service_id;
-$_SESSION['amount'] = $amount;
 
+/* Store in session */
+$_SESSION['service_id'] = $service_id;
+$_SESSION['amount'] = number_format((float)$amount, 2, '.', '');
 ?>
+
 <!DOCTYPE html>
 <html>
 <head>
