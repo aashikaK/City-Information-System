@@ -13,6 +13,8 @@ if (!$service_id || !$amount) {
 $_SESSION['service_id'] = $service_id;
 $_SESSION['amount'] = $amount;
 
+
+
 ?>
 <!DOCTYPE html>
 <html>

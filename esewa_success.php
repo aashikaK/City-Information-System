@@ -45,7 +45,7 @@ $stmt->execute([
     $service_id,
     $_SESSION['category'],  // you can fetch category from services table if needed
     $amount,
-    'succcess',
+    'success',
     'pending'         // booking approved automatically
 ]);
 
