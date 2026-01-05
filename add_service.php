@@ -1,5 +1,4 @@
 <?php
-session_start();
 require "db.php";
 include "admin-navbar.php";
 
@@ -8,56 +7,71 @@ if (!isset($_SESSION['admin']) || $_SESSION['admin'] == '') {
     exit;
 }
 
-// Handle form submission
+$error = "";
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-    $city          = $_POST['city'];
-    $category      = $_POST['category'];
-    $name          = $_POST['name'];
-    $description   = $_POST['description'];
-    $contact_info  = $_POST['contact_info'];
-    $location      = $_POST['location'];
+    $city          = trim($_POST['city']);
+    $category      = trim($_POST['category']);
+    $name          = trim($_POST['name']);
+    $description   = trim($_POST['description']);
+    $contact_info  = trim($_POST['contact_info']);
+    $location      = trim($_POST['location']);
     $booking_price = $_POST['booking_price'];
     $capacity      = $_POST['capacity'];
 
-    // Image upload (ONLY images/services/)
-    $image_path = '';
-    if (!empty($_FILES['image']['name'])) {
+    // 🔍 CHECK DUPLICATE SERVICE (same city + same name)
+   $check = $pdo->prepare("
+    SELECT id FROM city_services 
+    WHERE city = ? AND category = ? AND name = ?
+    LIMIT 1
+");
+$check->execute([$city, $category, $name]);
 
-        $upload_dir = "images/services/";
 
-        // Create folder if not exists
-        if (!is_dir($upload_dir)) {
-            mkdir($upload_dir, 0777, true);
+    if ($check->rowCount() > 0) {
+       $error = "This service already exists in this city under the same category.";
+
+    } else {
+
+        // Image upload (ONLY images/services/)
+        $image_path = '';
+        if (!empty($_FILES['image']['name'])) {
+
+            $upload_dir = "images/services/";
+
+            if (!is_dir($upload_dir)) {
+                mkdir($upload_dir, 0777, true);
+            }
+
+            $image_name = time() . "_" . basename($_FILES['image']['name']);
+            $image_path = $upload_dir . $image_name;
+
+            move_uploaded_file($_FILES['image']['tmp_name'], $image_path);
         }
 
-        $image_name = time() . "_" . basename($_FILES['image']['name']);
-        $image_path = $upload_dir . $image_name;
+        // Insert into database
+        $stmt = $pdo->prepare("
+            INSERT INTO city_services 
+            (city, category, name, description, contact_info, location, image, booking_price, capacity, status)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 1)
+        ");
 
-        move_uploaded_file($_FILES['image']['tmp_name'], $image_path);
+        $stmt->execute([
+            $city,
+            $category,
+            $name,
+            $description,
+            $contact_info,
+            $location,
+            $image_path,
+            $booking_price,
+            $capacity
+        ]);
+
+        header("Location: manage-services.php");
+        exit;
     }
-
-    // Insert into database
-    $stmt = $pdo->prepare("
-        INSERT INTO city_services 
-        (city, category, name, description, contact_info, location, image, booking_price, capacity, status)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 1)
-    ");
-
-    $stmt->execute([
-        $city,
-        $category,
-        $name,
-        $description,
-        $contact_info,
-        $location,
-        $image_path,
-        $booking_price,
-        $capacity
-    ]);
-
-    header("Location: manage-services.php");
-    exit;
 }
 ?>
 
@@ -84,6 +98,14 @@ body {
 h2 {
     text-align: center;
     color: #4a90e2;
+}
+.error {
+    background: #ffe6e6;
+    color: #c00;
+    padding: 10px;
+    border-radius: 6px;
+    margin-bottom: 10px;
+    text-align: center;
 }
 input, textarea {
     width: 100%;
@@ -112,19 +134,24 @@ button:hover {
 <div class="container">
     <h2>Add City Service</h2>
 
+    <!-- ❌ ERROR MESSAGE -->
+    <?php if ($error): ?>
+        <div class="error"><?= htmlspecialchars($error) ?></div>
+    <?php endif; ?>
+
     <form method="POST" enctype="multipart/form-data">
 
-        <input type="text" name="city" placeholder="City" required>
-        <input type="text" name="category" placeholder="Category (Hospital, Transport, Hotel)" required>
-        <input type="text" name="name" placeholder="Service Name" required>
+        <input type="text" name="city" placeholder="City" required value="<?= htmlspecialchars($_POST['city'] ?? '') ?>">
+        <input type="text" name="category" placeholder="Category (Hospital, Transport, Hotel)" required value="<?= htmlspecialchars($_POST['category'] ?? '') ?>">
+        <input type="text" name="name" placeholder="Service Name" required value="<?= htmlspecialchars($_POST['name'] ?? '') ?>">
 
-        <textarea name="description" rows="4" placeholder="Description"></textarea>
+        <textarea name="description" rows="4" placeholder="Description"><?= htmlspecialchars($_POST['description'] ?? '') ?></textarea>
 
-        <input type="text" name="location" placeholder="Location">
-        <input type="text" name="contact_info" placeholder="Contact Info">
+        <input type="text" name="location" placeholder="Location" value="<?= htmlspecialchars($_POST['location'] ?? '') ?>">
+        <input type="text" name="contact_info" placeholder="Contact Info" value="<?= htmlspecialchars($_POST['contact_info'] ?? '') ?>">
 
-        <input type="number" name="capacity" placeholder="Capacity">
-        <input type="number" step="0.01" name="booking_price" placeholder="Booking Price">
+        <input type="number" name="capacity" placeholder="Capacity" value="<?= htmlspecialchars($_POST['capacity'] ?? '') ?>">
+        <input type="number" step="0.01" name="booking_price" placeholder="Booking Price" value="<?= htmlspecialchars($_POST['booking_price'] ?? '') ?>">
 
         <input type="file" name="image" accept="image/*">
 
