@@ -7,45 +7,66 @@ if (!isset($_SESSION['admin']) || $_SESSION['admin'] == '') {
     exit;
 }
 
-// Handle form submission
+$error = "";
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-    $city = $_POST['city'];
-    $place_name = $_POST['place_name'];
-    $category = $_POST['category'];
-    $description = $_POST['description'];
-    $population = $_POST['population'];
-    $area = $_POST['area'];
-    $contact_info = $_POST['contact_info'];
+    $city        = trim($_POST['city']);
+    $place_name  = trim($_POST['place_name']);
+    $category    = trim($_POST['category']);
+    $description = trim($_POST['description']);
+    $population  = $_POST['population'];
+    $area        = trim($_POST['area']);
+    $contact_info= trim($_POST['contact_info']);
 
-    // Image upload (optional)
-    // Image upload (optional)
-$image_path = '';
-if (isset($_FILES['image']) && $_FILES['image']['name'] != '') {
-
-    // Make city folder inside tourism (replace spaces with underscores)
-    $city_folder = preg_replace('/\s+/', '_', strtolower($city));
-    $upload_dir = "images/tourism/$city_folder/";
-
-    // Create folder if it doesn't exist
-    if (!is_dir($upload_dir)) {
-        mkdir($upload_dir, 0777, true);
-    }
-
-    // Save the image
-    $image_path = $upload_dir . time() . "_" . basename($_FILES['image']['name']);
-    move_uploaded_file($_FILES['image']['tmp_name'], $image_path);
-}
-
-
-    $stmt = $pdo->prepare("
-        INSERT INTO tourism (city, place_name, category, description, population, area, contact_info, image, status)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1)
+    // 🔍 DUPLICATE CHECK (city + place_name)
+    $check = $pdo->prepare("
+        SELECT id FROM tourism
+        WHERE city = ? AND place_name = ?
+        LIMIT 1
     ");
-    $stmt->execute([$city, $place_name, $category, $description, $population, $area, $contact_info, $image_path]);
+    $check->execute([$city, $place_name]);
 
-    header("Location: manage-tourism.php");
-    exit;
+    if ($check->rowCount() > 0) {
+        $error = "This place already exists in the selected city.";
+    } else {
+
+        // Image upload (optional)
+        $image_path = '';
+        if (!empty($_FILES['image']['name'])) {
+
+            $city_folder = preg_replace('/\s+/', '_', strtolower($city));
+            $upload_dir = "images/tourism/$city_folder/";
+
+            if (!is_dir($upload_dir)) {
+                mkdir($upload_dir, 0777, true);
+            }
+
+            $image_path = $upload_dir . time() . "_" . basename($_FILES['image']['name']);
+            move_uploaded_file($_FILES['image']['tmp_name'], $image_path);
+        }
+
+        // Insert into database
+        $stmt = $pdo->prepare("
+            INSERT INTO tourism 
+            (city, place_name, category, description, population, area, contact_info, image, status)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1)
+        ");
+
+        $stmt->execute([
+            $city,
+            $place_name,
+            $category,
+            $description,
+            $population,
+            $area,
+            $contact_info,
+            $image_path
+        ]);
+
+        header("Location: manage-tourism.php");
+        exit;
+    }
 }
 ?>
 
@@ -67,7 +88,21 @@ body { font-family: Arial, sans-serif; background:#f4f7fb; }
     box-shadow:0 5px 15px rgba(0,0,0,0.1);
 }
 h2 { text-align:center; color:#4a90e2; }
-input, textarea { width:100%; padding:10px; margin:8px 0; border:1px solid #ccc; border-radius:6px; }
+.error {
+    background:#ffe6e6;
+    color:#c00;
+    padding:10px;
+    border-radius:6px;
+    margin-bottom:10px;
+    text-align:center;
+}
+input, textarea {
+    width:100%;
+    padding:10px;
+    margin:8px 0;
+    border:1px solid #ccc;
+    border-radius:6px;
+}
 button {
     background:#4a90e2;
     color:white;
@@ -85,14 +120,19 @@ button:hover { background:#357ab8; }
 <div class="container">
     <h2>Add Tourism Place</h2>
 
+    <!-- ❌ ERROR MESSAGE -->
+    <?php if ($error): ?>
+        <div class="error"><?= htmlspecialchars($error) ?></div>
+    <?php endif; ?>
+
     <form method="POST" enctype="multipart/form-data">
-        <input type="text" name="city" placeholder="City" required>
-        <input type="text" name="place_name" placeholder="Place Name" required>
-        <input type="text" name="category" placeholder="Category">
-        <textarea name="description" rows="4" placeholder="Description"></textarea>
-        <input type="number" name="population" placeholder="Population">
-        <input type="text" name="area" placeholder="Area">
-        <input type="text" name="contact_info" placeholder="Contact Info">
+        <input type="text" name="city" placeholder="City" required value="<?= htmlspecialchars($_POST['city'] ?? '') ?>">
+        <input type="text" name="place_name" placeholder="Place Name" required value="<?= htmlspecialchars($_POST['place_name'] ?? '') ?>">
+        <input type="text" name="category" placeholder="Category" value="<?= htmlspecialchars($_POST['category'] ?? '') ?>">
+        <textarea name="description" rows="4" placeholder="Description"><?= htmlspecialchars($_POST['description'] ?? '') ?></textarea>
+        <input type="number" name="population" placeholder="Population" value="<?= htmlspecialchars($_POST['population'] ?? '') ?>">
+        <input type="text" name="area" placeholder="Area" value="<?= htmlspecialchars($_POST['area'] ?? '') ?>">
+        <input type="text" name="contact_info" placeholder="Contact Info" value="<?= htmlspecialchars($_POST['contact_info'] ?? '') ?>">
         <input type="file" name="image" accept="image/*">
 
         <button type="submit">Add Place</button>
