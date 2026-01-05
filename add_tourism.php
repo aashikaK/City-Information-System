@@ -22,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // 🔍 DUPLICATE CHECK (city + place_name)
     $check = $pdo->prepare("
         SELECT id FROM tourism
-        WHERE city = ? AND place_name = ?
+        WHERE city = ? AND place_name = ? 
         LIMIT 1
     ");
     $check->execute([$city, $place_name]);
