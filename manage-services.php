@@ -1,14 +1,14 @@
 <?php
-session_start();
 
-// Protect admin pages
+
+require "db.php";
+include "admin-navbar.php";
+
 if(!isset($_SESSION['admin']) || $_SESSION['admin'] == ''){
     header("Location: signin.php");
     exit;
 }
 
-require "db.php";
-include "admin-navbar.php";
 
 // Handle DELETE
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
