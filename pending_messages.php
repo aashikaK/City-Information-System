@@ -2,9 +2,13 @@
 include "admin-navbar.php";
 require "db.php";
 
-/* -------------------------------------------------
-   Handle manual status update
--------------------------------------------------- */
+
+if (!isset($_SESSION['admin']) || $_SESSION['admin'] == '') {
+    header("Location: signin.php");
+    exit;
+}
+
+
 if (isset($_POST['update_status'])) {
 
     $msg_id = (int)$_POST['msg_id'];

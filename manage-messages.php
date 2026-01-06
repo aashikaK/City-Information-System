@@ -2,10 +2,10 @@
 include "admin-navbar.php";
 require "db.php";
 
-/* -------------------------------------------------
-   1. Convert NEW → PENDING
-   ONLY when NOT opened from dashboard
--------------------------------------------------- */
+if (!isset($_SESSION['admin']) || $_SESSION['admin'] == '') {
+    header("Location: signin.php");
+    exit;
+}
 if (!isset($_GET['from'])) {
     $stmt = $pdo->prepare(
         "UPDATE write_us SET status='pending' WHERE status='new'"
