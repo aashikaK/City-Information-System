@@ -13,9 +13,7 @@ if (!isset($_GET['from'])) {
     $stmt->execute();
 }
 
-/* -------------------------------------------------
-   2. Handle manual status update
--------------------------------------------------- */
+
 if (isset($_POST['update_status'])) {
 
     $msg_id = (int)$_POST['msg_id'];
@@ -37,9 +35,7 @@ if (isset($_POST['update_status'])) {
     exit;
 }
 
-/* -------------------------------------------------
-   3. Fetch messages
--------------------------------------------------- */
+
 $stmt = $pdo->query(
     "SELECT * FROM write_us ORDER BY created_at DESC"
 );
