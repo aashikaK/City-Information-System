@@ -20,9 +20,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $description = $_POST['description'];
     $is_popular  = isset($_POST['is_popular']) ? 1 : 0;
 
-    // 🔍 CHECK DUPLICATE EVENT (same name + city + location)
+    //  CHECK DUPLICATE EVENT (same name + city + location)
     $check = $pdo->prepare("
-        SELECT id FROM events 
+        SELECT event_id FROM events 
         WHERE event_name = ? AND city = ? AND location = ?
         LIMIT 1
     ");
@@ -101,7 +101,6 @@ form button:hover { background:#357ab8; }
 <div class="container">
     <h2>Add New Event</h2>
 
-    <!-- ❌ DUPLICATE ERROR -->
     <?php if ($error): ?>
         <div class="error"><?= htmlspecialchars($error) ?></div>
     <?php endif; ?>
