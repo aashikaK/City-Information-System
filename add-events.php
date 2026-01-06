@@ -7,6 +7,8 @@ if (!isset($_SESSION['admin']) || $_SESSION['admin'] == '') {
     header("Location: signin.php");
     exit;
 }
+$error = "";
+
 
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

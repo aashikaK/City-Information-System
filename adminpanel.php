@@ -187,19 +187,19 @@ body { background:#f4f7fb; }
             <a href="manage-services.php">Manage Services</a>
         </div>
 
-        <div class="card">
+        <!-- <div class="card">
             <i class="fas fa-envelope-open-text"></i>
-            <h2><?php echo $issuesCount; ?></h2>
+            <h2><php echo $issuesCount; ?></h2>
             Issue Tickets
             <a href="admin-issues.php">View Tickets</a>
         </div>
 
         <div class="card">
             <i class="fas fa-clock"></i>
-            <h2><?php echo $pendingIssuesCount; ?></h2>
+             <h2> <php echo $pendingIssuesCount; ?></h2> 
             Pending Issues
             <a href="admin-issues.php">View Pending</a>
-        </div>
+        </div> -->
 
         <div class="card">
     <i class="fas fa-envelope"></i>
