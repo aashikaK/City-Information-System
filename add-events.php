@@ -13,12 +13,24 @@ $error = "";
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-    $event_name = $_POST['event_name'];
-    $city = $_POST['city'];
-    $location = $_POST['location'];
-    $event_date = $_POST['event_date'];
-    $description = $_POST['description'];
-    $is_popular = isset($_POST['is_popular']) ? 1 : 0;
+    $event_name = trim($_POST['event_name']);
+$city       = trim($_POST['city']);
+$location   = trim($_POST['location']);
+$event_date = $_POST['event_date'];
+$description = $_POST['description'];
+$is_popular = isset($_POST['is_popular']) ? 1 : 0;
+
+//  CHECK DUPLICATE EVENT (same name + city + location)
+$check = $pdo->prepare("
+    SELECT id FROM events 
+    WHERE event_name = ? AND city = ? AND location = ?
+    LIMIT 1
+");
+$check->execute([$event_name, $city, $location]);
+
+if ($check->rowCount() > 0) {
+    $error = "This event already exists in the same city and location.";
+} else {
 
     // Handle image upload
     $image_path = '';
@@ -50,7 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     header("Location: manage-events.php");
     exit;
-}
+}}
 ?>
 
 <!DOCTYPE html>
