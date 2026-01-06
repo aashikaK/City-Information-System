@@ -170,7 +170,7 @@ body { background:#f4f7fb; }
             <i class="fas fa-hourglass-half"></i>
             <h2><?php echo $pendingBookingsCount; ?></h2>
             Pending Bookings
-            <a href="manage-bookings.php">View Pending</a>
+            <a href="pending-bookings.php">View Pending</a>
         </div>
 
         <div class="card">
