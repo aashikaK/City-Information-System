@@ -181,10 +181,7 @@ document.querySelectorAll('.service-card').forEach(function(card){
     card.addEventListener('click', function(){
         var lat = parseFloat(card.getAttribute('data-lat'));
         var lng = parseFloat(card.getAttribute('data-lng'));
-        var name = card.querySelector('h3').innerText;
-        var city = card.querySelector('.location').innerText;
 
-        // Show map
         var mapDiv = document.getElementById('map');
         mapDiv.style.display = 'block';
         mapDiv.scrollIntoView({behavior:"smooth"});
@@ -195,10 +192,10 @@ document.querySelectorAll('.service-card').forEach(function(card){
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; OpenStreetMap contributors'
             }).addTo(map);
-        } else {
-            map.setView([lat,lng], 14);
-            if(routingControl) map.removeControl(routingControl);
         }
+
+        // Remove old route if exists
+        if(routingControl) map.removeControl(routingControl);
 
         // Get user's location
         if(navigator.geolocation){
@@ -206,22 +203,34 @@ document.querySelectorAll('.service-card').forEach(function(card){
                 var userLat = position.coords.latitude;
                 var userLng = position.coords.longitude;
 
+                // Add route with auto zoom to fit route fully below panel
                 routingControl = L.Routing.control({
                     waypoints: [
                         L.latLng(userLat, userLng),
                         L.latLng(lat, lng)
                     ],
-                    routeWhileDragging: false,
+                    routeWhileDragging: true,
+                    addWaypoints: false,
+                    fitSelectedRoutes: true,
+                    draggableWaypoints: false,
                     show: true
                 }).addTo(map);
 
+                // Automatically adjust zoom & padding so route fits below panel
+                var bounds = L.latLngBounds([
+                    [userLat, userLng],
+                    [lat, lng]
+                ]);
+                map.fitBounds(bounds, { paddingTopLeft: [0, 70], paddingBottomRight: [20,20] });
+
             }, function(err){
                 alert('Could not get your location. Route cannot be shown.');
+                map.setView([lat,lng],14);
             });
         } else {
             alert('Geolocation is not supported by your browser.');
+            map.setView([lat,lng],14);
         }
-
     });
 });
 </script>
