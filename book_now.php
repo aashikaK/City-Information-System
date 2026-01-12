@@ -80,6 +80,7 @@ body {background:#f4f7fb; min-height:100vh; display:flex; justify-content:center
 
             <p class="total-price">Total Price: Rs. <span id="totalPrice"><?php echo $service['booking_price']; ?></span></p>
             <input type="hidden" name="total_price" id="total_price_input" value="<?php echo $service['booking_price']; ?>">
+            <input type="hidden" name="days" id="days_input" value="1">
         <?php endif; ?>
 
         <button type="submit">Make Payment</button>
@@ -94,15 +95,15 @@ const endDateInput = document.getElementById('end_date');
 const roomsInput = document.getElementById('rooms');
 const totalPriceSpan = document.getElementById('totalPrice');
 const totalPriceInput = document.getElementById('total_price_input');
+const daysInput = document.getElementById('days_input');
 
-// Set checkout min date to next day of check-in
+// Ensure checkout is always at least next day
 startDateInput.addEventListener('change', function() {
     const startDate = new Date(this.value);
     const nextDay = new Date(startDate);
     nextDay.setDate(startDate.getDate() + 1);
     endDateInput.min = nextDay.toISOString().split('T')[0];
 
-    // If current end date < min, reset it
     if (endDateInput.value && new Date(endDateInput.value) <= startDate) {
         endDateInput.value = endDateInput.min;
     }
@@ -110,15 +111,14 @@ startDateInput.addEventListener('change', function() {
     updateTotalPrice();
 });
 
-// Calculate total price based on nights and rooms
+// Update price & nights dynamically
 function updateTotalPrice() {
     if (!startDateInput.value || !endDateInput.value) return;
 
     const start = new Date(startDateInput.value);
     const end = new Date(endDateInput.value);
 
-    // Nights = difference between dates
-    let nights = Math.round((end - start) / (1000 * 60 * 60 * 24));
+    let nights = Math.round((end - start) / (1000*60*60*24));
     if (nights < 1) nights = 1;
 
     let rooms = parseInt(roomsInput.value) || 1;
@@ -126,9 +126,9 @@ function updateTotalPrice() {
     const total = pricePerRoom * nights * rooms;
     totalPriceSpan.textContent = total;
     totalPriceInput.value = total;
+    daysInput.value = nights; // send nights to esewa_payment.php
 }
 
-// Event listeners
 startDateInput.addEventListener('change', updateTotalPrice);
 endDateInput.addEventListener('change', updateTotalPrice);
 roomsInput.addEventListener('input', updateTotalPrice);
