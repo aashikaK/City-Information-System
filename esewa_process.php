@@ -1,37 +1,47 @@
 <?php
 session_start();
 
-
 if (!isset($_SESSION['login'])) {
     header("Location: signin.php");
     exit;
 }
 
-
+// Booking info from session
 $service_id = $_SESSION['service_id'] ?? null;
-$amount     = $_SESSION['amount'] ?? null;
+$amount     = $_SESSION['total_price'] ?? null;
+$category   = $_SESSION['category'] ?? null;
 
-if (!$service_id || !$amount) {
+if (!$service_id || !$amount || !$category) {
     die("Invalid payment request");
 }
+
+// Optional details
+$appointment_date = $_SESSION['appointment_date'] ?? null;
+$start_date       = $_SESSION['start_date'] ?? null;
+$end_date         = $_SESSION['end_date'] ?? null;
+$rooms            = $_SESSION['rooms'] ?? 1;
+$days             = $_SESSION['days'] ?? 1;
+
+// Generate transaction UUID
 $transaction_uuid = "CIS_" . time() . rand(1000,9999);
 $_SESSION['transaction_uuid'] = $transaction_uuid;
 
+// eSewa UAT/Test URL
 $esewa_url = "https://rc-epay.esewa.com.np/api/epay/main/v2/form";
 
-//  Merchant product code (TEST)
+// Merchant product code (TEST)
 $product_code = "EPAYTEST";
 
-//  Charges (keep 0 for project)
+// Charges (keep 0 for project)
 $tax_amount = 0;
 $product_service_charge = 0;
 $product_delivery_charge = 0;
 
-//  URLs (LOCALHOST allowed for demo)
+// URLs
 $success_url = "http://localhost/CIS/esewa_success.php";
 $failure_url = "http://localhost/CIS/esewa_fail.php";
 
-//  Fields that must be signed (ORDER MATTERS!)
+// Fields that must be signed (ORDER MATTERS!)
 $signed_field_names = "total_amount,transaction_uuid,product_code";
 
 $signature_string =
@@ -39,14 +49,15 @@ $signature_string =
     "transaction_uuid={$transaction_uuid}," .
     "product_code={$product_code}";
 
-    //  eSewa UAT secret key
+// eSewa UAT secret key
 $secret_key = "8gBm/:&EnhH.1/q";
 
-//  Generate signature (HMAC SHA256 + Base64)
+// Generate signature (HMAC SHA256 + Base64)
 $signature = base64_encode(
     hash_hmac("sha256", $signature_string, $secret_key, true)
 );
 ?>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -74,6 +85,14 @@ $signature = base64_encode(
 
     <input type="hidden" name="signed_field_names" value="<?php echo $signed_field_names; ?>">
     <input type="hidden" name="signature" value="<?php echo $signature; ?>">
+
+    <!-- Extra hidden fields to preserve booking info -->
+    <input type="hidden" name="category" value="<?php echo htmlspecialchars($category); ?>">
+    <input type="hidden" name="appointment_date" value="<?php echo htmlspecialchars($appointment_date); ?>">
+    <input type="hidden" name="start_date" value="<?php echo htmlspecialchars($start_date); ?>">
+    <input type="hidden" name="end_date" value="<?php echo htmlspecialchars($end_date); ?>">
+    <input type="hidden" name="rooms" value="<?php echo htmlspecialchars($rooms); ?>">
+    <input type="hidden" name="days" value="<?php echo htmlspecialchars($days); ?>">
 
 </form>
 
