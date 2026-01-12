@@ -176,6 +176,18 @@ window.addEventListener('load', AOS.refresh);
 // Map and routing setup
 var map, routingControl;
 
+// Function to calculate distance between two points in km
+function distance(lat1, lng1, lat2, lng2) {
+    const R = 6371; // km
+    const dLat = (lat2-lat1)*Math.PI/180;
+    const dLng = (lng2-lng1)*Math.PI/180;
+    const a = Math.sin(dLat/2)*Math.sin(dLat/2) +
+              Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180) *
+              Math.sin(dLng/2)*Math.sin(dLng/2);
+    const c = 2*Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    return R * c; // distance in km
+}
+
 // When a card is clicked
 document.querySelectorAll('.service-card').forEach(function(card){
     card.addEventListener('click', function(){
@@ -203,7 +215,7 @@ document.querySelectorAll('.service-card').forEach(function(card){
                 var userLat = position.coords.latitude;
                 var userLng = position.coords.longitude;
 
-                // Add route with auto zoom to fit route fully below panel
+                // Add route
                 routingControl = L.Routing.control({
                     waypoints: [
                         L.latLng(userLat, userLng),
@@ -216,12 +228,17 @@ document.querySelectorAll('.service-card').forEach(function(card){
                     show: true
                 }).addTo(map);
 
-                // Automatically adjust zoom & padding so route fits below panel
+                // Dynamically calculate padding based on distance
                 var bounds = L.latLngBounds([
                     [userLat, userLng],
                     [lat, lng]
                 ]);
-                map.fitBounds(bounds, { paddingTopLeft: [0, 70], paddingBottomRight: [20,20] });
+                let dist = distance(userLat, userLng, lat, lng); // km
+                let rightPadding = Math.min(500, Math.max(200, dist*50)); // 200-500px
+                map.fitBounds(bounds, { 
+                    paddingTopLeft: [10,10],
+                    paddingBottomRight: [rightPadding, 10] 
+                });
 
             }, function(err){
                 alert('Could not get your location. Route cannot be shown.');

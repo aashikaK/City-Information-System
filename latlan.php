@@ -2,7 +2,7 @@
 ini_set('max_execution_time', 600);
 require "db.php";
 
-/* City fallback coordinates (REAL city centers) */
+// City fallback coordinates
 $cityCenters = [
     "Kathmandu" => [27.7172, 85.3240],
     "Lalitpur"  => [27.6644, 85.3188],
@@ -13,6 +13,7 @@ $cityCenters = [
     "Mustang"   => [29.1833, 83.8333]
 ];
 
+// Function to fetch coordinates from OSM
 function fetchLatLng($query) {
     $url = "https://nominatim.openstreetmap.org/search?format=json&q=" . urlencode($query);
     $opts = [
@@ -33,16 +34,26 @@ function fetchLatLng($query) {
     return null;
 }
 
-/* Get all records */
-$stmt = $pdo->query("SELECT id, name, city FROM city_services");
+// Fetch all services
+$stmt = $pdo->query("SELECT id, name, city, location FROM city_services");
 $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 foreach ($rows as $row) {
 
-    $search = $row['name'] . ", " . $row['city'] . ", Nepal";
-    $coords = fetchLatLng($search);
+    // Try multiple search queries
+    $queries = [
+        $row['name'] . ", " . $row['city'] . ", Nepal",              // name + city
+        $row['name'] . ", " . $row['location'] . ", " . $row['city'] . ", Nepal" // name + location + city
+    ];
 
-    /* Fallback to city center if exact place not found */
+    $coords = null;
+    foreach ($queries as $q) {
+        $coords = fetchLatLng($q);
+        if ($coords) break; // stop at first successful fetch
+        sleep(1); // respect rate limit
+    }
+
+    // Fallback to city center only if still not found
     if (!$coords && isset($cityCenters[$row['city']])) {
         $coords = [
             'lat' => $cityCenters[$row['city']][0],
@@ -51,17 +62,15 @@ foreach ($rows as $row) {
     }
 
     if ($coords) {
-        $update = $pdo->prepare(
-            "UPDATE city_services SET latitude=?, longitude=? WHERE id=?"
-        );
+        $update = $pdo->prepare("UPDATE city_services SET latitude=?, longitude=? WHERE id=?");
         $update->execute([$coords['lat'], $coords['lng'], $row['id']]);
 
-        echo "✔ Updated: {$row['name']} ({$row['city']})<br>";
+        echo "✔ Updated: {$row['name']} ({$row['city']}) => {$coords['lat']}, {$coords['lng']}<br>";
     } else {
         echo "❌ Skipped: {$row['name']}<br>";
     }
 
-    sleep(1); // REQUIRED (OSM rate limit)
+    sleep(1); // rate limit
 }
 
-echo "<br><b>DONE — REAL COORDINATES ADDED</b>";
+echo "<br><b>DONE — REAL COORDINATES UPDATED</b>";
