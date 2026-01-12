@@ -87,7 +87,6 @@ body {background:#f4f7fb; min-height:100vh; display:flex; justify-content:center
 </div>
 
 <script>
-// Hotel dynamic price calculation
 <?php if ($category == "Hotel"): ?>
 const pricePerRoom = <?php echo $service['booking_price']; ?>;
 const startDateInput = document.getElementById('start_date');
@@ -96,40 +95,41 @@ const roomsInput = document.getElementById('rooms');
 const totalPriceSpan = document.getElementById('totalPrice');
 const totalPriceInput = document.getElementById('total_price_input');
 
-function updateCheckoutMin() {
-    if (startDateInput.value) {
-        const start = new Date(startDateInput.value);
-        start.setDate(start.getDate() + 1); // checkout must be next day
-        const minDate = start.toISOString().split('T')[0];
-        endDateInput.min = minDate;
+// Set checkout min date to next day of check-in
+startDateInput.addEventListener('change', function() {
+    const startDate = new Date(this.value);
+    const nextDay = new Date(startDate);
+    nextDay.setDate(startDate.getDate() + 1);
+    endDateInput.min = nextDay.toISOString().split('T')[0];
 
-        // if checkout is before new min, reset
-        if (endDateInput.value && endDateInput.value < minDate) {
-            endDateInput.value = minDate;
-        }
+    // If current end date < min, reset it
+    if (endDateInput.value && new Date(endDateInput.value) <= startDate) {
+        endDateInput.value = endDateInput.min;
     }
-}
 
+    updateTotalPrice();
+});
+
+// Calculate total price based on nights and rooms
 function updateTotalPrice() {
     if (!startDateInput.value || !endDateInput.value) return;
 
     const start = new Date(startDateInput.value);
     const end = new Date(endDateInput.value);
 
-    let diffMs = end - start;
-    let nights = Math.round(diffMs / (1000*60*60*24));
+    // Nights = difference between dates
+    let nights = Math.round((end - start) / (1000 * 60 * 60 * 24));
     if (nights < 1) nights = 1;
 
     let rooms = parseInt(roomsInput.value) || 1;
+
     const total = pricePerRoom * nights * rooms;
     totalPriceSpan.textContent = total;
     totalPriceInput.value = total;
 }
 
-startDateInput.addEventListener('change', () => {
-    updateCheckoutMin();
-    updateTotalPrice();
-});
+// Event listeners
+startDateInput.addEventListener('change', updateTotalPrice);
 endDateInput.addEventListener('change', updateTotalPrice);
 roomsInput.addEventListener('input', updateTotalPrice);
 <?php endif; ?>
