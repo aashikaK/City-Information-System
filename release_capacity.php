@@ -51,5 +51,5 @@ foreach ($hotels as $booking) {
     $mark->execute([$booking['id']]);
 }
 
-echo "Capacity released successfully for today.";
+// echo "Capacity released successfully for today.";
 ?>

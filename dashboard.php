@@ -1,6 +1,6 @@
 <?php
 include "navbar.php";
-
+require "release_capacity.php";
 // Redirect if not logged in
 if(!isset($_SESSION['login']) || $_SESSION['login'] == ''){
     header("Location: signin.php");

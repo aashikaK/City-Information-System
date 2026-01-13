@@ -1,6 +1,6 @@
 <?php
  include "admin-navbar.php"; 
-
+require "release_capacity.php";
 // Protect admin pages
 if (!isset($_SESSION['admin']) || $_SESSION['admin'] == '') {
     header("Location: signin.php");
