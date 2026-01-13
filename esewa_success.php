@@ -88,6 +88,7 @@ unset($_SESSION['rooms']);
         body { font-family: "Segoe UI", Arial; text-align:center; background:#f4f7fb; padding:50px; }
         .success { color:#3F84B1; font-size:1.5rem; margin-bottom:20px; }
         .info { font-size:1rem; margin:10px 0; }
+         .notice { font-size:1rem; color:#555; margin-top:20px; background:#eaf2fb; padding:15px; border-radius:8px; display:inline-block; max-width:500px; }
         a.button { display:inline-block; margin-top:20px; padding:10px 20px; background:#3F84B1; color:white; text-decoration:none; border-radius:6px; }
     </style>
 </head>
@@ -105,6 +106,12 @@ unset($_SESSION['rooms']);
 <?php else: ?>
 <div class="info"><strong>Appointment Date:</strong> <?php echo htmlspecialchars($start_date); ?></div>
 <?php endif; ?>
+
+<div class="notice">
+    Your ticket is being generated. Please wait a few minutes. <br>
+    You will be notified as soon as your official ticket is ready.
+</div>
+
 
 <a href="issuetickets.php" class="button">Back to Services</a>
 
