@@ -135,9 +135,15 @@ th { background:#f0f4fa; }
         <?php if ($b['status'] === 'pending'): ?>
             <a class="btn confirm" href="?action=confirmed&id=<?= $b['id'] ?>">Confirm</a>
             <a class="btn cancel" href="?action=cancelled&id=<?= $b['id'] ?>">Cancel</a>
-        <?php elseif($b['status'] === 'confirmed'): ?>
-            <a class="btn completed" href="?action=completed&id=<?= $b['id'] ?>">Mark Completed</a>
-        <?php else: ?>
+        <
+        <?php elseif ($b['status'] === 'confirmed'): ?>
+    <a class="btn confirm" href="admin_issues.php?booking_id=<?= $b['id'] ?>">
+        Issue Ticket
+    </a>
+<?php elseif ($b['status'] === 'completed'): ?>
+    <span class="btn disabled">Completed</span>
+<?php else: ?>
+
             <span class="btn disabled">No Action</span>
         <?php endif; ?>
     </td>

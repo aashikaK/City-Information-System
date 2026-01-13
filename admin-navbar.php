@@ -112,7 +112,7 @@ body { background:#f4f7fb; } /* light gray */
         <li><a href="manage-events.php">Events</a></li>
         <li><a href="manage-tourism.php">Tourism</a></li>
         <li><a href="manage-services.php">Services</a></li>
-        <li><a href="admin_issues.php">Issue Tickets</a></li>
+       <li><a href="admin_tickets.php">Issued Tickets</a></li>
         <li><a href="/CIS/logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
     </ul>
 </nav>
