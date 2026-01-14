@@ -153,28 +153,28 @@ body {
 <li><a href="/CIS/services.php"><i class="fas fa-concierge-bell"></i> Services</a></li>
 <li><a href="/CIS/tourism.php"><i class="fas fa-map-marked-alt"></i> Tourism</a></li>
 <li><a href="/CIS/map.php"><i class="fas fa-map"></i> Map</a></li>
- <li style="position:relative;">
-    <a href="notification.php">
+<li style="position:relative;">
+    <a href="notification.php" id="notification-bell">
         <i class="fas fa-bell" style="font-size:20px;"></i>
         <?php if($ticket_count > 0): ?>
-            <span style="
-                position:absolute;
-                top:-5px;
-                right:-5px;
-                min-width:18px;
-                height:18px;
-                background:red;
-                color:white;
-                font-size:12px;
-                font-weight:bold;
-                border-radius:50%;
-                display:flex;
-                align-items:center;
-                justify-content:center;
-                padding:0 5px;
-            ">
-                <?php echo $ticket_count; ?>
-            </span>
+        <span id="notif-count" style="
+            position:absolute;
+            top:-5px;
+            right:-5px;
+            min-width:18px;
+            height:18px;
+            background:red;
+            color:white;
+            font-size:12px;
+            font-weight:bold;
+            border-radius:50%;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            padding:0 5px;
+        ">
+            <?php echo $ticket_count; ?>
+        </span>
         <?php endif; ?>
     </a>
 </li>
@@ -269,6 +269,17 @@ document.addEventListener('click', function(e) {
 function toggleMenu() {
     document.getElementById('menu').classList.toggle('show');
 }
+document.getElementById('notification-bell').addEventListener('click', function(e) {
+    // Make AJAX request to mark all notifications as read
+    fetch('mark_read.php')
+    .then(response => response.json())
+    .then(data => {
+        if(data.success) {
+            const countEl = document.getElementById('notif-count');
+            if(countEl) countEl.style.display = 'none'; // hide red dot/count
+        }
+    });
+});
 </script>
 
 </body>

@@ -1,5 +1,5 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) session_start();
 require "db.php";
 
 if (!isset($_SESSION['login'])) {
@@ -8,15 +8,12 @@ if (!isset($_SESSION['login'])) {
 }
 
 $username = $_SESSION['login'];
-
-// Get user ID
 $stmt_user = $pdo->prepare("SELECT id FROM users WHERE username=?");
 $stmt_user->execute([$username]);
 $user_id = $stmt_user->fetchColumn();
-
 if (!$user_id) die("User not found.");
 
-// Handle actions: delete or pin/unpin
+// Handle actions
 if (isset($_GET['action'], $_GET['id'])) {
     $notif_id = (int)$_GET['id'];
     if ($_GET['action'] === 'delete') {
@@ -30,21 +27,28 @@ if (isset($_GET['action'], $_GET['id'])) {
     exit;
 }
 
-// Fetch notifications: pinned first, then newest
+// Mark all unread as read
+$pdo->prepare("UPDATE notifications SET status='read' WHERE user_id=? AND status='unread'")
+    ->execute([$user_id]);
+
+// Fetch notifications
 $stmt_notif = $pdo->prepare("
-    SELECT n.*, t.ticket_number, t.booking_id, t.service_name, t.category
+    SELECT n.id, n.user_id, n.type, n.reference_id, n.title, n.status, n.pinned, n.created_at,
+           t.ticket_number, t.booking_id, t.service_name, t.category
     FROM notifications n
     LEFT JOIN tickets t ON n.type='ticket' AND n.reference_id = t.booking_id
     WHERE n.user_id = ?
-    ORDER BY pinned DESC, created_at DESC
+    GROUP BY n.id
+    ORDER BY created_at DESC
 ");
 $stmt_notif->execute([$user_id]);
 $notifications = $stmt_notif->fetchAll(PDO::FETCH_ASSOC);
 
-// Mark all unread as read once viewed
-$pdo->prepare("UPDATE notifications SET status='read' WHERE user_id=? AND status='unread'")
-    ->execute([$user_id]);
+// Separate pinned and normal notifications
+$pinned = array_filter($notifications, fn($n) => $n['pinned']);
+$normal = array_filter($notifications, fn($n) => !$n['pinned']);
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -55,8 +59,10 @@ body { font-family:"Segoe UI", Arial; background:#f4f7fb; padding:20px; }
 .container { max-width:700px; margin:auto; }
 h2 { color:#3F84B1; text-align:center; margin-bottom:20px; }
 
-/* Pinned section */
-h3 { margin-top:20px; color:#4a90e2; }
+/* Tabs */
+.tabs { display:flex; margin-bottom:20px; }
+.tabs button { flex:1; padding:10px; border:none; cursor:pointer; font-weight:bold; background:#ddd; transition:0.3s; }
+.tabs button.active { background:#4a90e2; color:white; }
 
 /* Card */
 .card { background:white; border-radius:10px; padding:12px 15px; margin-bottom:12px;
@@ -72,8 +78,9 @@ h3 { margin-top:20px; color:#4a90e2; }
 .btn-download { display:inline-block; padding:5px 10px; background:#4a90e2; color:white; border-radius:6px; text-decoration:none; margin-top:6px; font-size:13px; }
 .btn-download:hover { background:#3678c3; }
 
-/* Scrollable notifications list */
-.notifications-list { max-height:400px; overflow-y:auto; padding-right:5px; }
+/* Scrollable container */
+.notifications-list { max-height:400px; overflow-y:auto; padding-right:5px; display:none; }
+.notifications-list.active { display:block; }
 </style>
 </head>
 <body>
@@ -81,61 +88,73 @@ h3 { margin-top:20px; color:#4a90e2; }
 <div class="container">
 <h2>My Notifications</h2>
 
-<?php
-// Separate pinned and normal notifications
-$pinned = array_filter($notifications, fn($n) => $n['pinned']);
-$normal = array_filter($notifications, fn($n) => !$n['pinned']);
-?>
+<div class="tabs">
+    <button id="tab-all" class="active" onclick="showTab('all')">All Notifications</button>
+    <button id="tab-pinned" onclick="showTab('pinned')">Pinned Notifications</button>
+</div>
 
-<?php if($pinned): ?>
-    <h3>Pinned Notifications</h3>
-    <div class="notifications-list">
+<!-- All notifications -->
+<div id="all" class="notifications-list active">
+    <?php if($notifications): ?>
+        <?php foreach($notifications as $n): ?>
+            <div class="card <?= $n['status']=='unread'?'unread':'' ?>">
+                <div class="actions">
+                    <a href="?action=pin&id=<?= $n['id'] ?>" title="<?= $n['pinned']?'Unpin':'Pin' ?>">📌</a>
+                    <a href="?action=delete&id=<?= $n['id'] ?>" title="Delete" onclick="return confirm('Delete this notification?');">🗑️</a>
+                </div>
+                <h4><?= htmlspecialchars($n['title']) ?> <?= $n['pinned']?'📌':'' ?></h4>
+                <small><?= $n['created_at'] ?></small>
+                <?php if($n['type']=='ticket' && $n['booking_id']): ?>
+                    <br>
+                    <a class="btn-download" href="ticket_view.php?booking_id=<?= $n['booking_id'] ?>" target="_blank">View & Download Ticket</a>
+                <?php endif; ?>
+            </div>
+        <?php endforeach; ?>
+    <?php else: ?>
+        <p style="text-align:center;color:gray;">No notifications yet.</p>
+    <?php endif; ?>
+</div>
+
+<!-- Pinned notifications -->
+<div id="pinned" class="notifications-list">
+    <?php if($pinned): ?>
         <?php foreach($pinned as $n): ?>
             <div class="card <?= $n['status']=='unread'?'unread':'' ?>">
                 <div class="actions">
                     <a href="?action=pin&id=<?= $n['id'] ?>" title="Unpin">📌</a>
                     <a href="?action=delete&id=<?= $n['id'] ?>" title="Delete" onclick="return confirm('Delete this notification?');">🗑️</a>
                 </div>
-                <h4><?= htmlspecialchars($n['title']) ?> <?= $n['pinned'] ? '📌' : '' ?></h4>
+                <h4><?= htmlspecialchars($n['title']) ?> 📌</h4>
                 <small><?= $n['created_at'] ?></small>
                 <?php if($n['type']=='ticket' && $n['booking_id']): ?>
                     <br>
-                    <a class="btn-download" href="ticket_view.php?booking_id=<?= $n['booking_id'] ?>" target="_blank">
-                        View & Download Ticket
-                    </a>
+                    <a class="btn-download" href="ticket_view.php?booking_id=<?= $n['booking_id'] ?>" target="_blank">View & Download Ticket</a>
                 <?php endif; ?>
             </div>
         <?php endforeach; ?>
-    </div>
-<?php endif; ?>
-
-<?php if($normal): ?>
-    <h3>Notifications</h3>
-    <div class="notifications-list">
-        <?php foreach($normal as $n): ?>
-            <div class="card <?= $n['status']=='unread'?'unread':'' ?>">
-                <div class="actions">
-                    <a href="?action=pin&id=<?= $n['id'] ?>" title="Pin">📌</a>
-                    <a href="?action=delete&id=<?= $n['id'] ?>" title="Delete" onclick="return confirm('Delete this notification?');">🗑️</a>
-                </div>
-                <h4><?= htmlspecialchars($n['title']) ?> <?= $n['pinned'] ? '📌' : '' ?></h4>
-                <small><?= $n['created_at'] ?></small>
-                <?php if($n['type']=='ticket' && $n['booking_id']): ?>
-                    <br>
-                    <a class="btn-download" href="ticket_view.php?booking_id=<?= $n['booking_id'] ?>" target="_blank">
-                        View & Download Ticket
-                    </a>
-                <?php endif; ?>
-            </div>
-        <?php endforeach; ?>
-    </div>
-<?php endif; ?>
-
-<?php if(empty($notifications)): ?>
-    <p style="color:gray; text-align:center;">No notifications yet.</p>
-<?php endif; ?>
+    <?php else: ?>
+        <p style="text-align:center;color:gray;">No pinned notifications.</p>
+    <?php endif; ?>
+</div>
 
 </div>
+
+<script>
+function showTab(tab) {
+    document.getElementById('all').classList.remove('active');
+    document.getElementById('pinned').classList.remove('active');
+    document.getElementById('tab-all').classList.remove('active');
+    document.getElementById('tab-pinned').classList.remove('active');
+
+    if(tab==='all') {
+        document.getElementById('all').classList.add('active');
+        document.getElementById('tab-all').classList.add('active');
+    } else {
+        document.getElementById('pinned').classList.add('active');
+        document.getElementById('tab-pinned').classList.add('active');
+    }
+}
+</script>
 
 </body>
 </html>
