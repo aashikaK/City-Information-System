@@ -26,7 +26,7 @@ $writeUsCount = $pdo->query("SELECT COUNT(*) FROM write_us WHERE status='new'")-
 $pendingMessagesCount = $pdo->query("SELECT COUNT(*) FROM write_us WHERE status='pending'")->fetchColumn();
 
 
-$registeredEventsCount = $pdo->query("SELECT COUNT(*) FROM user_events WHERE status='registered'")->fetchColumn();
+$allEventsCount = $pdo->query("SELECT COUNT(*) FROM user_events")->fetchColumn();
 $pendingEventsCount = $pdo->query("SELECT COUNT(*) FROM user_events WHERE status='pending'")->fetchColumn();
 
 
@@ -176,7 +176,7 @@ body { background:#f4f7fb; }
     <i class="fas fa-hourglass-half"></i>
     <h2><?php echo $pendingEventsCount; ?></h2>
     Pending Event Approvals
-    <a href="manage-userEvents.php?status=pending">View Pending</a>
+    <a href="manage-pendingEvents.php?status=pending">View Pending</a>
 </div>
 
 

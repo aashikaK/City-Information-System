@@ -1,22 +1,38 @@
 <?php
 include "admin-navbar.php";
+require "db.php";
 
-if(!isset($_SESSION['admin']) || $_SESSION['admin'] == ''){
+// Protect admin pages
+if (!isset($_SESSION['admin']) || $_SESSION['admin'] == '') {
     header("Location: signin.php");
     exit;
 }
 
-require "db.php";
+// Handle status update for pending events
+if(isset($_GET['action'], $_GET['id'])){
+    $id = (int) $_GET['id'];
+    $action = $_GET['action'];
+
+    if($action === 'confirm'){ // pending → registered
+        $stmt = $pdo->prepare("UPDATE user_events SET status='registered' WHERE id=? AND status='pending'");
+        $stmt->execute([$id]);
+    } elseif($action === 'cancel'){ // pending → cancelled
+        $stmt = $pdo->prepare("UPDATE user_events SET status='cancelled' WHERE id=? AND status='pending'");
+        $stmt->execute([$id]);
+    }
+
+    // Reload page so updates reflect immediately
+    header("Location: all-userEvents.php");
+    exit;
+}
 
 try {
     // Fetch all user_events with event and user info
-    $sql = "SELECT ue.status, u.username, u.email, e.event_name, e.city, e.location, e.event_date, e.image_path
-        FROM user_events ue
-        JOIN users u ON ue.user_id = u.id
-        JOIN events e ON ue.event_id = e.event_id
-        WHERE ue.status IN ('registered', 'attended')
-        ORDER BY e.event_date ASC";
-
+    $sql = "SELECT ue.id, ue.status, u.username, u.email, e.event_name, e.city, e.location, e.event_date, e.image_path
+            FROM user_events ue
+            JOIN users u ON ue.user_id = u.id
+            JOIN events e ON ue.event_id = e.event_id
+            ORDER BY e.event_date ASC";
     $stmt = $pdo->query($sql);
     $registrations = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -30,9 +46,8 @@ try {
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin - Registered Events</title>
+<title>Admin - All User Registrations</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css"/>
-
 <style>
 * { margin:0; padding:0; box-sizing:border-box; font-family:"Segoe UI", Arial, sans-serif; }
 body { background:#f4f7fb; }
@@ -73,10 +88,14 @@ body { background:#f4f7fb; }
 
 .event-card strong { font-size:1.4rem; color:#222; display:block; margin-bottom:5px; }
 .event-info { font-size:0.9rem; color:#555; margin-bottom:5px; }
-.user-info { 
-    
+.user-info { font-size:0.85rem; color:#333; margin-top:10px; background:#eef3f9; padding:8px; border-radius:6px; }
 
-font-size:0.85rem; color:#333; margin-top:10px; background:#eef3f9; padding:8px; border-radius:6px; }
+.status-badge { display:inline-block; padding:4px 8px; border-radius:5px; color:white; font-weight:bold; margin-top:5px; }
+
+.btn { padding:6px 10px; border-radius:6px; color:white; text-decoration:none; font-size:0.85rem; margin:3px; display:inline-block;}
+.confirm { background:#28a745; }
+.cancel { background:#dc3545; }
+.disabled { background:#aaa; cursor:not-allowed; }
 
 .footer {
     background:#3F84B1;
@@ -90,14 +109,23 @@ font-size:0.85rem; color:#333; margin-top:10px; background:#eef3f9; padding:8px;
 <body>
 
 <div class="page-header">
-    <h1>Registered Events by Users</h1>
+    <h1>All User Event Registrations</h1>
 </div>
 
 <div class="events-container">
 <?php
-if ($registrations) {
-    foreach ($registrations as $reg) {
+if($registrations){
+    foreach($registrations as $reg){
         $img_path = !empty($reg['image_path']) ? htmlspecialchars($reg['image_path']) : 'images/events/default.jpg';
+
+        // Badge colors
+        $status_color = match($reg['status']){
+            'attended' => '#4caf50',
+            'registered' => '#f39c12',
+            'pending' => '#e67e22',
+            'cancelled' => '#e74c3c',
+            default => '#777'
+        };
 
         echo "<div class='event-card'>";
         echo "<img src='{$img_path}' alt='Event Image'>";
@@ -108,16 +136,21 @@ if ($registrations) {
         echo "<div class='user-info'>";
         echo "<strong>User:</strong> " . htmlspecialchars($reg['username']) . "<br>";
         echo "<strong>Email:</strong> " . htmlspecialchars($reg['email']) . "<br>";
-        $status_color = ($reg['status'] == 'attended') ? '#4caf50' : '#f39c12'; // green for attended, orange for registered
-echo "<span style='display:inline-block; padding:4px 8px; border-radius:5px; background:{$status_color}; color:white; margin-top:5px;'>{$reg['status']}</span>";
+        echo "<span class='status-badge' style='background:{$status_color}'>" . ucfirst($reg['status']) . "</span><br>";
 
-        echo "<strong>Status:</strong> " . ucfirst($reg['status']);
-        echo "</div>";
+        // Show action only if pending
+        if($reg['status'] === 'pending'){
+            echo "<a class='btn confirm' href='?action=confirm&id={$reg['id']}'>Confirm</a>";
+            echo "<a class='btn cancel' href='?action=cancel&id={$reg['id']}'>Cancel</a>";
+        } else {
+            echo "<span class='btn disabled'>No Action</span>";
+        }
 
-        echo "</div>";
+        echo "</div>"; // user-info
+        echo "</div>"; // event-card
     }
 } else {
-    echo "<p style='text-align:center; color:#777;'>No users have registered for events yet.</p>";
+    echo "<p style='text-align:center; color:#777;'>No registrations found.</p>";
 }
 ?>
 </div>

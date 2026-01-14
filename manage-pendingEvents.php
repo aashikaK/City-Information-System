@@ -13,15 +13,22 @@ if (isset($_GET['action'], $_GET['id'])) {
     $id = (int) $_GET['id'];
     $action = $_GET['action'];
 
-    if (in_array($action, ['confirmed','cancelled'])) { // only pending actions
-        $stmt = $pdo->prepare("UPDATE user_events SET status = ? WHERE id = ?");
-        $stmt->execute([$action, $id]);
-        header("Location: pending-userEvents.php");
-        exit;
+    if ($action === 'confirm') {
+        // Change status from pending → registered
+        $stmt = $pdo->prepare("UPDATE user_events SET status = 'registered' WHERE id = ?");
+        $stmt->execute([$id]);
+    } elseif ($action === 'cancel') {
+        // Change status from pending → cancelled
+        $stmt = $pdo->prepare("UPDATE user_events SET status = 'cancelled' WHERE id = ?");
+        $stmt->execute([$id]);
     }
+
+    // Refresh page so table updates immediately
+    header("Location: manage-pendingEvents.php");
+    exit;
 }
 
-// Fetch **only pending registrations**
+// Fetch only pending registrations
 $stmt = $pdo->query("
     SELECT ue.id, ue.status, u.username, u.email, e.event_name, e.city, e.location, e.event_date
     FROM user_events ue
@@ -32,6 +39,7 @@ $stmt = $pdo->query("
 ");
 $registrations = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -45,7 +53,10 @@ h2 { text-align:center; color:#4a90e2; margin-bottom:20px; }
 table { width:100%; border-collapse:collapse; font-size:0.95rem; }
 th, td { padding:10px; border-bottom:1px solid #ddd; text-align:center; }
 th { background:#f0f4fa; }
+
 .status-pending { color:#d18b00; font-weight:bold; }
+.status-registered { color:#28a745; font-weight:bold; }
+.status-cancelled { color:#e74c3c; font-weight:bold; }
 
 .btn { padding:6px 10px; border-radius:6px; color:white; text-decoration:none; font-size:0.85rem; margin:2px; display:inline-block;}
 .confirm { background:#28a745; }
@@ -84,8 +95,8 @@ th { background:#f0f4fa; }
     <td><?= date("d M Y", strtotime($r['event_date'])) ?></td>
     <td class="status-<?= $r['status'] ?>"><?= ucfirst($r['status']) ?></td>
     <td>
-        <a class="btn confirm" href="?action=confirmed&id=<?= $r['id'] ?>">Confirm</a>
-        <a class="btn cancel" href="?action=cancelled&id=<?= $r['id'] ?>">Cancel</a>
+        <a class="btn confirm" href="?action=confirm&id=<?= $r['id'] ?>">Confirm</a>
+        <a class="btn cancel" href="?action=cancel&id=<?= $r['id'] ?>">Cancel</a>
     </td>
 </tr>
 <?php endforeach; ?>

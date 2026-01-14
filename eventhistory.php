@@ -131,6 +131,14 @@ if ($events) {
             echo "<label>Personal Note:</label>";
             $note = htmlspecialchars($event['personal_note'] ?? '');
             echo "<textarea name='personal_note'>{$note}</textarea>";
+
+            echo "<label>Mark as Favorite:</label><br>";
+            $is_fav = $event['is_favorite'] ?? 0;
+            $yes_checked = $is_fav ? "checked" : "";
+            $no_checked = !$is_fav ? "checked" : "";
+            echo "<input type='radio' name='is_favorite' value='1' {$yes_checked}> Yes ";
+            echo "<input type='radio' name='is_favorite' value='0' {$no_checked}> No <br>";
+
             echo "<input type='hidden' name='event_id' value='{$event['event_id']}'>";
             echo "<button type='submit' name='save_btn' class='save-btn'>Save</button>";
             echo "</form>";
