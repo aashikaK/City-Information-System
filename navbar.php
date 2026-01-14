@@ -1,5 +1,6 @@
 <?php
 session_start();
+include "notification_count.php";
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -152,11 +153,50 @@ body {
 <li><a href="/CIS/services.php"><i class="fas fa-concierge-bell"></i> Services</a></li>
 <li><a href="/CIS/tourism.php"><i class="fas fa-map-marked-alt"></i> Tourism</a></li>
 <li><a href="/CIS/map.php"><i class="fas fa-map"></i> Map</a></li>
- <li>
-                <button id="notification-button">
-                    <a href="/CIS/notification.php"><i class="fas fa-bell"></i></a>
-                </button>
-            </li>
+ <li style="position:relative;">
+    <a href="notification.php">
+        <i class="fas fa-bell" style="font-size:20px;"></i>
+        <?php if($ticket_count > 0): ?>
+            <span style="
+                position:absolute;
+                top:-5px;
+                right:-5px;
+                min-width:18px;
+                height:18px;
+                background:red;
+                color:white;
+                font-size:12px;
+                font-weight:bold;
+                border-radius:50%;
+                display:flex;
+                align-items:center;
+                justify-content:center;
+                padding:0 5px;
+            ">
+                <?php echo $ticket_count; ?>
+            </span>
+        <?php endif; ?>
+    </a>
+</li>
+
+
+
+<script>
+function toggleNotifications() {
+    const dropdown = document.getElementById('notification-dropdown');
+    dropdown.style.display = (dropdown.style.display === 'block') ? 'none' : 'block';
+}
+
+// Optional: click outside to close
+document.addEventListener('click', function(e) {
+    const dropdown = document.getElementById('notification-dropdown');
+    const bell = e.target.closest('.fa-bell');
+    if (!bell && !e.target.closest('#notification-dropdown')) {
+        dropdown.style.display = 'none';
+    }
+});
+</script>
+
 
         <?php } 
         // else { 

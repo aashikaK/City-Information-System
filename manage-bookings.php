@@ -135,7 +135,7 @@ th { background:#f0f4fa; }
         <?php if ($b['status'] === 'pending'): ?>
             <a class="btn confirm" href="?action=confirmed&id=<?= $b['id'] ?>">Confirm</a>
             <a class="btn cancel" href="?action=cancelled&id=<?= $b['id'] ?>">Cancel</a>
-        <
+      
         <?php elseif ($b['status'] === 'confirmed'): ?>
     <a class="btn confirm" href="admin_issues.php?booking_id=<?= $b['id'] ?>">
         Issue Ticket

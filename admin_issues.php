@@ -33,7 +33,6 @@ if (!$booking) {
 $categoryCode = strtoupper($booking['category']);
 $date = date("Ymd");
 $ticket_number = "CIS-$categoryCode-$date-" . str_pad($booking_id, 5, "0", STR_PAD_LEFT);
-
 /* 3. Insert ticket */
 $stmt = $pdo->prepare("
     INSERT INTO tickets (
@@ -50,6 +49,15 @@ $stmt->execute([
     $booking['service_name'],
     "Authorized Admin"
 ]);
+
+/* --- 3a. Insert notification for user --- */
+$stmt_notif = $pdo->prepare("
+    INSERT INTO notifications (
+        user_id, type, reference_id, title, status, pinned
+    ) VALUES (?, 'ticket', ?, ?, 'unread', 0)
+");
+$title = "Your ticket for {$booking['service_name']} has been issued.";
+$stmt_notif->execute([$booking['user_id'], $booking_id, $title]);
 
 /* 4. Mark booking completed */
 $pdo->prepare("UPDATE bookings SET status='completed' WHERE id=?")

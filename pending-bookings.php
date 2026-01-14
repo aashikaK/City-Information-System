@@ -40,7 +40,7 @@ if (isset($_GET['action'], $_GET['id'])) {
         $stmt->execute([$action, $id]);
     }
 
-    header("Location: manage-bookings.php");
+    header("Location: pending-bookings.php");
     exit;
 }
 
