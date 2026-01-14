@@ -35,13 +35,13 @@ $record = $check_stmt->fetch(PDO::FETCH_ASSOC);
 if ($record) {
     if ($record['status'] == 'cancelled') {
         // Re-register
-        $update = $pdo->prepare("UPDATE user_events SET status='registered', registered_at=NOW() WHERE id=:id");
+        $update = $pdo->prepare("UPDATE user_events SET status='pending', registered_at=NOW() WHERE id=:id");
         $update->execute([':id' => $record['id']]);
     }
     // If already registered or attended, do nothing
 } else {
     // New registration
-    $insert = $pdo->prepare("INSERT INTO user_events (user_id, event_id, status) VALUES (:uid, :eid, 'registered')");
+    $insert = $pdo->prepare("INSERT INTO user_events (user_id, event_id, status) VALUES (:uid, :eid, 'pending')");
     $insert->execute([':uid' => $user_id, ':eid' => $event_id]);
 }
 

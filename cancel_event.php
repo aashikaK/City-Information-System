@@ -19,9 +19,12 @@ if (isset($_POST['event_id'])) {
     $event_id = $_POST['event_id'];
 
     // Update status to 'cancelled' in user_events
-    $stmt = $pdo->prepare("UPDATE user_events 
-                           SET status = 'cancelled' 
-                           WHERE user_id = :uid AND event_id = :eid AND status = 'registered'");
+    $stmt = $pdo->prepare("UPDATE user_events
+SET status = 'cancelled'
+WHERE user_id = :uid
+  AND event_id = :eid
+  AND status IN ('registered', 'pending')
+");
     $stmt->execute([
         ':uid' => $user_id,
         ':eid' => $event_id

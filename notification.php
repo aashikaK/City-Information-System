@@ -73,6 +73,10 @@ h2 { color:#3F84B1; text-align:center; margin-bottom:20px; }
 .card .actions { position:absolute; top:8px; right:8px; }
 .card .actions a { margin-left:8px; color:#3F84B1; text-decoration:none; font-size:14px; }
 .card .actions a:hover { color:#ff4d4d; }
+.card:hover {
+    transform: translateY(-2px);
+    transition: 0.2s;
+}
 
 /* Download button */
 .btn-download { display:inline-block; padding:5px 10px; background:#4a90e2; color:white; border-radius:6px; text-decoration:none; margin-top:6px; font-size:13px; }

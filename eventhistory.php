@@ -101,13 +101,25 @@ if ($events) {
         echo "<p>" . htmlspecialchars($event['description']) . "</p>";
 
         // Status and actions
-        if ($event['status'] == 'registered' && strtotime($event['event_date']) >= time()) {
-            echo "<div class='registered'>Upcoming</div>";
-            echo "<form method='POST' action='cancel_event.php'>";
-            echo "<input type='hidden' name='event_id' value='{$event['event_id']}'>";
-            echo "<button type='submit' class='register-btn'>Cancel Registration</button>";
-            echo "</form>";
-        } elseif ($event['status'] == 'attended' || strtotime($event['event_date']) < time()) {
+       if (
+    ($event['status'] == 'registered' || $event['status'] == 'pending')
+    && strtotime($event['event_date']) >= time()
+) {
+
+    if ($event['status'] == 'registered') {
+        echo "<div class='registered'>Registered (Confirmed)</div>";
+    } else {
+        echo "<div class='registered'>Pending Approval</div>";
+    }
+
+    echo "<form method='POST' action='cancel_event.php'>";
+    echo "<input type='hidden' name='event_id' value='{$event['event_id']}'>";
+    echo "<button type='submit' class='register-btn'>Cancel Registration</button>";
+    echo "</form>";
+}
+
+        
+        elseif ($event['status'] == 'attended' || strtotime($event['event_date']) < time()) {
             echo "<div class='registered'>Completed</div>";
             echo "<form method='POST' action='update_event_feedback.php'>";
             echo "<label>Rating (1-5):</label>";

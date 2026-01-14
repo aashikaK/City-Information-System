@@ -33,9 +33,9 @@ try {
 
     $registered_events = [];
     if ($user_id) {
-        $reg_stmt = $pdo->prepare("SELECT event_id FROM user_events WHERE user_id = :uid AND status = 'registered'");
+        $reg_stmt = $pdo->prepare("SELECT event_id,status FROM user_events WHERE user_id = :uid");
         $reg_stmt->execute([':uid'=>$user_id]);
-        $registered_events = $reg_stmt->fetchAll(PDO::FETCH_COLUMN);
+      $registered_events = $reg_stmt->fetchAll(PDO::FETCH_KEY_PAIR);
     }
 
 } catch (PDOException $e) {
@@ -199,14 +199,21 @@ if ($events) {
         echo "<p>" . htmlspecialchars($event['description']) . "</p>";
 
         if ($user_id) {
-            if (in_array($event['event_id'], $registered_events)) {
-                echo "<div class='registered'>Registered</div>";
-            } else {
-                echo "<form method='POST' action='register_event.php'>
-                        <input type='hidden' name='event_id' value='{$event['event_id']}'>
-                        <button type='submit' class='register-btn'>Register</button>
-                      </form>";
-            }
+            if (isset($registered_events[$event['event_id']])) {
+    $status = $registered_events[$event['event_id']];
+
+    if ($status === 'pending') {
+        echo "<div class='registered'>Pending Approval</div>";
+    } elseif ($status === 'registered') {
+        echo "<div class='registered'>Registered</div>";
+    }
+} else {
+    echo "<form method='POST' action='register_event.php'>
+            <input type='hidden' name='event_id' value='{$event['event_id']}'>
+            <button type='submit' class='register-btn'>Register</button>
+          </form>";
+}
+
         }
 
         echo "</div>";
