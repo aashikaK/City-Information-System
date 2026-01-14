@@ -73,7 +73,10 @@ body { background:#f4f7fb; }
 
 .event-card strong { font-size:1.4rem; color:#222; display:block; margin-bottom:5px; }
 .event-info { font-size:0.9rem; color:#555; margin-bottom:5px; }
-.user-info { font-size:0.85rem; color:#333; margin-top:10px; background:#eef3f9; padding:8px; border-radius:6px; }
+.user-info { 
+    
+
+font-size:0.85rem; color:#333; margin-top:10px; background:#eef3f9; padding:8px; border-radius:6px; }
 
 .footer {
     background:#3F84B1;
@@ -105,6 +108,9 @@ if ($registrations) {
         echo "<div class='user-info'>";
         echo "<strong>User:</strong> " . htmlspecialchars($reg['username']) . "<br>";
         echo "<strong>Email:</strong> " . htmlspecialchars($reg['email']) . "<br>";
+        $status_color = ($reg['status'] == 'attended') ? '#4caf50' : '#f39c12'; // green for attended, orange for registered
+echo "<span style='display:inline-block; padding:4px 8px; border-radius:5px; background:{$status_color}; color:white; margin-top:5px;'>{$reg['status']}</span>";
+
         echo "<strong>Status:</strong> " . ucfirst($reg['status']);
         echo "</div>";
 

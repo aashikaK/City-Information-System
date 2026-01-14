@@ -164,17 +164,18 @@ body { background:#f4f7fb; }
 
         
 <div class="card">
-    <i class="fas fa-check-circle"></i>
-    <h2><?php echo $registeredEventsCount; ?></h2>
-    Registered Events
-    <a href="registered-events.php?status=registered">View Registered</a>
+    <i class="fas fa-calendar-check"></i>
+    <h2><?php echo $allEventsCount; ?></h2>
+    All Registrations
+    <a href="all-userEvents.php">View All</a>
 </div>
+
 
 
 <div class="card">
     <i class="fas fa-hourglass-half"></i>
     <h2><?php echo $pendingEventsCount; ?></h2>
-    Pending Approvals
+    Pending Event Approvals
     <a href="manage-userEvents.php?status=pending">View Pending</a>
 </div>
 
