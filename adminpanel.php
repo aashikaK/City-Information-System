@@ -26,6 +26,9 @@ $writeUsCount = $pdo->query("SELECT COUNT(*) FROM write_us WHERE status='new'")-
 $pendingMessagesCount = $pdo->query("SELECT COUNT(*) FROM write_us WHERE status='pending'")->fetchColumn();
 
 
+$registeredEventsCount = $pdo->query("SELECT COUNT(*) FROM user_events WHERE status='registered'")->fetchColumn();
+$pendingEventsCount = $pdo->query("SELECT COUNT(*) FROM user_events WHERE status='pending'")->fetchColumn();
+
 
 // $issuesCount = $pdo->query("SELECT COUNT(*) FROM issue_tickets")->fetchColumn();
 // $pendingIssuesCount = $pdo->query("SELECT COUNT(*) FROM issue_tickets WHERE status='pending'")->fetchColumn();
@@ -158,6 +161,23 @@ body { background:#f4f7fb; }
             Popular Events
             <a href="popular-events.php">View Popular</a>
         </div>
+
+        
+<div class="card">
+    <i class="fas fa-check-circle"></i>
+    <h2><?php echo $registeredEventsCount; ?></h2>
+    Registered Events
+    <a href="registered-events.php?status=registered">View Registered</a>
+</div>
+
+
+<div class="card">
+    <i class="fas fa-hourglass-half"></i>
+    <h2><?php echo $pendingEventsCount; ?></h2>
+    Pending Approvals
+    <a href="manage-userEvents.php?status=pending">View Pending</a>
+</div>
+
 
         <div class="card">
             <i class="fas fa-ticket-alt"></i>

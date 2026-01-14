@@ -78,8 +78,8 @@ body { background:#f4f7fb; }
 
         <div class="card">
             <i class="fas fa-envelope-open-text"></i>
-            Issue Tickets
-            <a href="issuetickets.php">Submit Ticket</a>
+            Book Tickets
+            <a href="issuetickets.php">Book Ticket</a>
         </div>
 
         <div class="card">
