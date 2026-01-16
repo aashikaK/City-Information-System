@@ -12,14 +12,26 @@
 * { margin:0; padding:0; box-sizing:border-box; font-family:"Segoe UI", Arial, sans-serif; }
 body { background:#f4f7fb; }
 h2 { text-align:center; margin:20px; color:#333; }
-#filter-box { text-align:center; margin-bottom:15px; }
+#filter-box, #radio-box { text-align:center; margin-bottom:15px; }
 select { padding:6px 10px; border-radius:5px; margin:0 5px; }
 #map {
-  height: 90vh;
+  height: 80vh;
   width: 90%;
-  margin: 0 auto 30px;
+  margin: 0 auto 20px;
   border-radius: 12px;
   box-shadow: 0 6px 14px rgba(0,0,0,0.25);
+}
+#nearest-places {
+  text-align:center;
+  font-weight:bold;
+  color:#333;
+  margin-bottom:30px;
+}
+#nearest-instruction {
+  text-align:center;
+  font-size:16px;
+  color:black;
+  margin-bottom:15px;
 }
 </style>
 </head>
@@ -34,48 +46,55 @@ select { padding:6px 10px; border-radius:5px; margin:0 5px; }
   <form method="GET">
     <select name="city">
       <option value="">All Cities</option>
-      <option value="Kathmandu">Kathmandu</option>
-      <option value="Lalitpur">Lalitpur</option>
-      <option value="Bhaktapur">Bhaktapur</option>
-      <option value="Pokhara">Pokhara</option>
-      <option value="Lumbini">Lumbini</option>
-      <option value="Chitwan">Chitwan</option>
-      <option value="Mustang">Mustang</option>
+      <option value="Kathmandu" <?php if(isset($_GET['city']) && $_GET['city']=="Kathmandu") echo "selected"; ?>>Kathmandu</option>
+      <option value="Lalitpur" <?php if(isset($_GET['city']) && $_GET['city']=="Lalitpur") echo "selected"; ?>>Lalitpur</option>
+      <option value="Bhaktapur" <?php if(isset($_GET['city']) && $_GET['city']=="Bhaktapur") echo "selected"; ?>>Bhaktapur</option>
+      <option value="Pokhara" <?php if(isset($_GET['city']) && $_GET['city']=="Pokhara") echo "selected"; ?>>Pokhara</option>
+      <option value="Lumbini" <?php if(isset($_GET['city']) && $_GET['city']=="Lumbini") echo "selected"; ?>>Lumbini</option>
+      <option value="Chitwan" <?php if(isset($_GET['city']) && $_GET['city']=="Chitwan") echo "selected"; ?>>Chitwan</option>
+      <option value="Mustang" <?php if(isset($_GET['city']) && $_GET['city']=="Mustang") echo "selected"; ?>>Mustang</option>
     </select>
 
     <select name="category">
       <option value="">All Categories</option>
-      <option value="Hospital">Hospital</option>
-      <option value="School">School</option>
-      <option value="University">University</option>
-      <option value="College">College</option>
-      <option value="Transport">Transport</option>
-      <option value="Hotel">Hotel</option>
-      <option value="Government">Government</option>
-      <option value="Bank">Bank</option>
-      <option value="Firestation">Firestation</option>
-      <option value="Temple">Temple</option>
-      <option value="Tourism">Tourism</option>
+      <option value="Hospital" <?php if(isset($_GET['category']) && $_GET['category']=="Hospital") echo "selected"; ?>>Hospital</option>
+      <option value="School" <?php if(isset($_GET['category']) && $_GET['category']=="School") echo "selected"; ?>>School</option>
+      <option value="University" <?php if(isset($_GET['category']) && $_GET['category']=="University") echo "selected"; ?>>University</option>
+      <option value="College" <?php if(isset($_GET['category']) && $_GET['category']=="College") echo "selected"; ?>>College</option>
+      <option value="Transport" <?php if(isset($_GET['category']) && $_GET['category']=="Transport") echo "selected"; ?>>Transport</option>
+      <option value="Hotel" <?php if(isset($_GET['category']) && $_GET['category']=="Hotel") echo "selected"; ?>>Hotel</option>
+      <option value="Government" <?php if(isset($_GET['category']) && $_GET['category']=="Government") echo "selected"; ?>>Government</option>
+      <option value="Bank" <?php if(isset($_GET['category']) && $_GET['category']=="Bank") echo "selected"; ?>>Bank</option>
+      <option value="Firestation" <?php if(isset($_GET['category']) && $_GET['category']=="Firestation") echo "selected"; ?>>Firestation</option>
+      <option value="Temple" <?php if(isset($_GET['category']) && $_GET['category']=="Temple") echo "selected"; ?>>Temple</option>
+      <option value="Tourism" <?php if(isset($_GET['category']) && $_GET['category']=="Tourism") echo "selected"; ?>>Tourism</option>
     </select>
 
     <button type="submit">Filter</button>
   </form>
 </div>
 
-<!-- Search section -->
-<div id="search-box" style="text-align:center; margin-bottom:15px;">
-  <input type="text" id="search-input" placeholder="Search places like 'hospital'..." 
-         style="padding:6px 10px; border-radius:5px; width:200px; margin-right:5px; border:1px solid #ccc;">
-  <button id="search-btn" style="padding:6px 10px; border-radius:5px; background:#4a90e2; color:white; border:none; cursor:pointer;">
-    Search
-  </button>
+<!-- Instruction for radio buttons -->
+<div id="nearest-instruction">
+  Choose a category below to find your nearest locations: <span style="color:#555; font-size:14px;">( Please wait few seconds until it loads....) </span>
 </div>
 
-<div id="nearest-places" style="text-align:center; margin-bottom:15px; font-weight:bold; color:#333;">
-  <!-- Nearest matching places will appear here -->
+<!-- Radio buttons for nearest places -->
+<div id="radio-box">
+  <?php
+    $categories = ["Hospital","School","University","College","Transport","Hotel","Government","Bank","Firestation","Temple","Tourism"];
+    foreach($categories as $cat){
+        echo '<label style="margin-right:10px;">
+                <input type="radio" name="nearest-category" value="'.htmlspecialchars($cat).'"> '.htmlspecialchars($cat).'
+              </label>';
+    }
+  ?>
 </div>
 
-
+<!-- Nearest places -->
+<div id="nearest-places">
+  <!-- Red pin image + names will appear here -->
+</div>
 
 <div id="map"></div>
 
@@ -87,7 +106,7 @@ $filter_category = isset($_GET['category']) ? $_GET['category'] : '';
 
 $places = [];
 
-// TOURISM
+// Tourism
 $sql_tourism = "SELECT place_name AS name, category, city, description, image, contact_info 
                 FROM tourism WHERE status = 1";
 $params = [];
@@ -103,7 +122,7 @@ $stmt = $pdo->prepare($sql_tourism);
 $stmt->execute($params);
 $tourism = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// CITY SERVICES
+// City services
 $sql_services = "SELECT name, category, city, description, image, icon, contact_info 
                  FROM city_services WHERE status = 1";
 $params = [];
@@ -122,20 +141,13 @@ $services = $stmt->fetchAll(PDO::FETCH_ASSOC);
 $places = array_merge($tourism, $services);
 ?>
 
-<!--Leaflet JS-->
+<!-- Leaflet JS -->
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
 <script>
 var dbPlaces = <?php echo json_encode($places); ?>;
 
-var map = L.map('map').setView([28.3949, 84.1240], 7);
-
-
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-  attribution: '&copy; OpenStreetMap contributors'
-}).addTo(map);
-
-// Major cities
+// Major cities with coordinates
 var cities = [
   { name: "Kathmandu", lat: 27.7172, lon: 85.3240, info: "Capital of Nepal" },
   { name: "Lalitpur", lat: 27.6644, lon: 85.3188, info: "Famous for Patan Durbar Square" },
@@ -146,12 +158,37 @@ var cities = [
   { name: "Mustang", lat: 29.1833, lon: 83.8333, info: "Lo Manthang - Walled City" }
 ];
 
+// Default map center
+var defaultLat = 28.3949;
+var defaultLon = 84.1240;
+var defaultZoom = 7;
+
+// Zoom to filtered city if any
+var cityFilter = "<?php echo $filter_city; ?>";
+if(cityFilter){
+    var cityObj = cities.find(c => c.name.toLowerCase() === cityFilter.toLowerCase());
+    if(cityObj){
+        defaultLat = cityObj.lat;
+        defaultLon = cityObj.lon;
+        defaultZoom = 12;
+    }
+}
+
+var map = L.map('map').setView([defaultLat, defaultLon], defaultZoom);
+
+// Tile layer
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  attribution: '&copy; OpenStreetMap contributors'
+}).addTo(map);
+
 // Add city markers
 cities.forEach(city => {
-  L.marker([city.lat, city.lon]).addTo(map)
+  L.marker([city.lat, city.lon])
+    .addTo(map)
     .bindPopup("<b>" + city.name + "</b><br>" + city.info);
 });
 
+// Icons for categories
 var icons = {
   "Hospital": L.icon({ iconUrl: "images/icons/hospital.png", iconSize: [20, 20] }),
   "School": L.icon({ iconUrl: "images/icons/school.png", iconSize: [20, 20] }),
@@ -166,112 +203,106 @@ var icons = {
   "Tourism": L.icon({ iconUrl: "images/icons/tourism.png", iconSize: [20, 20] }),
   "default": L.icon({ iconUrl: "images/icons/default.png", iconSize: [20, 20] })
 };
-//dbplaces
+
+// Add database places with small icons
 dbPlaces.forEach(place => {
   var icon = icons[place.category] || icons["default"];
-  var popup = `
-    <b>${place.name}</b><br>
-    Category: ${place.category}<br>
-    City: ${place.city}<br>
-    ${place.description ? place.description + "<br>" : ""}
-    ${place.contact_info ? "📞 " + place.contact_info + "<br>" : ""}
-    ${place.image ? "<img src='" + place.image + "' width='120px'><br>" : ""}
-  `;
   var coords = cities.find(c => c.name.toLowerCase() === place.city.toLowerCase());
   if (coords) {
-    var offsetLat = (Math.random() - 0.5) * 0.04; 
-    var offsetLon = (Math.random() - 0.5) * 0.04; 
+    var offsetLat = (Math.random()-0.5)*0.04;
+    var offsetLon = (Math.random()-0.5)*0.04;
     var lat = coords.lat + offsetLat;
     var lon = coords.lon + offsetLon;
-    L.marker([lat, lon], { icon: icon }).addTo(map).bindPopup(popup);
+
+    var popup = `<b>${place.name}</b><br>
+                 Category: ${place.category}<br>
+                 City: ${place.city}<br>
+                 ${place.description ? place.description + "<br>" : ""}
+                 ${place.contact_info ? "📞 " + place.contact_info + "<br>" : ""}
+                 ${place.image ? "<img src='" + place.image + "' width='120px'><br>" : ""}`;
+    
+    L.marker([lat, lon], {icon: icon}).addTo(map).bindPopup(popup);
   }
 });
 
+// Highlight icon for nearest places
+var highlightIcon = L.icon({
+  iconUrl: "https://cdn-icons-png.flaticon.com/512/684/684908.png",
+  iconSize: [40,40],
+  iconAnchor: [20,40],
+  popupAnchor: [0,-35]
+});
+
 // Haversine distance function
-function getDistance(lat1, lon1, lat2, lon2) {
+function getDistance(lat1, lon1, lat2, lon2){
     const R = 6371;
-    const dLat = (lat2 - lat1) * Math.PI / 180;
-    const dLon = (lon2 - lon1) * Math.PI / 180;
-    const a = Math.sin(dLat/2)**2 + Math.cos(lat1 * Math.PI/180) * Math.cos(lat2 * Math.PI/180) * Math.sin(dLon/2)**2;
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    const dLat = (lat2-lat1)*Math.PI/180;
+    const dLon = (lon2-lon1)*Math.PI/180;
+    const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
+    const c = 2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
     return R * c;
 }
 
-var highlightIcon = L.icon({
-  iconUrl: "https://cdn-icons-png.flaticon.com/512/684/684908.png", // bright red pin
-  iconSize: [40, 40], // bigger than normal
-  iconAnchor: [20, 40],
-  popupAnchor: [0, -35]
-});
+// Radio button nearest logic
+document.querySelectorAll('input[name="nearest-category"]').forEach(function(radio){
+    radio.addEventListener('change', function(){
+        var category = radio.value;
+        var nearestDiv = document.getElementById("nearest-places");
+        nearestDiv.innerHTML = "";
 
-// =======================
-// SEARCH WITH OSM + ALGORITHM
-// =======================
-document.getElementById("search-btn").addEventListener("click", function() {
-    var query = document.getElementById("search-input").value.toLowerCase();
-    if (!query) return alert("Please enter a search term");
+        if (!navigator.geolocation) return alert("Geolocation not supported");
 
-    if (!navigator.geolocation) return alert("Geolocation not supported");
+        navigator.geolocation.getCurrentPosition(function(position){
+            var userLat = position.coords.latitude;
+            var userLon = position.coords.longitude;
 
-    navigator.geolocation.getCurrentPosition(async function(position) {
-        var userLat = position.coords.latitude;
-        var userLon = position.coords.longitude;
+            // remove old red markers
+            if(window.redMarkers) window.redMarkers.forEach(m=>map.removeLayer(m));
+            window.redMarkers = [];
 
-        // Overpass API query for real OSM data
-        var overpassQuery = `
-            [out:json];
-            (
-              node["amenity"="${query}"](around:5000,${userLat},${userLon});
-              way["amenity"="${query}"](around:5000,${userLat},${userLon});
-              relation["amenity"="${query}"](around:5000,${userLat},${userLon});
-            );
-            out center;
-        `;
-        var url = "https://overpass-api.de/api/interpreter?data=" + encodeURIComponent(overpassQuery);
+            var matchingPlaces = dbPlaces.filter(p=>p.category.toLowerCase()===category.toLowerCase());
 
-        try {
-            let response = await fetch(url);
-            let data = await response.json();
-
-            if (!data.elements.length) return alert("No nearby places found");
-
-            // Calculate distance and sort
-            data.elements.forEach(el => {
-                if (!el.lat && el.center) el.lat = el.center.lat;
-                if (!el.lon && el.center) el.lon = el.center.lon;
-                el.distance = getDistance(userLat, userLon, el.lat, el.lon);
-            });
-            data.elements.sort((a, b) => a.distance - b.distance);
-
-            // Clear previous nearest places text
-           document.getElementById("nearest-places").innerHTML += `
-  <img src="https://cdn-icons-png.flaticon.com/512/684/684908.png" 
-       width="16" height="16" style="vertical-align:middle; margin-right:5px;">
-  ${name}<br>
-`;
-
-
-            // Show nearest 2 places
-            data.elements.slice(0,2).forEach(place => {
-                var name = place.tags.name || query;
-                var category = place.tags.amenity || query;
-                var icon = icons[category] || icons["default"];
-                L.marker([place.lat, place.lon], { icon: highlightIcon, riseOnHover: true })
-
-                 .addTo(map)
-                 .bindPopup(`<b>${name}</b><br>Category: ${category}`);
-                
-                document.getElementById("nearest-places").innerHTML += name + "<br>";
+            matchingPlaces.forEach(p=>{
+                var coords = cities.find(c=>c.name.toLowerCase()===p.city.toLowerCase());
+                if(coords){
+                    var offsetLat = (Math.random()-0.5)*0.04;
+                    var offsetLon = (Math.random()-0.5)*0.04;
+                    p.lat = coords.lat + offsetLat;
+                    p.lon = coords.lon + offsetLon;
+                    p.distance = getDistance(userLat,userLon,p.lat,p.lon);
+                }
             });
 
-            map.setView([userLat, userLon], 13);
+            matchingPlaces.sort((a,b)=>a.distance - b.distance);
 
-        } catch(err) {
-            console.error(err);
-            alert("Error fetching data from OpenStreetMap");
-        }
-    }, function() {
-        alert("Geolocation is required to find nearest places");
+            // Show red pin image above names
+            if(matchingPlaces.length >= 2){
+                nearestDiv.innerHTML = `<img src="https://cdn-icons-png.flaticon.com/512/684/684908.png" 
+                                         width="20" height="20" style="vertical-align:middle; margin-right:5px;">
+                                         Nearest locations:<br>`;
+            }
+
+            // Add nearest 2 red pins on map
+            matchingPlaces.slice(0,2).forEach(p=>{
+                var marker = L.marker([p.lat,p.lon],{icon:highlightIcon,riseOnHover:true})
+                              .addTo(map)
+                              .bindPopup(`<b>${p.name}</b><br>Category: ${p.category}`);
+                window.redMarkers.push(marker);
+            });
+
+            if(window.redMarkers.length>0){
+                var group = new L.featureGroup(window.redMarkers);
+                map.fitBounds(group.getBounds().pad(0.4));
+            }
+
+            // Show names below pin image
+            matchingPlaces.slice(0,2).forEach(p=>{
+                nearestDiv.innerHTML += `${p.name} (${p.city})<br>`;
+            });
+
+        }, function(){
+            alert("Geolocation is required to find nearest places");
+        });
     });
 });
 </script>
