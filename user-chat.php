@@ -8,39 +8,43 @@ if (!isset($_SESSION['login'])) {
     exit;
 }
 
-$username=$_SESSION['login'];
-$sql="select id from users where username=?";
-$stmt=$pdo->prepare($sql);
+$username = $_SESSION['login'];
+// Get user_id
+$stmt = $pdo->prepare("SELECT id FROM users WHERE username=?");
 $stmt->execute([$username]);
-$user_id = $stmt->fetch(PDO::FETCH_ASSOC); ;
-if (!$user_id) die("Invalid session");
+$user = $stmt->fetch(PDO::FETCH_ASSOC);
+if (!$user) die("Invalid session");
+$user_id = $user['id'];
 
-// Check msg_id
-if (!isset($_GET['msg_id'])) die("Invalid request");
-$msg_id = (int)$_GET['msg_id'];
-
-// Fetch original message and admin replies
+// Fetch all messages of this user
 $stmt = $pdo->prepare("
-    SELECT w.*, u.username, p.profile_pic, p.full_name
+    SELECT w.*, p.profile_pic, p.full_name
     FROM write_us w
-    JOIN users u ON w.user_id = u.id
-    LEFT JOIN user_profiles p ON p.user_id = u.id
-    WHERE w.id = ? AND w.user_id = ?
+    LEFT JOIN user_profiles p ON p.user_id = w.user_id
+    WHERE w.user_id = ?
+    ORDER BY w.created_at ASC
 ");
-$stmt->execute([$msg_id, $user_id]);
-$msg = $stmt->fetch(PDO::FETCH_ASSOC);
-if (!$msg) die("Message not found");
+$stmt->execute([$user_id]);
+$messages = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Fetch all replies
+// Default user pic
+$userPic = 'images/default-user.png';
+if (!empty($messages[0]['profile_pic'])) {
+    $userPic = $messages[0]['profile_pic'];
+}
+
+// Fetch all replies and group by message_id
+$replies = [];
 $stmt = $pdo->prepare("
-    SELECT * FROM message_replies
-    WHERE message_id = ?
+    SELECT * FROM message_replies 
+    WHERE user_id=? 
     ORDER BY created_at ASC
 ");
-$stmt->execute([$msg_id]);
-$replies = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-$userPic = $msg['profile_pic'] ?: 'images/default-user.png';
+$stmt->execute([$user_id]);
+$allReplies = $stmt->fetchAll(PDO::FETCH_ASSOC);
+foreach ($allReplies as $r) {
+    $replies[$r['message_id']][] = $r;
+}
 ?>
 
 <!DOCTYPE html>
@@ -129,30 +133,38 @@ body {
 <div class="chat-header">
     <img src="<?= $userPic ?>">
     <div>
-        <strong><?= htmlentities($msg['full_name'] ?? $msg['username']) ?></strong><br>
-        <small><?= htmlentities($msg['email']) ?></small>
+        <strong><?= htmlentities($_SESSION['login']) ?></strong><br>
+        <small>Your Chat History with Admin</small>
     </div>
 </div>
 
 <div class="chat-body">
-    <!-- User original message -->
-    <div class="user-msg">
-        <?= nl2br(htmlentities($msg['message'])) ?><br>
-        <small><?= $msg['created_at'] ?></small>
-    </div>
+    <?php if (!$messages): ?>
+        <div class="info-msg">No messages yet. To ask something, use <strong>Write Us</strong>.</div>
+    <?php else: ?>
+        <?php foreach ($messages as $msg): ?>
+            <!-- User original message -->
+            <div class="user-msg">
+                <?= nl2br(htmlentities($msg['message'])) ?><br>
+                <small><?= $msg['created_at'] ?></small>
+            </div>
 
-    <!-- Admin replies -->
-    <?php foreach ($replies as $r): ?>
-        <div class="admin-msg">
-            <?= nl2br(htmlentities($r['reply'])) ?><br>
-            <small><?= $r['created_at'] ?></small>
-        </div>
-    <?php endforeach; ?>
+            <!-- Admin replies -->
+            <?php if (!empty($replies[$msg['id']])): ?>
+                <?php foreach ($replies[$msg['id']] as $r): ?>
+                    <div class="admin-msg">
+                        <?= nl2br(htmlentities($r['reply'])) ?><br>
+                        <small><?= $r['created_at'] ?></small>
+                    </div>
+                <?php endforeach; ?>
+            <?php endif; ?>
+        <?php endforeach; ?>
+    <?php endif; ?>
 </div>
 
-<!-- Info message for user -->
+<!-- Info message -->
 <div class="info-msg">
-    If you have more questions or need clarification, please send a new message using <strong>Write Us</strong>.
+    For more questions or clarifications, please send a new message using <strong>Write Us</strong>.
 </div>
 
 <a href="write-us.php" class="back-btn">Ask Admin Again</a>
