@@ -35,6 +35,12 @@ $categories = $cat_stmt->fetchAll(PDO::FETCH_COLUMN);
 <title>Tourism - City Information System</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css"/>
 <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+<!-- Leaflet CSS & JS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.min.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
+
 <style>
 body { background:#f4f7fb; font-family:"Segoe UI", Arial, sans-serif; }
 .page-header { background:#3F84B1; color:white; padding:40px 20px; text-align:center; }
@@ -42,12 +48,13 @@ body { background:#f4f7fb; font-family:"Segoe UI", Arial, sans-serif; }
 .filter-sort { display:flex; justify-content:center; gap:15px; margin:20px; flex-wrap:wrap; }
 .filter-sort select, .filter-sort button { padding:8px 12px; border:1px solid #ccc; border-radius:5px; }
 .places-container { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:20px; width:90%; margin:20px auto; }
-.place-card { background:#e2ebf5; border-radius:10px; overflow:hidden; box-shadow:0 4px 8px rgba(0,0,0,0.2); transition:0.3s; }
+.place-card { background:#e2ebf5; border-radius:10px; overflow:hidden; box-shadow:0 4px 8px rgba(0,0,0,0.2); transition:0.3s; cursor:pointer; }
 .place-card:hover { transform:translateY(-5px); }
 .place-card img { width:100%; height:200px; object-fit:cover; }
 .place-card .content { padding:15px; }
 .place-card h3 { margin-bottom:10px; }
 .place-card p { font-size:0.95rem; margin-bottom:5px; color:#555; }
+#map { display:none; height:500px; width:90%; margin:20px auto; border-radius:10px; box-shadow:0 4px 12px rgba(0,0,0,0.2); }
 .footer { background:#3F84B1; color:white; text-align:center; padding:15px; margin-top:30px; }
 </style>
 </head>
@@ -77,11 +84,14 @@ body { background:#f4f7fb; font-family:"Segoe UI", Arial, sans-serif; }
   </form>
 </div>
 
+<!-- Map -->
+<div id="map" data-aos="fade-up"></div>
+
 <div class="places-container">
 <?php
 if ($places) {
     foreach ($places as $p) {
-        echo "<div class='place-card' data-aos='fade-up'>";
+        echo "<div class='place-card' data-aos='fade-up' data-lat='".$p['latitude']."' data-lng='".$p['longitude']."'>";
         echo "<img src='".htmlspecialchars($p['image'])."' alt='".htmlspecialchars($p['place_name'])."'>";
         echo "<div class='content'>";
         echo "<h3>".htmlspecialchars($p['place_name'])."</h3>";
@@ -101,8 +111,78 @@ if ($places) {
 <div class="footer">&copy; 2025 City Information System. All rights reserved.</div>
 
 <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
-<script>AOS.init({duration:800,once:true});
-    window.addEventListener('load', AOS.refresh);
+<script>AOS.init({duration:800,once:true}); window.addEventListener('load', AOS.refresh);</script>
+
+<script>
+// Map and routing setup
+// Map and routing setup
+var map;
+var routingControl = null;
+
+document.querySelectorAll('.place-card').forEach(function(card){
+    card.addEventListener('click', function(){
+        var lat = parseFloat(card.getAttribute('data-lat'));
+        var lng = parseFloat(card.getAttribute('data-lng'));
+
+        var mapDiv = document.getElementById('map');
+        mapDiv.style.display = 'block';
+        mapDiv.scrollIntoView({behavior:"smooth"});
+
+        // Initialize map if not already
+        if(!map){
+            map = L.map('map').setView([lat, lng], 13);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; OpenStreetMap contributors'
+            }).addTo(map);
+        }
+
+        // Remove previous route completely
+        if(routingControl){
+            routingControl.getPlan().setWaypoints([]);
+            map.removeControl(routingControl);
+            routingControl = null;
+        }
+
+        // Get user's location
+        if(navigator.geolocation){
+            navigator.geolocation.getCurrentPosition(function(position){
+                var userLat = position.coords.latitude;
+                var userLng = position.coords.longitude;
+
+                // Add new route
+                routingControl = L.Routing.control({
+                    waypoints: [
+                        L.latLng(userLat, userLng),
+                        L.latLng(lat, lng)
+                    ],
+                    routeWhileDragging: false,
+                    addWaypoints: false,
+                    draggableWaypoints: false,
+                    show: true,
+                    createMarker: function(i, wp, nWps) {
+                        // Only create markers for start and destination
+                        return L.marker(wp.latLng);
+                    }
+                }).addTo(map);
+
+                // Fit map bounds nicely
+                var bounds = L.latLngBounds([
+                    [userLat, userLng],
+                    [lat, lng]
+                ]);
+                map.fitBounds(bounds, {padding:[50,50], maxZoom:15});
+
+            }, function(err){
+                alert('Could not get your location. Showing place only.');
+                map.setView([lat, lng], 14);
+            });
+        } else {
+            alert('Geolocation is not supported. Showing place only.');
+            map.setView([lat, lng], 14);
+        }
+    });
+});
+
 </script>
 
 </body>
