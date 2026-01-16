@@ -225,7 +225,7 @@ body { background:#f4f7fb; }
         <div class="card">
     <i class="fas fa-envelope"></i>
     <h2><?php echo $writeUsCount; ?></h2>
-    Messages
+   New Message/s
     <a href="manage-messages.php?from=dashboard">View Messages</a>
 
 </div>

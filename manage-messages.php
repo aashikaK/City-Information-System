@@ -196,7 +196,16 @@ elseif ($msg['status'] === 'replied')
 <td data-label="Action">
 <input type="hidden" name="msg_id" value="<?= $msg['id'] ?>">
 <button type="submit" name="update_status">Update</button>
+
+<a href="reply.php?msg_id=<?= $msg['id'] ?>"
+   style="display:inline-block;margin-top:6px;
+   background:#25D366;color:white;
+   padding:6px 10px;border-radius:6px;
+   text-decoration:none;font-size:14px;">
+   Reply
+</a>
 </td>
+
 </form>
 
 </tr>
