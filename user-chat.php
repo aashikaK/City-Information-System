@@ -106,11 +106,11 @@ body {
 }
 .user-msg {
     background:white;
-    align-self:flex-start;
+    align-self:flex-end;
 }
 .admin-msg {
     background:#dcf8c6;
-    align-self:flex-end;
+    align-self:flex-start;
 }
 .message-reply-to {
     font-size:12px;
