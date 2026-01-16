@@ -146,12 +146,14 @@ body {
 
 <!-- Chat header: shows admin profile -->
 <div class="chat-header">
+    <a href="dashboard.php" class="back-btn">←</a> <!-- Added back arrow -->
     <img src="<?= $adminPic ?>" alt="Admin">
     <div>
         <strong>Admin</strong><br>
         <small>Your Chat History</small>
     </div>
 </div>
+
 
 <div class="chat-body" id="chatBody">
     <?php if (!$chatItems): ?>
