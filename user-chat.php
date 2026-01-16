@@ -20,29 +20,36 @@ $user_id = $user['id'];
 // Default admin pic for chat header
 $adminPic = 'images/admin-profile.png';
 
-// Fetch all messages of this user
-$stmt = $pdo->prepare("
-    SELECT w.*, p.profile_pic, p.full_name
-    FROM write_us w
-    LEFT JOIN user_profiles p ON p.user_id = w.user_id
-    WHERE w.user_id = ?
-    ORDER BY w.created_at ASC
-");
-$stmt->execute([$user_id]);
-$messages = $stmt->fetchAll(PDO::FETCH_ASSOC);
+// Fetch all messages and admin replies together chronologically
+// We'll combine them into one array sorted by created_at
+$chatItems = [];
 
-// Fetch all replies and group by message_id
-$replies = [];
+// Fetch user messages
 $stmt = $pdo->prepare("
-    SELECT * FROM message_replies 
-    WHERE user_id=? 
-    ORDER BY created_at ASC
+    SELECT id as msg_id, message as content, created_at, 'user' as sender
+    FROM write_us
+    WHERE user_id=?
 ");
 $stmt->execute([$user_id]);
-$allReplies = $stmt->fetchAll(PDO::FETCH_ASSOC);
-foreach ($allReplies as $r) {
-    $replies[$r['message_id']][] = $r;
-}
+$userMessages = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Fetch admin replies for this user
+$stmt = $pdo->prepare("
+    SELECT message_id, reply as content, created_at, 'admin' as sender
+    FROM message_replies
+    WHERE user_id=?
+");
+$stmt->execute([$user_id]);
+$adminReplies = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Combine all messages
+foreach ($userMessages as $um) $chatItems[] = $um;
+foreach ($adminReplies as $ar) $chatItems[] = $ar;
+
+// Sort by created_at ascending
+usort($chatItems, function($a, $b) {
+    return strtotime($a['created_at']) - strtotime($b['created_at']);
+});
 ?>
 
 <!DOCTYPE html>
@@ -86,6 +93,8 @@ body {
     padding:15px;
     overflow-y:auto;
     background:#efeae2;
+    display:flex;
+    flex-direction:column;
 }
 .user-msg, .admin-msg {
     max-width:70%;
@@ -96,12 +105,19 @@ body {
     word-wrap:break-word;
 }
 .user-msg {
+    background:white;
+    align-self:flex-start;
+}
+.admin-msg {
     background:#dcf8c6;
     align-self:flex-end;
 }
-.admin-msg {
-    background:white;
-    align-self:flex-start;
+.message-reply-to {
+    font-size:12px;
+    color:#888;
+    margin-bottom:3px;
+    padding-left:5px;
+    border-left:2px solid #ccc;
 }
 .info-msg {
     text-align:center;
@@ -122,13 +138,6 @@ body {
 .back-btn:hover {
     background:#1da851;
 }
-.message-reply-to {
-    font-size:12px;
-    color:#888;
-    margin-bottom:3px;
-    padding-left:5px;
-    border-left:2px solid #ccc;
-}
 </style>
 </head>
 <body>
@@ -145,26 +154,30 @@ body {
 </div>
 
 <div class="chat-body" id="chatBody">
-    <?php if (!$messages): ?>
+    <?php if (!$chatItems): ?>
         <div class="info-msg">No messages yet. To ask something, use <strong>Write Us</strong>.</div>
     <?php else: ?>
-        <?php foreach ($messages as $msg): ?>
-            <!-- Show which message this admin reply is for -->
-            <?php if (!empty($replies[$msg['id']])): ?>
-                <?php foreach ($replies[$msg['id']] as $r): ?>
-                    <div class="admin-msg">
-                        <div class="message-reply-to">Replying to your message: <?= nl2br(htmlentities($msg['message'])) ?></div>
-                        <?= nl2br(htmlentities($r['reply'])) ?><br>
-                        <small><?= $r['created_at'] ?></small>
-                    </div>
-                <?php endforeach; ?>
+        <?php foreach ($chatItems as $item): ?>
+            <?php if ($item['sender'] === 'user'): ?>
+                <div class="user-msg">
+                    <?= nl2br(htmlentities($item['content'])) ?><br>
+                    <small><?= $item['created_at'] ?></small>
+                </div>
+            <?php else: ?>
+                <div class="admin-msg">
+                    <?php
+                    // Show which user message this admin reply is for
+                    $msg_id = $item['message_id'];
+                    $originalMsg = array_filter($userMessages, fn($m) => $m['msg_id']==$msg_id);
+                    $originalMsg = reset($originalMsg);
+                    if ($originalMsg):
+                    ?>
+                        <div class="message-reply-to">Replying to your message: <?= nl2br(htmlentities($originalMsg['content'])) ?></div>
+                    <?php endif; ?>
+                    <?= nl2br(htmlentities($item['content'])) ?><br>
+                    <small><?= $item['created_at'] ?></small>
+                </div>
             <?php endif; ?>
-
-            <!-- User original message on right -->
-            <div class="user-msg">
-                <?= nl2br(htmlentities($msg['message'])) ?><br>
-                <small><?= $msg['created_at'] ?></small>
-            </div>
         <?php endforeach; ?>
     <?php endif; ?>
 </div>
