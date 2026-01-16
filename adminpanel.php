@@ -226,7 +226,7 @@ body { background:#f4f7fb; }
     <i class="fas fa-envelope"></i>
     <h2><?php echo $writeUsCount; ?></h2>
    New Message/s
-    <a href="manage-messages.php?from=dashboard">View Messages</a>
+    <a href="manage-messages.php?from=dashboard">View New/All Messages</a>
 
 </div>
 
