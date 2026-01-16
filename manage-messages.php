@@ -216,4 +216,23 @@ elseif ($msg['status'] === 'replied')
 <?php endif; ?>
 
 </body>
+<script>
+    // This function calls our PHP endpoint
+    function markNewMessagesPending() {
+        navigator.sendBeacon('mark-pending.php');
+    }
+
+    // When page is unloaded (tab close, reload, navigate away)
+    window.addEventListener('beforeunload', function (e) {
+        markNewMessagesPending();
+    });
+
+    // Optional: detect tab switching (visibility change)
+    document.addEventListener('visibilitychange', function() {
+        if (document.visibilityState === 'hidden') {
+            markNewMessagesPending();
+        }
+    });
+</script>
+
 </html>

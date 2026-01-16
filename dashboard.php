@@ -84,8 +84,8 @@ body { background:#f4f7fb; }
 
         <div class="card">
             <i class="fas fa-comments"></i>
-            Chat Group
-            <a href="chatgroup_history.php">Open Chat</a>
+            Admin's reply
+            <a href="user-chat.php">Open Chat</a>
         </div>
 
         <div class="card">
