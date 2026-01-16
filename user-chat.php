@@ -9,12 +9,16 @@ if (!isset($_SESSION['login'])) {
 }
 
 $username = $_SESSION['login'];
+
 // Get user_id
 $stmt = $pdo->prepare("SELECT id FROM users WHERE username=?");
 $stmt->execute([$username]);
 $user = $stmt->fetch(PDO::FETCH_ASSOC);
 if (!$user) die("Invalid session");
 $user_id = $user['id'];
+
+// Default admin pic for chat header
+$adminPic = 'images/admin-profile.png';
 
 // Fetch all messages of this user
 $stmt = $pdo->prepare("
@@ -26,12 +30,6 @@ $stmt = $pdo->prepare("
 ");
 $stmt->execute([$user_id]);
 $messages = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-// Default user pic
-$userPic = 'images/default-user.png';
-if (!empty($messages[0]['profile_pic'])) {
-    $userPic = $messages[0]['profile_pic'];
-}
 
 // Fetch all replies and group by message_id
 $replies = [];
@@ -78,8 +76,8 @@ body {
     border-radius:12px 12px 0 0;
 }
 .chat-header img {
-    width:45px;
-    height:45px;
+    width:50px;
+    height:50px;
     border-radius:50%;
     object-fit:cover;
 }
@@ -124,52 +122,67 @@ body {
 .back-btn:hover {
     background:#1da851;
 }
+.message-reply-to {
+    font-size:12px;
+    color:#888;
+    margin-bottom:3px;
+    padding-left:5px;
+    border-left:2px solid #ccc;
+}
 </style>
 </head>
 <body>
 
 <div class="chat-container">
 
+<!-- Chat header: shows admin profile -->
 <div class="chat-header">
-    <img src="<?= $userPic ?>">
+    <img src="<?= $adminPic ?>" alt="Admin">
     <div>
-        <strong><?= htmlentities($_SESSION['login']) ?></strong><br>
-        <small>Your Chat History with Admin</small>
+        <strong>Admin</strong><br>
+        <small>Your Chat History</small>
     </div>
 </div>
 
-<div class="chat-body">
+<div class="chat-body" id="chatBody">
     <?php if (!$messages): ?>
         <div class="info-msg">No messages yet. To ask something, use <strong>Write Us</strong>.</div>
     <?php else: ?>
         <?php foreach ($messages as $msg): ?>
-            <!-- User original message -->
-            <div class="user-msg">
-                <?= nl2br(htmlentities($msg['message'])) ?><br>
-                <small><?= $msg['created_at'] ?></small>
-            </div>
-
-            <!-- Admin replies -->
+            <!-- Show which message this admin reply is for -->
             <?php if (!empty($replies[$msg['id']])): ?>
                 <?php foreach ($replies[$msg['id']] as $r): ?>
                     <div class="admin-msg">
+                        <div class="message-reply-to">Replying to your message: <?= nl2br(htmlentities($msg['message'])) ?></div>
                         <?= nl2br(htmlentities($r['reply'])) ?><br>
                         <small><?= $r['created_at'] ?></small>
                     </div>
                 <?php endforeach; ?>
             <?php endif; ?>
+
+            <!-- User original message on right -->
+            <div class="user-msg">
+                <?= nl2br(htmlentities($msg['message'])) ?><br>
+                <small><?= $msg['created_at'] ?></small>
+            </div>
         <?php endforeach; ?>
     <?php endif; ?>
 </div>
 
 <!-- Info message -->
 <div class="info-msg">
-    For more questions or clarifications, please send a new message using <strong>Write Us</strong>.
+    To ask more questions or clarifications, please send a new message using <strong>Write Us</strong>.
 </div>
 
 <a href="write-us.php" class="back-btn">Ask Admin Again</a>
 
 </div>
+
+<script>
+// Scroll chat to bottom on page load
+const chatBody = document.getElementById('chatBody');
+chatBody.scrollTop = chatBody.scrollHeight;
+</script>
 
 </body>
 </html>
