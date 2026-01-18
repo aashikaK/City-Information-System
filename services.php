@@ -92,6 +92,22 @@ body { background:#f4f7fb; }
 .service-card p { font-size:0.95rem; color:#555; margin-bottom:5px; }
 .service-card .location { font-style:italic; color:#777; font-size:0.85rem; }
 
+.back-btn {
+    text-decoration:none;
+    color:#3F84B1;
+    font-size:1.1rem;
+    font-weight:600;
+    display:flex;
+    align-items:center;
+    gap:6px;
+    transition:0.3s;
+    margin-left:20px;
+}
+
+.back-btn:hover {
+    color:#2c6388;
+    transform:translateX(-3px);
+}
 /* Map */
 #map { display:none; height:500px; width:90%; margin:20px auto; border-radius:10px; box-shadow:0 4px 12px rgba(0,0,0,0.2); }
 
@@ -122,6 +138,11 @@ body { background:#f4f7fb; }
 
 <?php else: ?>
 <div class="city-filter" data-aos="fade-up">
+
+  <a href="services.php" class="back-btn">
+        <i class="fas fa-arrow-left"></i> Back to Categories
+    </a>
+
     <form method="GET" action="services.php">
         <input type="hidden" name="category" value="<?php echo htmlspecialchars($selected_category); ?>">
         <select name="city" onchange="this.form.submit()">
