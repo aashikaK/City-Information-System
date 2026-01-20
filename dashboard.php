@@ -58,6 +58,12 @@ body { background:#f4f7fb; }
         </div>
 
         <div class="card">
+    <i class="fas fa-key"></i>
+    Change Password
+    <a href="change_password.php">Update Password</a>
+</div>
+
+        <div class="card">
             <i class="fas fa-calendar-alt"></i>
             Event History
             <a href="eventhistory.php">View Events</a>
