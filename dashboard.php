@@ -60,7 +60,7 @@ body { background:#f4f7fb; }
         <div class="card">
     <i class="fas fa-key"></i>
     Change Password
-    <a href="change_password.php">Update Password</a>
+    <a href="change-password.php">Update Password</a>
 </div>
 
         <div class="card">
