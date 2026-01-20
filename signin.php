@@ -107,6 +107,18 @@ body{
 .signup-link a:hover{
   text-decoration:underline;
 }
+.input-group {
+  position: relative;
+}
+
+.eye-icon {
+  position: absolute;
+  right: 12px;
+  top: 38px;
+  cursor: pointer;
+  color: #555;
+}
+
 </style>
 </head>
 
@@ -131,10 +143,12 @@ body{
     </div>
 
     <div class="input-group">
-      <label>Password</label>
-      <input type="password" name="password" id="password">
-      <p id="pw-err-msg" style="color:#ffd54f;"></p>
-    </div>
+  <label>Password</label>
+  <input type="password" name="password" id="password">
+  <i class="fas fa-eye eye-icon toggle-password" data-target="password"></i>
+  <p id="pw-err-msg" style="color:#ffd54f;"></p>
+</div>
+
 
     <button type="submit" name="login" class="btn">Sign In</button>
     
@@ -172,6 +186,7 @@ function validateForm(){
   return valid;
 }
 </script>
+<script src="password-toggle.js"></script>
 
 </body>
 </html>
