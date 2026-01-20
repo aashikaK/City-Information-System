@@ -271,6 +271,7 @@ body {
       return valid;
     }
   </script>
+  <script src="password-toggle.js"></script>
 </body>
 </html>
 

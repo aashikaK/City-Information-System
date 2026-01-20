@@ -100,6 +100,17 @@ body{
 .btn:hover{
   background:#ffd54f;
 }
+.input-group {
+  position: relative;
+}
+
+.eye-icon {
+  position: absolute;
+  right: 12px;
+  top: 38px;
+  cursor: pointer;
+  color: #555;
+}
 </style>
 </head>
 
@@ -127,20 +138,23 @@ body{
 
   <form method="POST">
     <div class="input-group">
-      <label>New Password</label>
-      <input type="password" name="password" placeholder="Enter new password">
-    </div>
+  <label>New Password</label>
+  <input type="password" name="password" id="password" placeholder="Enter new password">
+  <i class="fas fa-eye eye-icon toggle-password" data-target="password"></i>
+</div>
 
-    <div class="input-group">
-      <label>Confirm Password</label>
-      <input type="password" name="confirm_password" placeholder="Confirm new password">
-    </div>
+<div class="input-group">
+  <label>Confirm Password</label>
+  <input type="password" name="confirm_password" id="confirm_password" placeholder="Confirm new password">
+  <i class="fas fa-eye eye-icon toggle-password" data-target="confirm_password"></i>
+</div>
+
 
     <button type="submit" name="reset" class="btn">Reset Password</button>
   </form>
 
   <?php } ?>
 </div>
-
+<script src="password-toggle.js"></script>
 </body>
 </html>
