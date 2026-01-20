@@ -236,6 +236,10 @@ body {
         document.getElementById("email-err-msg").innerHTML= "Email cannot start with '@'.";
         valid = false;
        }
+       else if (email.charAt(emailField.length - 4) !== '.') {
+            document.getElementById('email-err-msg').innerHTML = "Invalid Email! Input correct Email";
+            return false;
+            }
 
         else {
     

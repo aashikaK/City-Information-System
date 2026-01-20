@@ -137,6 +137,11 @@ body{
     </div>
 
     <button type="submit" name="login" class="btn">Sign In</button>
+    
+    <div class="signup-link">
+  <a href="forgot_password.php">Forgot Password?</a>
+</div>
+
   </form>
 
   <!-- SIGNUP LINK -->
