@@ -135,6 +135,17 @@ body {
 .bottom-text a:hover {
   text-decoration: underline;
 }
+.input-group {
+  position: relative;
+}
+
+.eye-icon {
+  position: absolute;
+  right: 12px;
+  top: 38px;
+  cursor: pointer;
+  color: #555;
+}
 </style>
 </head>
 <body>
@@ -168,12 +179,14 @@ body {
       <input type="password" name="password" id="password" placeholder="Create a password" 
       title="Must contain at least 1 number,an uppercase and a lowercase letter, and at least 6 or more characters"
       required>
+       <i class="fas fa-eye eye-icon toggle-password" data-target="password"></i>
         <p id="pw-err-msg" style="color: #ffd54f;"></p>
     </div>
 
     <div class="input-group">
       <label for="confirm_password">Confirm Password</label>
       <input type="password" name="confirm_password" id="confirm_password" placeholder="Re-enter your password" required>
+      <i class="fas fa-eye eye-icon toggle-password" data-target="confirm_password"></i>
         <p id="c_pw-err-msg" style="color: #ffd54f;"></p>
     </div>
 
