@@ -120,7 +120,7 @@ body{
     </div>
 
     <a href="signin.php" class="btn" style="display:block;text-decoration:none;text-align:center;">
-      Go to Login
+      Go back to Signin
     </a>
 
   <?php } else { ?>
