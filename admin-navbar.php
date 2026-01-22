@@ -92,6 +92,7 @@ body { background:#f4f7fb; } /* light gray */
         <!-- <li><a href="/CIS/adminpanel.php"><i class="fas fa-user-shield"></i> Admin Panel</a></li> -->
     </ul>
     <ul>
+        <li><a href="/CIS/register-admin.php"><i class="fas fa-user"></i> Register New Admin</a></li>
         <li>Welcome Admin:</li>
         <li><strong><?php echo htmlentities($_SESSION['admin']); ?></strong></li>
         <!-- <li><a href="/CIS/logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li> -->
