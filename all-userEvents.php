@@ -61,6 +61,8 @@ body { background:#f4f7fb; }
     gap:20px;
     width:90%;
     margin:20px auto;
+    margin:20px auto;
+    justify-items:center;
 }
 
 .event-card {
