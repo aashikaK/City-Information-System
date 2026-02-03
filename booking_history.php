@@ -78,7 +78,10 @@ if ($bookings) {
         echo "<div class='event-card' data-aos='fade-up' data-aos-delay='{$delay}'>";
         
         // Service image, name & location
-$img_path = !empty($b['image_path']) ? htmlspecialchars($b['image']) : 'images/default_service.jpg';
+$img_path = !empty($b['image']) 
+    ? htmlspecialchars($b['image']) 
+    : 'images/default_service.jpg';
+
 echo "<img src='{$img_path}' class='event-image' alt='Service Image'>";
 
         echo "<strong>" . htmlspecialchars($b['service_name']) . "</strong>";

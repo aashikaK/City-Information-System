@@ -218,15 +218,14 @@ body {
     valid=false;
   }
 
-  // password validation
-  const pwPattern = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}$/;
+  const pwPattern = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@$!%*?&]).{6,}$/;
 
   if(pw===""){
     document.getElementById("pw-err-msg").innerHTML="Please enter password";
     valid=false;
   }
   else if (!pwPattern.test(pw)) {
-    document.getElementById("pw-err-msg").innerHTML="Password must contain at least one number, one uppercase, one lowercase letter, and be 6 or more characters long.";
+    document.getElementById("pw-err-msg").innerHTML="Password must contain at least one number,one special symbol, one uppercase, one lowercase letter, and be 6 or more characters long.";
     valid=false;
   }
 // for pw confirmation
