@@ -166,8 +166,8 @@ body { background:#f4f7fb; }
 <div class="card">
     <i class="fas fa-calendar-check"></i>
     <h2><?php echo $allEventsCount; ?></h2>
-    All Registrations
-    <a href="all-userEvents.php">View All</a>
+    All Event Registrations
+    <a href="all-userEvents.php">View All Registered Events</a>
 </div>
 
 
